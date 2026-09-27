@@ -1,0 +1,25 @@
+name: Notation visual explorer
+on: [push, pull_request]
+permissions:
+  contents: read
+jobs:
+  contract-and-regression:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version: '24'
+          cache: npm
+      - run: node --test tests/explorer/*.node.mjs
+      - run: node scripts/check-replacement-ledger.mjs
+      - run: node scripts/check-gsv-contract.mjs
+      - name: Compare exact upstream contract bytes
+        run: |
+          curl --fail --silent --show-error --max-time 30 https://raw.githubusercontent.com/giasonpooni/Geospatial-State-Visualization/06c47bd851d8ea8b363a6bbe60a96c7448cbe12e/src/data/esmProjection.ts -o "$RUNNER_TEMP/gsv-consumer.ts"
+          node scripts/check-gsv-contract.mjs "$RUNNER_TEMP/gsv-consumer.ts"
+      - run: npm ci
+      - run: npm test
+      - run: npx tsc --noEmit
+      - run: npm run build
