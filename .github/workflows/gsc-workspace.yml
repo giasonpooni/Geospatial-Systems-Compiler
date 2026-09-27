@@ -1,0 +1,57 @@
+name: GSC integration workspace
+on:
+  push:
+    branches: [gsc/compiler-ir-foundation]
+    paths: [.github/workflows/gsc-workspace.yml]
+permissions:
+  contents: read
+jobs:
+  workspace:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          path: work/gsc
+          persist-credentials: false
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          repository: giasonpooni/Geospatial-State-Visualization
+          ref: 58713d02d4e79c52290ee9d0da51ea6b4d0677ed
+          path: work/gsv
+          persist-credentials: false
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version: '24'
+      - name: Install locked dependencies
+        run: |
+          npm ci --prefix work/gsc
+          npm ci --prefix work/gsv
+      - name: Capture original GSV checks
+        working-directory: work/gsv
+        run: |
+          set -o pipefail
+          npm run check 2>&1 | tee ../gsv-baseline.log
+          npm run build 2>&1 | tee ../gsv-build.log
+      - name: Package source and offline execution workspace
+        run: |
+          tar --exclude='.git' --exclude='node_modules' --exclude='dist' --exclude='.next' -czf gsc-sources.tar.gz -C work .
+          tar -czf gsc-dependencies.tar.gz -C work/gsc node_modules
+          tar -czf gsv-dependencies.tar.gz -C work/gsv node_modules
+          cp "$(command -v node)" node24
+          gzip node24
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: gsc-sources
+          path: gsc-sources.tar.gz
+          retention-days: 3
+          compression-level: 0
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: gsc-dependencies
+          path: |
+            gsc-dependencies.tar.gz
+            gsv-dependencies.tar.gz
+            node24.gz
+          retention-days: 3
+          compression-level: 0
