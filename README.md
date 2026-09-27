@@ -1,221 +1,149 @@
-<div align="center">
+# Notation Systems · Visual Inspection
 
-# Payload Terminal V0
-
-### Notation Systems — data, modelling, and visualization for physical systems.
+**Geospatial Systems Compiler** (the existing Payload Terminal application) — visualize physical systems, compare declared records,
+and inspect the evidence behind them.
 
 **State · Variation · Invariance**
 
-[![Next.js](https://img.shields.io/badge/Next.js-16-black?style=for-the-badge&logo=next.js)](https://nextjs.org)
-[![TypeScript](https://img.shields.io/badge/TypeScript-5-3178C6?style=for-the-badge&logo=typescript&logoColor=white)](https://typescriptlang.org)
-[![MapLibre](https://img.shields.io/badge/MapLibre_GL-GPU_Rendered-396CB2?style=for-the-badge)](https://maplibre.org)
-[![License](https://img.shields.io/badge/License-GPLv3-D4AF37?style=for-the-badge)](LICENSE)
+![Geospatial State Visualization — synthetic global network view](https://raw.githubusercontent.com/giasonpooni/Geospatial-State-Visualization/58713d02d4e79c52290ee9d0da51ea6b4d0677ed/docs/media/global.png)
 
-Explore observations, compare results, and inspect how they were produced.
+*Companion GSV synthetic-demo view, retaining its earlier display branding.
+This image is not a screenshot of an ESM-connected production deployment.*
 
-</div>
+The repository was previously named `Payload-Terminal-V0`. Existing package names,
+Payload routes and retained record identities remain compatible.
 
-## Overview
+The terminal is Notation Systems' browser interface for geographic inspection,
+recorded-value comparison and evidence review. It connects visual views to exact
+records instead of turning a picture into a new source of truth. ESM governs
+evidence and release state; GSV provides geographic visualization; the existing
+workbench and instruments retain scientific execution.
 
-Payload Terminal is the browser-interface foundation for **Notation Systems**,
-part of its computational instrumentation and evidence infrastructure for
-industrial and cyber-physical systems. It currently contains a map-led
-physical-economy application with commodity analytics and freight workflows.
+## Start with the view, keep the evidence
 
-The development direction is a **separately maintained Notation Systems
-homepage and read-only explorer**, connected to existing evidence services,
-visualization clients, and the computational workbench through explicit
-interfaces. Freight remains a worked application, not the definition of the
-whole company. Scientific methods and specialist domain models stay with their
-respective instruments.
-
-**Status:** the existing Next.js application is implemented. The company
-homepage separation, ESM projection adapter, Geospatial State Visualization
-integration, and workbench handoff described below are **planned integrations**,
-not capabilities delivered by this README update. The running interface and
-application metadata have not been rebranded by this documentation change.
-
-## What is already in this repository
-
-| Area | Existing application |
+| Experience | Implemented scope |
 | --- | --- |
-| Browser interface | Next.js, MapLibre maps, search, panels, layer controls, and temporal inspection. |
-| Physical-economy records | Entities, observations, flows, capacities, dependencies, provenance, and source-known time. |
-| Commodity analytics | Copper and aluminium examples; concentration, flow dependencies, candidate bottlenecks, source disagreements, and acquisition/snapshot fallback. |
-| Freight records | Append-only entries, lane residuals with minimum-trial requirements, carrier vetting, and exceptions. |
-| Freight operations | Persistent intake, alternatives, authorization, assignment, dispatch evidence, tracking, and settlement; an exception-first `/operations` workspace. |
-| Supporting sources | Routing, maritime reference, weather, market data, and conditional organisational-infrastructure attribution. Availability depends on the source and configuration. |
-| Checks | Vitest tests, source and route policy checks, and checks over outward-facing product descriptions. |
+| **Company entry — `/notation`** | Visualization-first introduction; readable without ESM or WebGL. The introductory graphic is labelled as a schematic, not measured data. |
+| **Visual explorer — `/explore`** | One explicitly configured public ESM fixture projection; exact release, source snapshot, selection and knowledge/valid times. Unavailable by default until configured. |
+| **Geographic view** | A separately built GSV embed displays declared WGS84 points. Selection is synchronized with the record table; unsupported boundary display does not invent coordinates. |
+| **Value comparison** | Explicit baseline/candidate selection, shared-scale plot, signed difference and relative difference. Requires the same subject, predicate, unit, basis and projection time. |
+| **Diagnostics and evidence** | Counts missing units, uncertainty and geometry; exposes source records, declarations, status, rights and original geometry. These counts are not quality scores. |
+| **Existing Payload application — `/` and `/operations`** | Map-led commodity and freight workflows, durable operating records, authority checks and exception handling remain available. |
 
-The existing application includes local domain state, analytics, and
-write-capable freight APIs. **The proposed read-only boundary applies to the
-new homepage/explorer; it is not a claim that every existing route is read-only.**
-Those workflows must remain explicitly separated from any public demonstration.
-This document neither removes them nor migrates their records into ESM.
+**Current limits:** the ESM adapter consumes fixture-only projections, not general
+live scientific results. Polygon and extent declarations are checked and retained
+in the inspector, but the new embed draws only literal points. It supplies no
+inferred operational state, covariance, confidence interval or solver execution.
+The connected experience needs a separately served GSV build and an explicitly
+reviewed projection. This repository does not deploy either service automatically.
 
-Implementation details remain in
-[`docs/PHYSICAL_ECONOMY.md`](docs/PHYSICAL_ECONOMY.md) and
-[`docs/ARCHITECTURE_LEDGER.md`](docs/ARCHITECTURE_LEDGER.md).
+## One projection across the interface
 
-## The Notation Systems experience
-
-The organizing object should be an **investigation**: a question connected to
-specific data, assumptions, model configurations, runs, and results.
-
-```text
-Inspect data → Understand the model and assumptions
-             → Open a recorded result or continue in the workbench
-             → Compare cases → Trace the supporting evidence
+```mermaid
+flowchart LR
+  E["ESM: exact public fixture projection"] --> P["Server: source, selection, time and digest checks"]
+  P --> T["Exact-record table"]
+  P --> G["GSV: declared geographic points"]
+  P --> C["Compatible-record comparison"]
+  T <-->|"Record identity"| G
+  T --> I["Evidence and missingness inspector"]
+  C --> I
 ```
 
-The browser presents this context; it should not recreate the existing
-workbench's experiment editor, execution history, or instrument implementations.
+The browser changes selection and presentation, not evidence class or release
+identity. A time change requires another explicit ESM projection. The viewer
+accepts no execution commands or credentials. Evidence, operation specification,
+execution attempt, result and verification identities remain separate.
 
-| Principle | Intended user action |
-| --- | --- |
-| **State** | Inspect a record, field, or estimate at a declared time, with its units, source, and observed/computed status. |
-| **Variation** | Compare a baseline with a changed input, parameter, model version, or sensor configuration. |
-| **Invariance** | Inspect model-specific constraints, conservation checks, frame consistency, tolerances, and failures supplied by the instrument. |
+### State
 
-These are design targets, not a claim that a general scientific comparison
-workspace already exists here. Controls must distinguish **changing a view**,
-**selecting a precomputed result**, and **requesting a new computation**.
+Inspect the supplied value, unit, source, validity and knowledge cutoff. Missing
+geometry is visibly unavailable; missing uncertainty is not replaced by zero.
+Multiple source positions stay distinct rather than being silently averaged.
 
-Data, model descriptions, recorded experiments, views, comparisons, and evidence
-should be navigable parts of the same investigation. A table, plot, map, globe,
-graph, or local 3D scene is a different way to inspect a result—not a different
-source of truth. Geography is one view, not the universal container for every
-scientific or industrial problem.
+### Variation
 
-## Responsibility in the stack
+Select two current records. The descriptive difference is `candidate - baseline`;
+relative difference divides by the absolute baseline value. A zero baseline has
+no relative result. Incompatible quantities and numerical overflow refuse with
+an explicit reason. Unit conversion, record fusion and causal inference are not
+performed. Input uncertainty is retained; uncertainty of a difference is not
+invented without a joint uncertainty model.
 
-**Separate application, integrated information and workflow.** Keep this
-frontend outside ESM and connect it through narrow interfaces rather than
-merging repositories or offering only a generic homepage link.
+### Invariance
+
+Preserve source, release, record and time bindings while moving between table,
+plot and geographic view. These are interface/contract invariants. Conservation
+laws, calibrated uncertainty, model validity and other physical invariants must
+be evaluated by the relevant instruments, not inferred from a convincing image.
+
+## Run it
+
+Use Node.js 24 to run the contract tests as written.
+
+```sh
+git clone https://github.com/giasonpooni/Geospatial-Systems-Compiler.git
+cd Geospatial-Systems-Compiler
+npm ci
+npm run dev
+```
+
+Open `/notation` for the company entry, `/explore` for configured visual
+inspection, or `/` for the existing Payload application. The current root route
+is preserved; making the company entry the deployed homepage is a separate
+routing/deployment cutover, not an implicit change to operating workflows.
+
+[Explorer configuration and boundaries](docs/NOTATION_EXPLORER.md) explain the
+exact ESM projection pin and companion GSV embed. [Existing application setup and
+freight operations](docs/PAYLOAD_OPERATIONS.md) retain Docker, feed-key, journal,
+authorization, carrier-adapter and webhook instructions. Do not put operating
+credentials in public configuration or browser messages.
+
+```sh
+node --test tests/explorer/*.node.mjs   # consumer, loader and descriptive comparison
+node scripts/check-gsv-contract.mjs   # exact mirrored contract hash
+node scripts/check-replacement-ledger.mjs
+npm test                              # existing domain and policy gates
+npx tsc --noEmit
+npm run build
+```
+
+The new contract tests use hand-authored public fixtures, not private ESM corpus
+exports. The GSV browser job checks the actual built embed. Passing a unit test
+does not establish a deployed integration or scientific validation; CI reports
+build and browser results separately.
+
+## Replace foundations by demonstrated capability
+
+Development adds explicit data contracts, numerical comparisons, diagnostics and
+instrument adapters alongside retained workflows. Existing functions are not
+removed merely because a new interface or name exists. A replacement needs its
+own input/output contract, numerical or domain tests, failure behavior and a
+migration check before the old path can be retired.
+
+The [capability replacement ledger](docs/REPLACEMENT_LEDGER.md) records the current
+alternatives, remaining gaps and retirement gates. Its machine-readable inventory
+protects named existing paths and notices. **No legacy capability is declared
+retired in this increment.**
+
+Next scientific integrations are recorded instrument results and their declared
+units/frames, covariance and validation artifacts, followed by contextual
+workbench handoff. They extend existing instrument contracts; the terminal does
+not acquire a competing solver, canonical store or execution history.
+
+## Components
 
 | Component | Responsibility |
 | --- | --- |
-| **Payload Terminal / Notation Systems web application** | Company presentation, navigation, local selection, view configuration, and inspection of explicitly supplied records and results. |
-| [Evidence and State Management (ESM)](https://github.com/giasonpooni/Evidence-and-State-Management) | Retain and govern evidence, versioned state, admission, and release. |
-| [Computational Instrumentation Workbench](https://github.com/giasonpooni/Computational-Instrumentation-Workbench) | Instrument sessions, adapters, configuration, inspection, and replay. |
-| [Scientific Computation Runtime](https://github.com/giasonpooni/Scientific-Computation-Runtime) and specialist instruments | Declared computation, numerical methods, result contracts, and diagnostics. |
-| [Geospatial State Visualization (GSV)](https://github.com/giasonpooni/Geospatial-State-Visualization) | Read-only geographic inspection of provider-supplied entities, routes, flows, and temporal state. |
+| This repository | Browser navigation, record selection, presentation and descriptive comparison. |
+| [Geospatial State Visualization](https://github.com/giasonpooni/Geospatial-State-Visualization) | Geographic visualization, retained CIW context provider and bounded ESM-record embed. |
+| [Evidence and State Management](https://github.com/giasonpooni/Evidence-and-State-Management) | Retained evidence, source/version identity, admission and release governance. |
+| [Computational Instrumentation Workbench](https://github.com/giasonpooni/Computational-Instrumentation-Workbench) | Existing sessions, instruments, execution/replay interfaces and result inspection. |
+| Specialist scientific instruments | Domain methods, state estimation, geometry, covariance and method-specific validation. |
 
-The following is the **target integration**, not the current deployment:
-
-```text
-Explicitly published demonstration artifacts
-                     │
-                     ▼
-           NOTATION SYSTEMS WEB APPLICATION
-              Homepage · Explorer · Inspectors
-                     │
-          ┌──────────┴───────────────────┐
-          │                              │
-   Read/projection adapter       Contextual links first;
-          │                      authenticated adapter later
-          ▼                              ▼
-         ESM                     Existing workbench
- Evidence and released state     Sessions, runs, replay
-                                         │
-                                         ▼
-                                Runtime and instruments
-
-       Maps, GSV, plots, and tables present returned data.
-       Displaying a result does not admit it or authorize execution.
-```
-
-ESM is not the route for camera movements or a general solver-dispatch service.
-The web application should retain references and replaceable view caches, not
-create a second canonical corpus or competing execution ledger.
-
-GSV is a separate client whose documented implementation uses a deterministic
-synthetic provider. Its presence elsewhere in the stack does not mean it is
-embedded here or connected to live data. Integration must explicitly map
-supported records to its provider contract; an ESM response is not automatically
-a GSV `WorldSnapshot`. Do not copy private implementation code or datasets into
-this public repository as an integration shortcut.
-
-## Homepage, explorer, and workbench
-
-| Experience | Intended boundary |
-| --- | --- |
-| **Public homepage** | Explain Notation Systems and demonstrate one investigation using deliberately published artifacts. No credentials for private stores or workbench execution; explanatory content must not require a running scientific backend. |
-| **Read-only explorer** | Inspect exact permitted releases and results, preserve identity and time selection, and open their supporting records. Public access is limited to deliberately published material. |
-| **Private workbench** | Continue investigations, configure supported instruments, execute, and replay through the existing workbench rather than a duplicate application built here. |
-
-Retention, admission, release, and public publication are different decisions.
-A record held in ESM is not automatically suitable for the homepage. Recorded
-instrument results and candidate evidence must not be presented as admitted
-state; candidate review must retain its `UNADMITTED` status where applicable.
-
-Contextual links should open an exact supporting record, release, recorded run,
-or workbench session where the destination supports it. Carry only necessary
-identifiers and view context—not credentials or embedded private records. The
-destination must still authorize access. A link is navigation, not permission.
-
-## Integration sequence
-
-### 1. One released dataset, two synchronized views
-
-Extract reusable navigation, panels, selection, and temporal controls from the
-existing application. Preserve the freight experience separately while adding
-the company homepage and explorer. Update company-level metadata alongside the
-future interface work, rather than changing only visible branding.
-
-Build one read-only ESM adapter around the existing projection contract:
-
-```text
-Exact release → Explicit record and time selection → Validated projection
-                                                    ├── Table
-                                                    └── Geographic view
-```
-
-Preserve release and snapshot bindings, source references, units, coordinate
-basis, event-time window, and knowledge cutoff. Keep fixture or synthetic
-responses labelled as such. Unsupported records remain unsupported; missing
-geometry must not become invented coordinates.
-
-For GSV, establish provider injection, container-relative sizing, selection and
-time synchronization, and a complete mount/resize/dispose lifecycle before
-embedding it as a panel. Begin with bounded snapshots and recorded outputs;
-streaming is a later requirement, not a prerequisite for the first integration.
-
-### 2. Recorded results, comparisons, and workbench handoff
-
-Open supported recorded results through the workbench's result/session boundary.
-Keep that adapter separate from ESM's released-record projection and any
-candidate-evidence review path.
-
-A comparison should state what changed, what stayed fixed, which outputs differ,
-and what limits the comparison. Preserve exact dataset, model, run, baseline,
-record, and time references when switching views. Covariance, residuals,
-sensitivity, and constraint diagnostics come from the relevant instrument;
-the viewer must not invent uncertainty propagation or infer independence.
-
-Start with contextual links into existing sessions and runs. Do not duplicate
-session management or replay machinery simply to make the frontend look complete.
-
-### 3. Authenticated operations only when required
-
-Add a workbench adapter only for a demonstrated workflow. The browser may request
-a supported operation; the existing backend remains responsible for permitting,
-executing, and recording it. Keep view commands and computation commands distinct.
-Public demonstrations remain on released data and recorded results unless a
-separately bounded public computation is deliberately provided.
-
-### First integration acceptance criteria
-
-- Switching views preserves the selected record, release, run, and time context; an unsupported view says so.
-- Invalid source or snapshot bindings are rejected; missing values, geometry, and unavailable results remain explicit rather than becoming zeros or fabricated data.
-- Comparisons declare their baseline, changed inputs, units, frames, and limitations; unsupported conversions and uncertainty calculations are refused.
-- Public requests cannot obtain internal records or invoke private operations, and publication is never inferred from retention alone.
-- Synthetic data, recorded runs, connected adapters, and validation evidence are labelled separately. A generated template is not an executed or validated experiment.
-
-Initial demonstration targets are **geographic state replay**, **state estimation
-and uncertainty**, and **geometry and sensitivity**. These are proposed
-end-to-end integrations, not a list of finished capabilities. Complete the first
-inspectable path before adding more feeds, industries, or renderers.
+The existing application uses Next.js, React, TypeScript, MapLibre and Vitest.
+The companion viewer uses Three.js and Vite. Package identities, Payload record
+identities, existing routes and licenses are not changed by the new branding.
 
 <!-- collection-policy:begin -->
 ## Collection policy
@@ -259,150 +187,15 @@ Three checks hold this in place, and they run in CI:
 Registration was never the only door.
 <!-- collection-policy:end -->
 
-## Run the existing application
+## Engineering references and license
 
-These commands start the current Payload application, not the proposed
-Notation Systems homepage or an integrated scientific workbench. Use Node.js 22
-for consistency with the repository's container build.
+[Physical-economy implementation](docs/PHYSICAL_ECONOMY.md) ·
+[Architecture ledger](docs/ARCHITECTURE_LEDGER.md) ·
+[Explorer integration](docs/NOTATION_EXPLORER.md) ·
+[Replacement ledger](docs/REPLACEMENT_LEDGER.md) ·
+[Security policy](SECURITY.md)
 
-```bash
-git clone https://github.com/giasonpooni/Payload-Terminal-V0.git
-cd Payload-Terminal-V0
-npm install
-npm run dev
-```
-
-Open [http://localhost:3000](http://localhost:3000).
-
-```bash
-npm test          # Vitest, including the policy gates
-npx tsc --noEmit  # Type checking
-npm run build    # Production build
-```
-
-For a README-only change, the relevant shipped-description checks are in:
-
-```bash
-npm test -- src/lib/economy/routeSurfacePolicy.test.ts
-```
-
-### Docker / self-hosting
-
-Create an optional `.env` with the supported settings below. The current Compose
-file expects an external network named `umami_default`; provision it first if
-it does not already exist.
-
-```bash
-docker network inspect umami_default >/dev/null 2>&1 || docker network create umami_default
-docker compose up -d --build
-```
-
-The image uses a multi-stage `node:22-alpine` standalone build and a non-root
-application user. The container listens on `3000`; `PAYLOAD_PORT` controls the
-published host port. Compose provisions a persistent freight-journal volume.
-See [DOCKER.md](DOCKER.md) for additional deployment details; some inherited
-naming and setup references there still need alignment with this repository.
-
-### Environment and freight operations
-
-Some existing data paths use public, keyless sources; others need credentials
-or return unavailable results. Keyless does not guarantee live availability.
-Private freight commands require their own configuration and are not part of
-the proposed public explorer.
-
-Use the following settings as needed in `.env`. The checked-in
-[`.env.example`](.env.example) also contains legacy entries and comments; it is
-not a declaration that all of those inherited capabilities are supported.
-
-```env
-# Published host port; container always listens on 3000
-PAYLOAD_PORT=3000
-
-# Force source snapshot fallback, visible in provenance
-PAYLOAD_DISABLE_LIVE=
-
-# Leave the operations token empty to disable the private operations API
-PAYLOAD_OPERATIONS_TOKEN=
-PAYLOAD_OPERATIONS_LOG=
-
-# Carrier authority/status and weekly diesel benchmark
-FMCSA_WEB_KEY=
-EIA_API_KEY=
-PAYLOAD_FREIGHT_SOURCE_TIMEOUT_MS=10000
-
-# Outbound carrier adapter and authenticated inbound carrier events
-PAYLOAD_CARRIER_DISPATCH_URL=
-PAYLOAD_CARRIER_DISPATCH_TOKEN=
-PAYLOAD_CARRIER_DISPATCH_PROVIDER=carrier-webhook
-PAYLOAD_CARRIER_DISPATCH_TIMEOUT_MS=10000
-PAYLOAD_CARRIER_WEBHOOK_SECRET=
-PAYLOAD_CARRIER_COMMUNICATIONS_LOG=
-```
-
-`GET /api/freight/operations` reads current load-operation projections;
-`POST /api/freight/operations` advances intake, alternatives, authorization,
-assignment, dispatch evidence, and settlement outcome capture.
-`GET /api/freight/control-tower` joins these records to tender delivery,
-acknowledgements, tracking freshness, delivery windows, and settlement state.
-The `/operations` workspace refreshes that private view every 30 seconds and
-keeps its bearer credential only in the active browser tab's memory.
-
-`GET /api/freight/sources?usdot=<number>&carrierId=<internal-id>&includeDiesel=1`
-pulls FMCSA identity/authority/out-of-service evidence and the EIA weekly U.S.
-diesel benchmark. It returns an `authorizationCarrier` object but leaves cargo
-insurance expiry and limit null: missing coverage never becomes clearance.
-
-`POST /api/freight/communications` delivers the journal-derived tender to the
-configured carrier adapter with a stable `Idempotency-Key`; its corresponding
-`GET` exposes delivery and carrier-event projections. These private routes
-require `Authorization: Bearer <PAYLOAD_OPERATIONS_TOKEN>`.
-
-The carrier adapter must return JSON containing `receiptId` and optionally
-`acceptedAt`. It receives only the selected carrier rate and sanitized load
-facts—not the shipper target rate or source-message identity. Carriers post
-acknowledgements and tracking updates to `/api/freight/carrier-events`, signed
-as `HMAC-SHA256(timestamp + "." + rawBody)` using
-`PAYLOAD_CARRIER_WEBHOOK_SECRET` (at least 32 random bytes). Run both journals
-on persistent, backed-up storage with one application writer.
-
-FMCSA and EIA keys stay server-side and are not included in evidence identifiers
-or source errors. Partial upstream failure returns a typed source refusal, not
-an inferred compliance pass. Do not expose operational credentials in public
-site configuration, demonstration artifacts, or navigation links.
-
-> **Compatibility:** existing `PAYLOAD_*` settings and Payload identifiers
-> remain in use. The documented `OSIRIS_*` migration aliases are temporary;
-> the existing compatibility window ends after `v0.2.0`. This README change
-> does not rename packages, environment variables, routes, or retained records.
->
-> `SCANNER_URL` and `SCANNER_KEY` refer to a removed backend. Do not configure
-> them even where inherited setup examples still contain those entries.
-
-## Technology and implementation references
-
-| Layer | Technology |
-| --- | --- |
-| Application | Next.js 16 App Router, React, TypeScript 5 |
-| Map | MapLibre GL JS / WebGL |
-| Interface | Framer Motion, Lucide React |
-| Tests | Vitest |
-
-See the [physical-economy design](docs/PHYSICAL_ECONOMY.md),
-[architecture ledger](docs/ARCHITECTURE_LEDGER.md),
-[deployment guide](DOCKER.md), and [security policy](SECURITY.md).
-Cross-repository links above describe component responsibilities; they do not
-establish that an adapter is connected or a service is publicly deployed.
-
-## Origin and license
-
-This project began as a fork of
-[simplifaisoul/osiris](https://github.com/simplifaisoul/osiris), an open-source
-situational-awareness dashboard, and retains its map and rendering foundation.
-It was subsequently developed around provenance-preserving physical-economy
-records and freight workflows. Those remain the starting application as the
-repository is repositioned within Notation Systems.
-
-The upstream project is MIT-licensed; its permissive grant and retained notice
-continue to apply to inherited code. This project as a whole is distributed
-under the **GNU General Public License v3.0**—see [LICENSE](LICENSE).
-This documentation update does not change the license.
+GNU General Public License v3.0 — see [LICENSE](LICENSE).
+Historical lineage and the retained upstream MIT notice are documented in
+[Origin and retained notices](docs/ORIGIN.md). This integration does not relicense
+inherited code or claim that the legacy application's foundations are fully replaced.

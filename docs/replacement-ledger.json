@@ -1,0 +1,48 @@
+{
+  "schema": "notation.capability-replacement.v1",
+  "retirementAuthorized": false,
+  "protectedPaths": [
+    "src/app/page.tsx",
+    "src/app/operations/page.tsx",
+    "src/lib/economy/routeSurfacePolicy.test.ts",
+    "src/lib/routeGate.ts",
+    "LICENSE"
+  ],
+  "capabilities": [
+    {
+      "id": "visual-entry",
+      "status": "ADDED",
+      "implementation": [
+        "src/app/notation/page.tsx",
+        "src/app/explore/page.tsx"
+      ],
+      "checks": [
+        "tests/explorer/loader.node.mjs"
+      ]
+    },
+    {
+      "id": "pinned-geographic-projection",
+      "status": "ADDED",
+      "implementation": [
+        "src/lib/explorer/esmProjection.ts",
+        "src/lib/explorer/loadProjection.ts",
+        "src/app/explore/ProjectionExplorer.tsx"
+      ],
+      "checks": [
+        "tests/explorer/projection.node.mjs",
+        "tests/explorer/loader.node.mjs"
+      ]
+    },
+    {
+      "id": "descriptive-comparison",
+      "status": "ADDED",
+      "implementation": [
+        "src/lib/explorer/recordComparison.ts",
+        "src/app/explore/RecordComparisonPanel.tsx"
+      ],
+      "checks": [
+        "tests/explorer/comparison.node.mjs"
+      ]
+    }
+  ]
+}
