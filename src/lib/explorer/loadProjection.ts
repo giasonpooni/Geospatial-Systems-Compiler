@@ -1,4 +1,6 @@
-import { MAX_PROJECTION_BYTES, ProjectionRefusal, parsePublicProjectionSpec, safeHttpUrl, validatePublicProjection } from './esmProjection.ts';
+/** Server-side publication adapter. No caller-controlled URL, records or time. */
+import { MAX_PROJECTION_BYTES, ProjectionRefusal, parsePublicProjectionSpec,
+  safeHttpUrl, validatePublicProjection } from './esmProjection.ts';
 
 export interface ExplorerConfig {
   enabled?: string; esmOrigin?: string; specJson?: string; digest?: string; viewerUrl?: string;
