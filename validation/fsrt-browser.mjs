@@ -20,7 +20,7 @@ try {
   }
   assert.ok(ready,'Next server readiness');
   browser=await chromium.launch({headless:true});
-  const page=await browser.newPage({viewport:{width:1100,height:850}});
+  const page=await browser.newPage({viewport:{width:1100,height:850},reducedMotion:'reduce'});
   const errors=[]; page.on('pageerror',e=>errors.push(e.message));
   await page.goto(url+'/numerics');
   const requests=[]; page.on('request',r=>requests.push({method:r.method(),url:r.url()}));
@@ -58,10 +58,23 @@ try {
   assert.ok(await page.getByRole('heading',{name:'Correction held — original posterior retained',exact:true}).isVisible());
   assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+2),'Page must not overflow horizontally');
   const screenshots=process.env.FSRT_BROWSER_OUT;
-  if(screenshots){mkdirSync(screenshots,{recursive:true});await page.screenshot({path:join(screenshots,'held-fluid-snapshot.png'),fullPage:true});}
+  // Reach the actual off-screen panels with user scrolling, not merely DOM queries.
+  await page.mouse.move(650,850); await page.mouse.wheel(0,1200);
+  await page.waitForFunction(()=>window.scrollY>0);
+  const finalPanel=page.getByRole('region',{name:'Covariance reconciled',exact:true});
+  await finalPanel.scrollIntoViewIfNeeded();
+  const bounds=await finalPanel.boundingBox();
+  assert.ok(bounds && bounds.y>=0 && bounds.y<900 && bounds.y+bounds.height<=902,'Covariance panel is reachable in viewport');
+  if(screenshots){
+    mkdirSync(screenshots,{recursive:true});
+    await page.screenshot({path:join(screenshots,'reconciled-covariance-visible.png')});
+    await page.evaluate(()=>window.scrollTo({top:0,behavior:'instant'}));
+    await page.waitForFunction(()=>window.scrollY===0);
+    await page.screenshot({path:join(screenshots,'held-fluid-snapshot.png'),fullPage:true});
+  }
   assert.deepEqual(errors,[]);
   assert.equal(requests.filter(r=>r.method!=='GET'||(!r.url.startsWith(url)&&!r.url.startsWith('data:'))).length,0,'No upload or external execution requests');
-  console.log('FSRT browser: actual ordinary/held/refused/legacy, covariance cross term, stale async, 700px layout, no upload/page errors passed');
+  console.log('FSRT browser: actual ordinary/held/refused/legacy, covariance cross term, stale async, 700px layout, user scrolling to covariance, no upload/page errors passed');
 } finally {
   if(browser) await browser.close();
   server.kill('SIGTERM');

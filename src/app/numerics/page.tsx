@@ -40,7 +40,7 @@ export default function NumericsPage() {
       if (generation.current === current) setMessage(error instanceof Error ? error.message : 'View refused.');
     }
   }
-  return <main className="mx-auto max-w-6xl space-y-6 p-8">
+  return <main className="docs-root mx-auto max-w-6xl space-y-6 p-8">
     <header><h1 className="text-3xl font-semibold">Retained numerical results</h1>
       <p className="mt-2">Inspect Python-coordinated native results and FSRT fluid snapshots. No provider is launched.</p></header>
     <section className="space-y-3" aria-label="Artifact selection">
