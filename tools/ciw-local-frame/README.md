@@ -42,7 +42,7 @@ ECEF-plus-rotation calculation. They do not establish geodetic survey accuracy,
 uncertainty propagation, physical calibration or global-frame suitability.
 
 No browser service is started. No GSC default branch or existing PR is merged.
-The matching NET change adds `ciw spatial` on the existing Session and operation
+The matching NET change adds `python -m ciw.spatial_workflow` on the existing Session and operation
 registry; it does not vendor this worker into NET.
 
 Primary API reference: https://pyproj4.github.io/pyproj/stable/api/transformer.html
