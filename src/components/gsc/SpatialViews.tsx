@@ -6,6 +6,7 @@ import type { Topology, GeometryCollection } from 'topojson-specification';
 import type { FeatureCollection } from 'geojson';
 import type { InvestigationFrame } from '@/lib/gscBrowser/session';
 import styles from './explorer.module.css';
+import { mapDisplayGeometry } from '@/lib/gscBrowser/mapGeometry';
 import 'maplibre-gl/dist/maplibre-gl.css';
 
 type Props = { frame: InvestigationFrame; onSelect: (id: string | null) => void };
@@ -23,9 +24,9 @@ export function MapView({ frame, onSelect }: Props) {
       if (!alive || !instance.getLayer('nodes')) return;
       const data = latest.current.map;
       const detached: FeatureCollection = { type: 'FeatureCollection', features: data.features.map((f) => ({
-        ...f, properties: { ...f.properties }, geometry: f.geometry.type === 'Point'
+        ...f, properties: { ...f.properties }, geometry: mapDisplayGeometry(f.geometry.type === 'Point'
           ? { type: 'Point', coordinates: [...f.geometry.coordinates] }
-          : { type: 'LineString', coordinates: f.geometry.coordinates.map((p) => [...p]) },
+          : { type: 'LineString', coordinates: f.geometry.coordinates.map((p) => [...p]) }),
       })) };
       (instance.getSource('records') as maplibregl.GeoJSONSource)?.setData(detached);
       instance.setPaintProperty('nodes', 'circle-color', ['case', ['==', ['get', 'recordId'], latest.current.state.selectedRecordId ?? ''], '#ffd277', '#5ee1d4']);
@@ -53,7 +54,9 @@ export function MapView({ frame, onSelect }: Props) {
         if (!response.ok) throw new Error(`World topology HTTP ${response.status}`);
         const topology = await response.json() as Topology<{ countries: GeometryCollection }>;
         if (!alive) return;
-        (instance.getSource('land') as maplibregl.GeoJSONSource).setData(feature(topology, topology.objects.countries));
+        const countries = feature(topology, topology.objects.countries);
+        countries.features = countries.features.map((f) => ({ ...f, geometry: mapDisplayGeometry(f.geometry) }));
+        (instance.getSource('land') as maplibregl.GeoJSONSource).setData(countries);
         setStatus('ready');
       } catch (error) { if (alive) setStatus(`unavailable: ${String(error)}`); }
     };
@@ -74,7 +77,7 @@ export function MapView({ frame, onSelect }: Props) {
   }, []);
   useEffect(() => { host.current?.dispatchEvent(new Event('gsc:update')); }, [frame]);
   return <div className={styles.spatial}><div ref={host} className={styles.canvasHost} data-testid="map-view" data-status={status} />
-    <div className={styles.mapNote}>MapLibre · WGS84 longitude/latitude · Natural Earth cartographic context</div>
+    <div className={styles.mapNote}>MapLibre · longitude-unwrapped display · WGS84 source · Natural Earth context</div>
     {status !== 'ready' && <div className={styles.renderStatus} role="status">Map {status}</div>}</div>;
 }
 export function GlobeView({ frame, onSelect }: Props) {
