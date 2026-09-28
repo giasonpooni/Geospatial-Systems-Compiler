@@ -81,6 +81,19 @@ jobs:
               paths.append(entry['path'])
           for name, expected in data['manifest'].items():
               assert hashlib.sha256(safe(name).read_bytes()).hexdigest() == expected, name
+          for fix in outer.get('fixes', []):
+              p = safe(fix['path'])
+              before = p.read_bytes()
+              assert hashlib.sha256(before).hexdigest() == fix['oldSha256'], f'Stale correction: {p}'
+              text = before.decode()
+              for replacement in fix['replacements']:
+                  assert replacement['old'] and text.count(replacement['old']) == 1, p
+                  text = text.replace(replacement['old'], replacement['new'])
+              b = text.encode()
+              assert hashlib.sha256(b).hexdigest() == fix['sha256'], f'Correction mismatch: {p}'
+              p.write_bytes(b)
+              data['manifest'][fix['path']] = fix['sha256']
+              paths.append(fix['path'])
           pathlib.Path('../../evidence/source-manifest.json').write_text(json.dumps(data['manifest'], indent=2))
           subprocess.run(['git','add','-f','--',*sorted(set(paths))], check=True)
           PY
