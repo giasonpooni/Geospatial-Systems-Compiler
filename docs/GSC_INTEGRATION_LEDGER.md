@@ -7,7 +7,7 @@
 - GSV baseline: `giasonpooni/Geospatial-State-Visualization@58713d02d4e79c52290ee9d0da51ea6b4d0677ed`.
 - Integration branch: `gsc/compiler-ir-foundation`.
 
-This is an incremental consolidation, not a claim that the two applications are already one. This ledger is committed before implementation. No existing renderer, freight route, source record, license notice or test is to be removed by the first slice.
+This ledger was committed before the first implementation. The historical first-slice decisions below are retained; the subsequent consolidation status is recorded at the end. No existing freight route, source record, license notice or regression assertion is removed.
 
 ## Audit ledger
 
@@ -58,3 +58,19 @@ Epistemic classification and availability are separate axes. A synthetic observa
 ## Attribution
 
 Imported/adapted GSV source remains attributable to the pinned repository above under its existing GPL-3.0 license. Payload's existing GPL license and inherited third-party notices remain unchanged. Repository naming does not remove copyright or license obligations.
+
+## Consolidation increment — 2026-09-27
+
+| Subsystem | Implemented migration | Preserved evidence / limits |
+| --- | --- | --- |
+| GSV data, store, provider, original tests | `packages/gsv/src/data`, complete original world, native WorldStore in GSC session | 114 nodes, 55 routes, 277 records; original replacement/eligibility/view-tool tests retained |
+| Shared browser | Root and `/explorer`, native MapLibre and Three.js backends, one selection and two clocks | No iframe; same compiled source IDs across all views |
+| Globe lifecycle | New container-bound owner; original Globe/Atmosphere/camera helpers | Abort initialization; dispose controls/listeners/observer/animation/GPU resources; original full-window Engine not used |
+| Actual temporal eligibility | `src/lib/gsc/temporal.ts` plus provider-state input checks | Half-open history, source-known cutoff, applicability, typed exclusions, raw nested history redaction |
+| Payload domain adapters | Six explicit collections; actual curated copper contract test | No fabricated flow paths; operator/shareholder roles distinct; missing event-end convention not guessed |
+| Existing Payload root | Moved byte-for-byte to `/terminal` | Existing panel tests retargeted, assertions unchanged; freight APIs and `/operations` unchanged |
+| Public metadata and boot | GSC homepage metadata; optional `GSC_PUBLIC_DEMO=1` skips domain warmup | Flag is not route authorization; no credential is placed in the public demo |
+| Source origin | Per-file Git blobs in `packages/gsv/ORIGIN.json` | Edited upstream blobs have explicit adaptation descriptions and pinned resulting hashes |
+| Browser evidence | `scripts/test-gsc-browser.mjs`, production build in Actions, captured map/globe screenshots | Software WebGL correctness smoke; not physical-GPU performance qualification |
+
+The old GSV standalone UI, all cinematic commands and particle-layer controls are not yet at feature parity in the new shell. Source components remain preserved for this migration. ESM/CIW service connections, general instrument-result import and advanced scientific field/covariance renderers are not claimed. The source code at the pinned GSV revision does not implement the newer workbench `/spatial` provider described in CIW documentation, so that connection must be implemented and tested against the actual producer contract rather than assumed present.

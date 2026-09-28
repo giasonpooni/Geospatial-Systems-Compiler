@@ -13,8 +13,8 @@ const sources = walk(source).filter((file) => file.endsWith('.ts'));
 for (const file of sources) {
   const contents = readFileSync(file, 'utf8');
   if (/\b(?:window|document)\s*\./.test(contents)) throw new Error(`Browser dependency in compiler: ${file}`);
-  for (const match of contents.matchAll(/(?:from\s*|import\s*\(|require\s*\()\s*['"]([^'"]+)['"]/g)) {
-    const specifier = match[1];
+  for (const match of contents.matchAll(/(?:^|\n)\s*(?:import|export)\s+(?:type\s+)?(?:[^'"]*?\sfrom\s+)?['"]([^'"]+)['"]|(?:import|require)\s*\(\s*['"]([^'"]+)['"]/g)) {
+    const specifier = match[1] ?? match[2];
     const target = path.resolve(path.dirname(file), specifier);
     if (!specifier.startsWith('.') || (target !== source && !target.startsWith(source + path.sep)))
       throw new Error(`Dependency crosses the compiler boundary: ${file} -> ${specifier}`);
@@ -23,7 +23,7 @@ for (const file of sources) {
 const build = mkdtempSync(path.join(tmpdir(), 'gsc-test-'));
 const localTsc = path.join(root, 'node_modules/typescript/bin/tsc');
 try {
-  const args = ['--strict', '--target', 'ES2022', '--module', 'commonjs', '--moduleResolution', 'node',
+  const args = ['--strict', '--target', 'ES2022', '--module', 'commonjs', '--moduleResolution', 'node', '--types', 'node',
     '--rootDir', source, '--outDir', build, ...sources];
   if (existsSync(localTsc)) execFileSync(process.execPath, [localTsc, ...args], { cwd: root, stdio: 'inherit' });
   else execFileSync('tsc', args, { cwd: root, stdio: 'inherit' });

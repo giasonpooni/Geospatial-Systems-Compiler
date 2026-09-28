@@ -6,7 +6,7 @@ import {
   overlappingPanels, slotOccupied, type PanelId, type PanelState,
 } from './panels';
 
-const PAGE = fs.readFileSync(path.join(process.cwd(), 'src/app/page.tsx'), 'utf8');
+const PAGE = fs.readFileSync(path.join(process.cwd(), 'src/app/terminal/page.tsx'), 'utf8');
 
 describe('exclusion is derived, so it cannot drift out of symmetry', () => {
   it('displacement is symmetric for every pair', () => {

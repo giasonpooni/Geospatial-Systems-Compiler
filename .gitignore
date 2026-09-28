@@ -49,6 +49,7 @@ scripts/*
 # archive manifest generator is imported by archiveManifest.test.ts.
 !scripts/archive-manifest.mjs
 !scripts/smoke.mjs
+!scripts/test-gsc*.mjs
 
 # AI agent config files
 CLAUDE.md

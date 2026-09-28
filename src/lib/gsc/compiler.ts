@@ -92,7 +92,7 @@ export const validationPasses: readonly ValidationPass[] = [
   { id: 'gsc.temporal.v1', check(ir) {
     const notes: Diagnostic[] = [];
     for (const r of ir.records) {
-      checkTime(r.knownAt); checkTime(r.eventTime); checkInterval(r.period); checkInterval(r.validity);
+      checkTime(r.knownAt); checkTime(r.eventTime); checkInterval(r.period); checkInterval(r.validity); checkInterval(r.applicability ?? null);
       requireThat(['declared', 'retrieval-upper-bound', 'unavailable'].includes(r.knownAtBasis), 'INVALID_TIME', 'Unknown knowledge-time basis', r.id);
       requireThat((r.knownAt === null) === (r.knownAtBasis === 'unavailable'), 'INVALID_TIME', 'Knowledge-time presence and basis disagree', r.id);
       if (r.knownAt === null) notes.push(warning('MISSING_KNOWLEDGE_TIME', 'No source-known time supplied; not eligible for as-known filtering', r.id));

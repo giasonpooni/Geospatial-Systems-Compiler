@@ -49,6 +49,8 @@ export interface IRRecord {
   readonly eventTime: TimeValue | null;
   readonly period: Interval | null; // measurement period, not applicability
   readonly validity: Interval | null;
+  /** Optional source-specific applicability, distinct from provenance validity. */
+  readonly applicability?: Interval | null;
   readonly provenance: readonly ProvenanceRef[];
   readonly uncertaintyRefs: readonly string[]; // [] means none supplied, NOT zero uncertainty
   readonly links: readonly { predicate: string; targetId: string }[];

@@ -70,6 +70,10 @@ export function compileGsv(input: unknown, compilationId: string, bindings: Bind
           value: finite(row.value, 'value'), unit: optionalText(row.unit, 'unit'), basis: null,
         } : null,
         eventTime: role === 'observation' ? timeValue(row.t) : role === 'assertion' ? timeValue(row.assertedAt) : null,
+        applicability: role === 'constraint' && (row.validFrom !== undefined || row.validTo !== undefined) ? {
+          from: row.validFrom === undefined ? null : timeValue(row.validFrom),
+          to: row.validTo === undefined ? null : timeValue(row.validTo), end: 'exclusive',
+        } : null,
         period: role === 'event' ? { from: timeValue(row.start), to: row.end === undefined ? null : timeValue(row.end), end: 'exclusive' } : null,
         validity: p.validFrom !== undefined || p.validTo !== undefined ? {
           from: p.validFrom === undefined ? null : timeValue(p.validFrom),

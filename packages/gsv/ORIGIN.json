@@ -1,0 +1,191 @@
+{
+  "repository": "giasonpooni/Geospatial-State-Visualization",
+  "commit": "58713d02d4e79c52290ee9d0da51ea6b4d0677ed",
+  "license": "GPL-3.0",
+  "files": [
+    {
+      "source": "LICENSE",
+      "destination": "packages/gsv/LICENSE",
+      "upstreamBlob": "f288702d2fa16d3cdf0035b15a9fcbc552cd88e7"
+    },
+    {
+      "source": "scripts/check-seam.mjs",
+      "destination": "packages/gsv/scripts/check-seam.mjs",
+      "upstreamBlob": "ed9835cfe06545bf58ca67fdb27cb7641c6b4a62"
+    },
+    {
+      "source": "scripts/validate-provenance.mjs",
+      "destination": "packages/gsv/scripts/validate-provenance.mjs",
+      "upstreamBlob": "f61ed7ca855baa7540e800bcbe94138fd9fb1343"
+    },
+    {
+      "source": "src/app/api.ts",
+      "destination": "packages/gsv/src/app/api.ts",
+      "upstreamBlob": "38efc3be316c00f2a362eed77a9e5f49978c1b5b"
+    },
+    {
+      "source": "src/app/commands.ts",
+      "destination": "packages/gsv/src/app/commands.ts",
+      "upstreamBlob": "a9628152b75bd2791f481ec5ecc3337be814ec77"
+    },
+    {
+      "source": "src/app/palette.ts",
+      "destination": "packages/gsv/src/app/palette.ts",
+      "upstreamBlob": "c40cfa483d69a5ff8b17f030af58dff932fa2743"
+    },
+    {
+      "source": "src/app/toolSurface.ts",
+      "destination": "packages/gsv/src/app/toolSurface.ts",
+      "upstreamBlob": "b8419bc4671288995c886509f9bf582089e1100d"
+    },
+    {
+      "source": "src/core/cameraController.ts",
+      "destination": "packages/gsv/src/core/cameraController.ts",
+      "upstreamBlob": "f4fc06e6b7057f1ab7e3f9f72706ae00281502fb",
+      "adaptedBlob": "70cbf4702eb2323194c54ec1fda257b6a1e72134",
+      "adaptation": "Container lifecycle disposal"
+    },
+    {
+      "source": "src/core/engine.ts",
+      "destination": "packages/gsv/src/core/engine.ts",
+      "upstreamBlob": "8f9bc5c4865dcccb957c6f4112aef702b4d83855"
+    },
+    {
+      "source": "src/core/events.ts",
+      "destination": "packages/gsv/src/core/events.ts",
+      "upstreamBlob": "a33b861049e654a594528485c80215651acb49ba"
+    },
+    {
+      "source": "src/core/time.ts",
+      "destination": "packages/gsv/src/core/time.ts",
+      "upstreamBlob": "964227d23c3020f1224b01ca8a9bc73920e728a8"
+    },
+    {
+      "source": "src/data/contracts.ts",
+      "destination": "packages/gsv/src/data/contracts.ts",
+      "upstreamBlob": "49b98975c2f63e61a492eee30704a1f8fe87c461"
+    },
+    {
+      "source": "src/data/provider.ts",
+      "destination": "packages/gsv/src/data/provider.ts",
+      "upstreamBlob": "9565c8b2df8b38685da5bff19768c776277cd463"
+    },
+    {
+      "source": "src/data/store.ts",
+      "destination": "packages/gsv/src/data/store.ts",
+      "upstreamBlob": "5959a2322cbf7119892fe0a46f26fabf657c737f"
+    },
+    {
+      "source": "src/data/synthetic/provider.ts",
+      "destination": "packages/gsv/src/data/synthetic/provider.ts",
+      "upstreamBlob": "bf3b5ec8de3ed4e61c0e0c69943b641c9c387fdf"
+    },
+    {
+      "source": "src/data/synthetic/world.ts",
+      "destination": "packages/gsv/src/data/synthetic/world.ts",
+      "upstreamBlob": "d7622e4ac501c3c0b80ab452d6a8aa5348950375"
+    },
+    {
+      "source": "src/data/validation.ts",
+      "destination": "packages/gsv/src/data/validation.ts",
+      "upstreamBlob": "fe6a9db4b0faa43426b84136088adae66a37f07a"
+    },
+    {
+      "source": "src/earth/atmosphere.ts",
+      "destination": "packages/gsv/src/earth/atmosphere.ts",
+      "upstreamBlob": "ba2754fc7a0a74680c47b92fb88d3f25ecb9ce23"
+    },
+    {
+      "source": "src/earth/globe.ts",
+      "destination": "packages/gsv/src/earth/globe.ts",
+      "upstreamBlob": "eceeb76e190fc2111473ebe288333406c107395a"
+    },
+    {
+      "source": "src/earth/graticule.ts",
+      "destination": "packages/gsv/src/earth/graticule.ts",
+      "upstreamBlob": "c839c3d08b18bd470a64a4449165b036a39de239"
+    },
+    {
+      "source": "src/earth/stars.ts",
+      "destination": "packages/gsv/src/earth/stars.ts",
+      "upstreamBlob": "162df80f19cddcecfa8a70a405a1301084ecf532"
+    },
+    {
+      "source": "src/geo/countries.ts",
+      "destination": "packages/gsv/src/geo/countries.ts",
+      "upstreamBlob": "cf1c709ed28c3874e1f5402dd7a0fc7f60f1680e"
+    },
+    {
+      "source": "src/geo/projection.ts",
+      "destination": "packages/gsv/src/geo/projection.ts",
+      "upstreamBlob": "15f8ef7d9a02435b5b5f653ed7ac80e05c74ba36"
+    },
+    {
+      "source": "src/geo/texture.ts",
+      "destination": "packages/gsv/src/geo/texture.ts",
+      "upstreamBlob": "4fff0c1ac403db55be7798fef83a5685a4efcf4a",
+      "adaptedBlob": "0aa2681cb2d57df50685300ad99e15c3284cad55",
+      "adaptation": "Abortable topology fetch and explicit HTTP failure"
+    },
+    {
+      "source": "src/interaction/followTheLoad.ts",
+      "destination": "packages/gsv/src/interaction/followTheLoad.ts",
+      "upstreamBlob": "61510d676e9c12d430971f0dd873afc56d954787"
+    },
+    {
+      "source": "src/interaction/selection.ts",
+      "destination": "packages/gsv/src/interaction/selection.ts",
+      "upstreamBlob": "0fbf904426b1676a503d9f838659aa688b73151a"
+    },
+    {
+      "source": "src/layers/flowsLayer.ts",
+      "destination": "packages/gsv/src/layers/flowsLayer.ts",
+      "upstreamBlob": "e9161de07e9132e0c22efe7b381d9e0c1b1f3046"
+    },
+    {
+      "source": "src/layers/labelsLayer.ts",
+      "destination": "packages/gsv/src/layers/labelsLayer.ts",
+      "upstreamBlob": "1d1c1c720a929f118fe4fff07078872bcc2b53bc"
+    },
+    {
+      "source": "src/layers/layerManager.ts",
+      "destination": "packages/gsv/src/layers/layerManager.ts",
+      "upstreamBlob": "f939521a9350c943a2ae2cf97d97e184026df672"
+    },
+    {
+      "source": "src/layers/nodesLayer.ts",
+      "destination": "packages/gsv/src/layers/nodesLayer.ts",
+      "upstreamBlob": "a4a14f16474d8ebf9b0932858f3c67b9733f617e"
+    },
+    {
+      "source": "src/layers/routesLayer.ts",
+      "destination": "packages/gsv/src/layers/routesLayer.ts",
+      "upstreamBlob": "44d79750385b18b10697c41bae32a2b370a7e4e9"
+    },
+    {
+      "source": "tests/provider-boundary.test.mjs",
+      "destination": "packages/gsv/tests/provider-boundary.test.mjs",
+      "upstreamBlob": "d17a9a291131f31c76b0748af6dc6d0db0374bd9"
+    },
+    {
+      "source": "tests/seam.test.mjs",
+      "destination": "packages/gsv/tests/seam.test.mjs",
+      "upstreamBlob": "aec123d47e82d02f28db73007cee30cbee7e2dcd"
+    },
+    {
+      "source": "tests/view-tools.test.mjs",
+      "destination": "packages/gsv/tests/view-tools.test.mjs",
+      "upstreamBlob": "c6f4c71ef0c0694369d9353e1301e563b59b6932"
+    },
+    {
+      "source": "public/data/countries-110m.json",
+      "destination": "public/gsc/world/countries-110m.json",
+      "upstreamBlob": "055d19ffcf3133435978527737ff8ad37a568c59"
+    },
+    {
+      "source": "public/data/land-50m.json",
+      "destination": "public/gsc/world/land-50m.json",
+      "upstreamBlob": "b9815942f54b07fdc4c9d5196c8933f11005d8d2"
+    }
+  ]
+}
