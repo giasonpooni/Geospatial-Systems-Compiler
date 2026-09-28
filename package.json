@@ -32,7 +32,9 @@
     "satellite.js": "^7.0.0",
     "sharp": "^0.34.5",
     "ws": "^8.21.0",
-    "zod": "^4.4.3"
+    "zod": "^4.4.3",
+    "three": "0.180.0",
+    "topojson-client": "3.1.0"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
@@ -47,6 +49,8 @@
     "tailwindcss": "^4",
     "tsx": "^4.23.12",
     "typescript": "^5",
-    "vitest": "^2.1.9"
+    "vitest": "^2.1.9",
+    "@types/three": "0.180.0",
+    "@types/topojson-client": "3.1.5"
   }
 }

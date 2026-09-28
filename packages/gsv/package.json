@@ -1,0 +1,6 @@
+{
+  "name": "@notation/gsv-components",
+  "private": true,
+  "type": "module",
+  "description": "Migrated GSV data and rendering components; no independent application entrypoint."
+}

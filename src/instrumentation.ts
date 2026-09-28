@@ -28,6 +28,12 @@ export async function register() {
   const { assertRequiredConfig } = await import('@/lib/economy/config');
   assertRequiredConfig();
 
+  // The public GSC demo uses committed synthetic assets and does not warm domain stores.
+  if (process.env.GSC_PUBLIC_DEMO === '1') {
+    console.log('[gsc] public demo: domain warmup disabled; no live source connection claimed');
+    return;
+  }
+
   const { runBoot } = await import('@/lib/economy/boot');
   console.log('[payload-terminal] serving; warming state in the background (/api/health → seaDogTerminal.boot)');
   void runBoot().then(report => {

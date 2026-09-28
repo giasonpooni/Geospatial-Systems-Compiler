@@ -3,6 +3,8 @@ import type { NextRequest, NextFetchEvent } from 'next/server';
 
 export function middleware(request: NextRequest, event: NextFetchEvent) {
   const url = request.nextUrl.pathname;
+  // Public scientific demonstration and its assets do not invoke legacy analytics.
+  if (url === '/' || url === '/explorer' || url.startsWith('/gsc/')) return NextResponse.next();
   
   const ip = request.headers.get('cf-connecting-ip') || request.headers.get('x-forwarded-for') || '127.0.0.1';
   const userAgent = request.headers.get('user-agent') || 'Unknown Payload Terminal Client';

@@ -1,0 +1,60 @@
+name: GSC browser and source contracts
+on:
+  push:
+    branches: [gsc/compiler-ir-foundation, main, 'claude/**']
+  pull_request:
+    paths: ['src/**', 'packages/gsv/**', 'public/gsc/**', 'scripts/test-gsc*', 'package*.json', 'tsconfig.json', '.github/workflows/gsc-browser.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: gsc-browser-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  browser:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      NEXT_TELEMETRY_DISABLED: '1'
+      GSC_PUBLIC_DEMO: '1'
+      GSC_BROWSER_ARTIFACTS: artifacts/browser
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version: '24'
+          cache: npm
+      - run: npm ci
+      - name: Source contracts and all regression suites
+        run: |
+          mkdir -p artifacts
+          set -o pipefail
+          npx tsc --noEmit 2>&1 | tee artifacts/types.log
+          node scripts/test-gsc.mjs 2>&1 | tee artifacts/compiler.log
+          node --import tsx packages/gsv/scripts/validate-provenance.mjs 2>&1 | tee artifacts/provenance.log
+          npm test -- --maxWorkers=4 --minWorkers=1 2>&1 | tee artifacts/tests.log
+      - name: Production build
+        run: |
+          set -o pipefail
+          npm run build 2>&1 | tee artifacts/build.log
+      - run: npx playwright install --with-deps chromium
+      - name: Native browser and WebGL lifecycle
+        run: |
+          set -o pipefail
+          npm run start -- --hostname 127.0.0.1 >artifacts/server.log 2>&1 &
+          server=$!
+          trap 'kill "$server" 2>/dev/null || true' EXIT
+          for i in $(seq 1 60); do
+            if curl -fsS http://127.0.0.1:3000/ >/dev/null; then break; fi
+            sleep 1
+          done
+          node scripts/test-gsc-browser.mjs 2>&1 | tee artifacts/browser.log
+          git rev-parse HEAD >artifacts/commit.txt
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        if: always()
+        with:
+          name: gsc-browser-evidence-${{ github.run_id }}
+          path: artifacts
+          retention-days: 14
