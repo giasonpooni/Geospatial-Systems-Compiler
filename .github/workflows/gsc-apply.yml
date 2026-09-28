@@ -1,0 +1,129 @@
+name: GSC consolidation gate
+on:
+  push:
+    branches: [gsc/compiler-ir-foundation]
+    paths: [.gsc-integration.json]
+permissions:
+  contents: read
+concurrency:
+  group: gsc-consolidation
+  cancel-in-progress: false
+jobs:
+  consolidate:
+    if: github.repository == 'giasonpooni/Geospatial-Systems-Compiler'
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          path: work/gsc
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          repository: giasonpooni/Geospatial-State-Visualization
+          ref: 58713d02d4e79c52290ee9d0da51ea6b4d0677ed
+          path: work/gsv
+          persist-credentials: false
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version: '24'
+      - name: Materialize exact reviewed sources
+        working-directory: work/gsc
+        shell: bash
+        run: |
+          mkdir -p ../../evidence
+          python - <<'PY'
+          import base64, gzip, hashlib, json, pathlib, subprocess
+          root = pathlib.Path.cwd()
+          outer = json.loads(pathlib.Path('.gsc-integration.json').read_text())
+          raw = gzip.decompress(base64.b64decode(outer['gzipBase64'], validate=True))
+          assert hashlib.sha256(raw).hexdigest() == outer['sha256'], 'Payload digest mismatch'
+          data = json.loads(raw)
+          assert data['gsvCommit'] == '58713d02d4e79c52290ee9d0da51ea6b4d0677ed'
+          def safe(name):
+              p = pathlib.PurePosixPath(name)
+              assert not p.is_absolute() and '..' not in p.parts
+              assert p.parts[0] in {'src','packages','public','scripts','tests','docs','package.json','package-lock.json','tsconfig.json','.gitignore','README.md'}
+              return root / p
+          for move in data['moves']:
+              src, dst = safe(move['from']), safe(move['to'])
+              assert hashlib.sha256(src.read_bytes()).hexdigest() == move['sha256'] and not dst.exists()
+              dst.parent.mkdir(parents=True, exist_ok=True)
+              src.rename(dst)
+          paths = [m['from'] for m in data['moves']] + [m['to'] for m in data['moves']]
+          for entry in data['imports']:
+              source = pathlib.PurePosixPath(entry['source'])
+              assert not source.is_absolute() and '..' not in source.parts
+              b = (root.parent / 'gsv' / source).read_bytes()
+              assert hashlib.sha1(f'blob {len(b)}\0'.encode() + b).hexdigest() == entry['upstreamBlob']
+              p = safe(entry['destination']); assert not p.exists()
+              p.parent.mkdir(parents=True, exist_ok=True); p.write_bytes(b)
+              paths.append(entry['destination'])
+          for entry in data['writes']:
+              p = safe(entry['path'])
+              if entry['oldSha256'] is None: assert not p.exists(), f'Unexpected existing file: {p}'
+              else: assert hashlib.sha256(p.read_bytes()).hexdigest() == entry['oldSha256'], f'Stale base: {p}'
+              b = entry['content'].encode()
+              assert hashlib.sha256(b).hexdigest() == entry['sha256']
+              p.parent.mkdir(parents=True, exist_ok=True); p.write_bytes(b)
+              paths.append(entry['path'])
+          for name, expected in data['manifest'].items():
+              assert hashlib.sha256(safe(name).read_bytes()).hexdigest() == expected, name
+          pathlib.Path('../../evidence/source-manifest.json').write_text(json.dumps(data['manifest'], indent=2))
+          subprocess.run(['git','add','-f','--',*sorted(set(paths))], check=True)
+          PY
+          git diff --cached --stat | tee ../../evidence/source-diff.txt
+      - name: Install exact locked dependencies
+        working-directory: work/gsc
+        run: npm ci
+      - name: Strict types and all regression suites
+        working-directory: work/gsc
+        run: |
+          set -o pipefail
+          npx tsc --noEmit 2>&1 | tee ../../evidence/types.log
+          node scripts/test-gsc.mjs 2>&1 | tee ../../evidence/compiler.log
+          node --import tsx packages/gsv/scripts/validate-provenance.mjs 2>&1 | tee ../../evidence/provenance.log
+          npm test -- --maxWorkers=4 --minWorkers=1 2>&1 | tee ../../evidence/tests.log
+      - name: Production build
+        working-directory: work/gsc
+        env:
+          NEXT_TELEMETRY_DISABLED: '1'
+          GSC_PUBLIC_DEMO: '1'
+        run: |
+          set -o pipefail
+          npm run build 2>&1 | tee ../../evidence/build.log
+      - name: Install browser
+        working-directory: work/gsc
+        run: npx playwright install --with-deps chromium
+      - name: Exercise production browser and WebGL lifecycle
+        working-directory: work/gsc
+        env:
+          NEXT_TELEMETRY_DISABLED: '1'
+          GSC_PUBLIC_DEMO: '1'
+          GSC_BROWSER_ARTIFACTS: ../../evidence/browser
+        run: |
+          set -o pipefail
+          npm run start -- --hostname 127.0.0.1 >../../evidence/server.log 2>&1 &
+          server=$!
+          trap 'kill "$server" 2>/dev/null || true' EXIT
+          for i in $(seq 1 60); do
+            if curl -fsS http://127.0.0.1:3000/ >/dev/null; then break; fi
+            sleep 1
+          done
+          node scripts/test-gsc-browser.mjs 2>&1 | tee ../../evidence/browser.log
+      - name: Commit verified consolidation without force or merge
+        working-directory: work/gsc
+        run: |
+          git rm -f .gsc-integration.json .github/workflows/gsc-apply.yml .github/workflows/gsc-workspace.yml
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git commit -m 'feat(gsc): consolidate native map/globe investigation, pinned GSV provider and temporal replay'
+          git push origin HEAD:gsc/compiler-ir-foundation
+          git rev-parse HEAD | tee ../../evidence/verified-commit.txt
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        if: always()
+        with:
+          name: gsc-consolidation-evidence
+          path: evidence
+          retention-days: 14
