@@ -78,3 +78,48 @@ test('caller mutation during asynchronous hashing cannot change inspected bytes'
   e.payload = JSON.stringify(changed);
   assert.equal((await result).view.outputs[0].value, 0.125);
 });
+
+
+const { inspectUncertaintyView } = await import(process.env.LINEAR_UNCERTAINTY_MODULE);
+function uncertaintyFixture() {
+  const d = 'sha256:' + 'c'.repeat(64);
+  return { schema: 'notation.linear-uncertainty-view.v1', mean: envelope(fixture()),
+    quantity_ids: ['displacement'], units: ['m'], frame: 'local-test', matrix: [[0.25]],
+    covariance_id: d, input_covariance_id: d, calculation_id: d, verification_id: d,
+    native_stage_count: 3, scope: 'fixed-jacobian-input-covariance-only', may_authorize: false };
+}
+function uncertaintyEnvelope(value) {
+  const payload = JSON.stringify(value);
+  return { schema: 'notation.linear-uncertainty-view-envelope.v1', payload, sha256: hash(payload) };
+}
+test('uncertainty view retains frozen matrix and distinct identities', async () => {
+  const e = uncertaintyEnvelope(uncertaintyFixture());
+  const r = await inspectUncertaintyView(e, e.sha256);
+  assert.equal(r.covariance.matrix[0][0],0.25); assert.equal(r.mean.view.outputs[0].value,0.125);
+  assert.throws(() => { r.covariance.matrix[0][0]=0; },TypeError);
+});
+const covarianceMutations = {
+  axis: v => { v.quantity_ids[0] = 'other'; },
+  unit: v => { v.units[0] = 'mm'; },
+  frame: v => { v.frame = 'other'; },
+  shape: v => { v.matrix[0].push(1); },
+  negativeVariance: v => { v.matrix[0][0] = -1; },
+  nonfinite: v => { v.matrix[0][0] = Infinity; },
+  coerced: v => { v.matrix[0][0] = '1'; },
+  stageCount: v => { v.native_stage_count = 2; },
+  widenedClaim: v => { v.scope = 'physically-validated'; },
+  authorizing: v => { v.may_authorize = true; },
+  nestedTamper: v => { v.mean.payload += ' '; },
+};
+for (const [name, mutate] of Object.entries(covarianceMutations)) test(`uncertainty refuses ${name}`, async () => {
+  const v=uncertaintyFixture(); mutate(v); const e=uncertaintyEnvelope(v);
+  await assert.rejects(inspectUncertaintyView(e,e.sha256));
+});
+test('uncertainty requires separately selected digest', async () => {
+  const e=uncertaintyEnvelope(uncertaintyFixture());
+  await assert.rejects(inspectUncertaintyView(e,'sha256:'+'0'.repeat(64)));
+});
+test('uncertainty checks the original payload during asynchronous mutation', async () => {
+  const e=uncertaintyEnvelope(uncertaintyFixture()); const result=inspectUncertaintyView(e,e.sha256);
+  e.payload='changed'; assert.equal((await result).covariance.matrix[0][0],0.25);
+});
