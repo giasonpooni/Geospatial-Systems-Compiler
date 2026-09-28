@@ -5,6 +5,8 @@ import { inspectLinearMapView, type LinearMapInspection } from '../../lib/notati
 import { inspectUncertaintyView, type UncertaintyInspection } from '../../lib/notation/linear-uncertainty-view';
 import { inspectFsrtView, type FsrtInspection } from '../../lib/notation/fsrt-view';
 import { FsrtResult } from './fsrt-result';
+import { inspectSimulatedFsrtText, SIMULATED_ENVELOPE, type SimulatedFsrtInspection } from '../../lib/notation/simulated-fsrt-view';
+import { SimulatedFsrtResult } from './simulated-fsrt-result';
 
 /** Local artifact inspection only. Files are never sent to a server or executor. */
 export default function NumericsPage() {
@@ -13,20 +15,25 @@ export default function NumericsPage() {
   const [mean, setMean] = useState<LinearMapInspection | null>(null);
   const [uncertainty, setUncertainty] = useState<UncertaintyInspection | null>(null);
   const [fsrt, setFsrt] = useState<FsrtInspection | null>(null);
+  const [simulated, setSimulated] = useState<SimulatedFsrtInspection | null>(null);
   const [message, setMessage] = useState('Select a retained view and its independently recorded SHA-256.');
   const generation = useRef(0);
-  function invalidate() { generation.current++; setMean(null); setUncertainty(null); setFsrt(null); }
+  function invalidate() { generation.current++; setMean(null); setUncertainty(null); setFsrt(null); setSimulated(null); }
   async function inspect() {
     invalidate(); const current = generation.current;
     if (!file) { setMessage('Select a retained JSON view.'); return; }
     if (file.size > 262144) { setMessage('File exceeds the 256 KiB limit.'); return; }
     setMessage('Checking the retained bytes.');
     try {
-      const envelope: unknown = JSON.parse(await file.text());
+      const fileText = await file.text();
+      const envelope: unknown = JSON.parse(fileText);
       let m: LinearMapInspection | null = null;
       let u: UncertaintyInspection | null = null;
       let f: FsrtInspection | null = null;
-      if (envelope && typeof envelope === 'object' && 'schema' in envelope
+      let synthetic: SimulatedFsrtInspection | null = null;
+      if (envelope && typeof envelope === 'object' && 'schema' in envelope && envelope.schema === SIMULATED_ENVELOPE) {
+        synthetic = await inspectSimulatedFsrtText(fileText, expected.trim());
+      } else if (envelope && typeof envelope === 'object' && 'schema' in envelope
           && envelope.schema === 'ciw.fsrt-view-envelope.v1') {
         f = await inspectFsrtView(envelope, expected.trim());
       } else if (envelope && typeof envelope === 'object' && 'schema' in envelope
@@ -34,7 +41,7 @@ export default function NumericsPage() {
         u = await inspectUncertaintyView(envelope, expected.trim()); m = u.mean;
       } else { m = await inspectLinearMapView(envelope, expected.trim()); }
       if (generation.current !== current) return;
-      setMean(m); setUncertainty(u); setFsrt(f);
+      setMean(m); setUncertainty(u); setFsrt(f); setSimulated(synthetic);
       setMessage('Bytes match the selected digest. This is not independent scientific validation or permission to act.');
     } catch (error) {
       if (generation.current === current) setMessage(error instanceof Error ? error.message : 'View refused.');
@@ -56,6 +63,7 @@ export default function NumericsPage() {
       <p role="status" aria-live="polite">{message}</p>
     </section>
     {fsrt && <FsrtResult inspection={fsrt} />}
+    {simulated && <SimulatedFsrtResult inspection={simulated} />}
     {mean && <section className="space-y-3" aria-label="Mean result">
       <h2 className="text-xl font-semibold">Quantity response</h2>
       <p>{mean.view.model.owner} · {mean.view.provider} · frame: {mean.view.frame}</p>

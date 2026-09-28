@@ -109,7 +109,7 @@ function parse(text: string): Json {
   const result = value(0); whitespace(); ensure(i === text.length, 'Trailing JSON'); return result;
 }
 
-function dataContract(value: unknown, operation: string, source: Obj): { data: FsrtData; stages: CovarianceStage[]; held: boolean } {
+function dataContract(value: unknown, operation: string, source: Obj, sampleTime = 0): { data: FsrtData; stages: CovarianceStage[]; held: boolean } {
   const v2 = operation === OPS[1];
   const d = object(value, ['model','calibrated_observation','estimate','unprojected_estimate','residuals','diagnostics','assumptions','observation_evidence_ids', ...(v2 ? ['state_order','covariance_artifacts'] : [])]);
   const model = object(d.model, ['kind','prior_mean','prior_std','total_mass_kg','total_mass_variance_kg2']);
@@ -119,7 +119,7 @@ function dataContract(value: unknown, operation: string, source: Obj): { data: F
   ensure((model.prior_std as number) > 0 && (model.total_mass_kg as number) >= 0 && (model.total_mass_variance_kg2 as number) >= 0, 'Invalid model bounds');
   const o = object(d.calibrated_observation, ['t','arrival_t','values','covariance','mask','source_ids','evidence_ids','unit']);
   ensure(o.unit === 'kg', 'Unsupported observation unit'); number(o.t); number(o.arrival_t);
-  ensure(o.t === 0 && o.arrival_t === 0, 'Unsupported snapshot clock');
+  ensure(o.t === sampleTime && o.arrival_t === sampleTime, 'Unsupported snapshot clock');
   bind(o.source_ids, source.source_order, 'Source order'); strings(o.evidence_ids, 2).forEach(digest);
   ensure(new Set(o.evidence_ids as string[]).size === 2, 'Duplicate observation evidence');
   bind(d.observation_evidence_ids, o.evidence_ids, 'Evidence order');
@@ -239,3 +239,6 @@ export async function inspectFsrtView(envelope: unknown, expectedSha256: string)
   if ('model' in parameters) bind(parameters.model,object(r.data).model,'Model');
   return freeze({integrity:'matched-external-digest',authority:'none',view:v as unknown as FsrtInspection['view'],...checked});
 }
+
+// Source-independent structural primitives; the RCI reader keeps its original zero-time profile.
+export { bind, dataContract, digest, ensure, freeze, identity, matrix, number, object, parse, strings, text, timestamp, vector };

@@ -1,4 +1,4 @@
-import type { FsrtInspection } from '../../lib/notation/fsrt-view';
+import type { FsrtInspection, FsrtData, CovarianceStage } from '../../lib/notation/fsrt-view';
 
 /** A representation of retained values. No equation, solver or control path. */
 export function FsrtResult({ inspection }: { inspection: FsrtInspection }) {
@@ -11,9 +11,23 @@ export function FsrtResult({ inspection }: { inspection: FsrtInspection }) {
       <p>Acquisition: {view.source.observed_at.join(' / ')}</p>
       <p>Clock: {view.source.time_reference} · frame: {view.source.coordinate_frame}</p>
     </header>
+    <FsrtNumericalPanels data={data} held={held} stages={stages} refusal={view.execution.refusal} />
+    <p>No numerical replay, independent scientific verification, field validation, state admission or equipment permission is produced by this inspection.</p>
+    <details><summary>Original result, execution and source records</summary>
+      <pre className="max-w-full overflow-auto p-2">{JSON.stringify(view,null,2)}</pre>
+    </details>
+  </section>;
+}
+
+/** Shared numerical presentation only. The source-aware readers validate provenance separately. */
+export function FsrtNumericalPanels({ data, held, stages, refusal }: {
+  data: FsrtData | null; held: boolean; stages: readonly CovarianceStage[];
+  refusal?: { code: string; message: string };
+}) {
+  return <>
     {!data ? <div className="rounded border p-4" aria-label="Refused fluid execution">
       <h3 className="font-semibold">Execution refused — no estimate produced</h3>
-      <p>{view.execution.refusal?.code}: {view.execution.refusal?.message}</p>
+      <p>{refusal?.code}: {refusal?.message}</p>
     </div> : <>
       <div className="rounded border p-4" aria-label="Fluid diagnostic outcome">
         <h3 className="font-semibold">{held ? 'Correction held — original posterior retained' : 'Balance reconciliation returned a conditional estimate'}</h3>
@@ -54,9 +68,5 @@ export function FsrtResult({ inspection }: { inspection: FsrtInspection }) {
         </table></div>
       </section>)}
     </section>}
-    <p>No numerical replay, independent scientific verification, field validation, state admission or equipment permission is produced by this inspection.</p>
-    <details><summary>Original result, execution and source records</summary>
-      <pre className="max-w-full overflow-auto p-2">{JSON.stringify(view,null,2)}</pre>
-    </details>
-  </section>;
+  </>;
 }
