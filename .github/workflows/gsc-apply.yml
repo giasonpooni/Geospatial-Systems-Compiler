@@ -34,10 +34,12 @@ jobs:
         run: |
           mkdir -p ../../evidence
           python - <<'PY'
-          import base64, gzip, hashlib, json, pathlib, subprocess
+          import base64, lzma, hashlib, json, pathlib, subprocess
           root = pathlib.Path.cwd()
           outer = json.loads(pathlib.Path('.gsc-integration.json').read_text())
-          raw = gzip.decompress(base64.b64decode(outer['gzipBase64'], validate=True))
+          assert outer['parts'] == ['.gsc-integration.1.b64','.gsc-integration.2.b64','.gsc-integration.3.b64']
+          encoded = ''.join(pathlib.Path(p).read_text().strip() for p in outer['parts'])
+          raw = lzma.decompress(base64.b64decode(encoded, validate=True))
           assert hashlib.sha256(raw).hexdigest() == outer['sha256'], 'Payload digest mismatch'
           data = json.loads(raw)
           assert data['gsvCommit'] == '58713d02d4e79c52290ee9d0da51ea6b4d0677ed'
@@ -62,10 +64,19 @@ jobs:
               paths.append(entry['destination'])
           for entry in data['writes']:
               p = safe(entry['path'])
-              if entry['oldSha256'] is None: assert not p.exists(), f'Unexpected existing file: {p}'
-              else: assert hashlib.sha256(p.read_bytes()).hexdigest() == entry['oldSha256'], f'Stale base: {p}'
-              b = entry['content'].encode()
-              assert hashlib.sha256(b).hexdigest() == entry['sha256']
+              if entry['oldSha256'] is None:
+                  assert not p.exists(), f'Unexpected existing file: {p}'
+                  b = entry['content'].encode()
+              else:
+                  before = p.read_bytes()
+                  assert hashlib.sha256(before).hexdigest() == entry['oldSha256'], f'Stale base: {p}'
+                  lines = before.decode().splitlines(keepends=True)
+                  for edit in reversed(entry['edits']):
+                      i, n = edit['start'], edit['delete']
+                      assert 0 <= i <= len(lines) and 0 <= n <= len(lines)-i
+                      lines[i:i+n] = edit['insert'].splitlines(keepends=True)
+                  b = ''.join(lines).encode()
+              assert hashlib.sha256(b).hexdigest() == entry['sha256'], p
               p.parent.mkdir(parents=True, exist_ok=True); p.write_bytes(b)
               paths.append(entry['path'])
           for name, expected in data['manifest'].items():
@@ -115,7 +126,11 @@ jobs:
       - name: Commit verified consolidation without force or merge
         working-directory: work/gsc
         run: |
-          git rm -f .gsc-integration.json .github/workflows/gsc-apply.yml .github/workflows/gsc-workspace.yml
+          mkdir -p docs/media
+          cp ../../evidence/browser/map.png docs/media/gsc-map.png
+          cp ../../evidence/browser/globe.png docs/media/gsc-globe.png
+          git add docs/media/gsc-map.png docs/media/gsc-globe.png
+          git rm -f .gsc-integration.json .gsc-integration.1.b64 .gsc-integration.2.b64 .gsc-integration.3.b64 .github/workflows/gsc-apply.yml .github/workflows/gsc-workspace.yml
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
           git commit -m 'feat(gsc): consolidate native map/globe investigation, pinned GSV provider and temporal replay'
