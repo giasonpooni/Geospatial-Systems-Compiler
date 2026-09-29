@@ -1,5 +1,5 @@
 {
-  "scope": "targeted offline validation; not full-repository CI",
+  "scope": "targeted offline validation plus the first observed repository CI run; later commit checks remain authoritative",
   "baseCommit": "bdfcb041836e86ab1ce93688b127f8960e8d08cf",
   "node": "v22.16.0",
   "typescript": "Version 5.8.3",
@@ -19,7 +19,8 @@
     "checks": [
       "commonjs emit with noEmitOnError",
       "esnext/bundler isolatedModules noEmit"
-    ]
+    ],
+    "afterRepair": "passed again with function-local case registration"
   },
   "notRunLocally": [
     "Vitest including the two registry-wrapper checks",
@@ -28,9 +29,33 @@
     "Next.js build"
   ],
   "sourceGitBlobs": {
-    "src/lib/economy/industrialObservationQuality.cases.ts": "7a3021d957a03da57e3d52e7e7c763af69d0122c",
-    "src/lib/economy/industrialObservationQuality.test.ts": "4e3abee31ea2aae3da410a09b3ab75ae9916cb92",
+    "src/lib/economy/industrialObservationQuality.cases.ts": "7b2f92aed31fbd5799d6ea94596ebeca67764d50",
+    "src/lib/economy/industrialObservationQuality.test.ts": "1695dadd4901620887c05a41b969549b5c062ee6",
     "src/lib/economy/industrialObservationQuality.ts": "419026984379760a6b07207ed9cb9ced3eeac394",
-    "src/lib/economy/industrialObservationQualityRegistry.ts": "d19ba2facf901c6928f791e1af0db5d9a5f7e5fe"
+    "src/lib/economy/industrialObservationQualityRegistry.ts": "d19ba2facf901c6928f791e1af0db5d9a5f7e5fe",
+    "src/lib/economy/routeSurfacePolicy.test.ts": "532376fc2f89d1a237f884deb5710e17b79fae90"
+  },
+  "firstRepositoryCI": {
+    "commit": "55716ba72c9beb2cabd06efcc4da650c26bc6a03",
+    "runId": 36514272462,
+    "jobId": 109232972702,
+    "fullProjectTypecheck": "passed",
+    "industrialQualityVitestCases": {
+      "passed": 60,
+      "failed": 0
+    },
+    "fullSuite": {
+      "passed": 1307,
+      "failed": 2
+    },
+    "build": "skipped after test failures",
+    "findings": [
+      "New shared test-case registry was mutable module-level state.",
+      "Pre-existing TECHNICAL_REFERENCE.md was absent from description-artifact classification."
+    ],
+    "repairs": [
+      "Replace shared mutable case registry with function-local registration and a frozen return value.",
+      "Include TECHNICAL_REFERENCE.md and docs/industrial-observation-quality.md in outward-facing scans without weakening prohibitions."
+    ]
   }
 }

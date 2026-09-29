@@ -111,13 +111,17 @@ implementations; ESM retains admission/release; GSV remains read-only.
 The registry-bound library entrypoint is implemented. NET operation dispatch,
 ESM transport, GSV presentation, external release and calibrated probability
 support are NOT wired or implied complete. There is no new public endpoint
-and no change to existing collection-policy, route-surface or description
-gates, credentials, package dependencies or licensing.
+and no change to existing collection-policy or route-surface
+prohibitions, credentials, package dependencies or licensing. The description
+gate coverage now includes this document and the pre-existing technical
+reference; no gate is disabled or weakened.
 
 ## Verification
 
 `industrialObservationQuality.cases.ts` contains shared deterministic synthetic
-regressions. The adjacent Vitest suite registers all cases and adds two actual
+regressions. Each registration call owns a function-local, frozen case list;
+there is no mutable module-level test registry. The adjacent Vitest suite
+registers all cases and adds two actual
 registry-wrapper checks. Cases cover person-lineage relabelling, rejection
 redaction, unknown eligibility, source registration/adapter posture, cycles,
 mode isolation, dates, fabricated geometry/probability, feed/health bindings,

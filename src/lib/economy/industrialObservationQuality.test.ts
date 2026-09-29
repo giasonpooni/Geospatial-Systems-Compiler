@@ -5,7 +5,7 @@ import { QUALITY_SCHEMA } from './industrialObservationQuality';
 import { SOURCE_REGISTRY } from './sourceRegistry';
 
 describe('industrial observation quality: source, measurement and lineage boundaries', () => {
-  for (const scenario of industrialQualityCases) it(scenario.name, scenario.run);
+  for (const scenario of industrialQualityCases()) it(scenario.name, scenario.run);
 
   it('application wrapper uses the existing source registry', () => {
     const source = SOURCE_REGISTRY.find(s => s.sourceId === 'un-comtrade');
