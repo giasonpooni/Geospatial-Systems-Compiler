@@ -83,6 +83,8 @@ try {
       const title=await bounds(page.locator('.wordmark')), nav=await bounds(page.locator('.primary-nav')), legal=await bounds(page.locator('.legal-footer nav'));
       for (const [name,r] of Object.entries({title,nav,legal}))fits(r,name);
       assert.ok(title.left<nav.left && title.top<100 && nav.top<100);
+      assert.deepEqual(await page.locator('.primary-nav a').allTextContents(),['About','Contact','Tools']);
+      assert.ok(title.right+12<=nav.left,'Three header links must not collide with the wordmark');
       assert.ok(Math.abs((legal.left+legal.right)/2-viewport.width/2)<1,'Legal links centered');
       assert.ok(legal.bottom>viewport.height-65,'Legal links at the bottom');
       assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1 && document.documentElement.scrollHeight<=innerHeight+1),true,'No landing-page scroll');
@@ -104,7 +106,7 @@ try {
       }, {bytes:[...screenshot], rect:frameRect});
       assert.deepEqual(background.exhibit,background.page,'Globe viewport must not appear as a contrasting rectangle');
       const dialogResults=[];
-      for (const id of ['about','contact','licences']) {
+      for (const id of ['about','contact','tools','licences']) {
         const trigger=page.locator(`[data-window="${id}"]`).first();
         const dialog=page.locator(`dialog#${id}`),close=dialog.locator('[data-close]');
         await trigger.click();
@@ -124,6 +126,13 @@ try {
       }
       assert.equal(await page.locator('#contact .email-link').getAttribute('href'),'mailto:info@notationsystems.com');
       assert.equal(await page.locator('form').count(),0);
+      assert.equal(await page.locator('#tools').getAttribute('data-launch-state'),'local-only');
+      assert.equal(await page.locator('#tools h2').innerText(),'Notations Terminal');
+      const guide=page.locator('#tools .tools-guide');
+      assert.equal(await guide.getAttribute('href'),'https://github.com/giasonpooni/Notations-Engineering-Terminal/blob/main/deploy/README.md');
+      assert.equal(await guide.getAttribute('target'),'_blank');
+      assert.equal(await guide.getAttribute('rel'),'noopener noreferrer');
+      assert.equal(await page.locator('#tools input, #tools textarea, #tools iframe').count(),0);
       assert.equal(await frame.evaluate(()=>performance.timeOrigin),timeOrigin,'No iframe reload when dialogs open/close');
       assert.equal(await frame.evaluate(()=>JSON.stringify(window.payloadEarth.api.store.snapshot)),original);
       // Exercise real pointer and wheel input. No scripted camera setter.
@@ -169,7 +178,7 @@ try {
   await fallback.goto(origin);
   assert.equal(await fallback.locator('h1').innerText(),'Notation Systems');
   assert.equal(await fallback.locator('.fallback').isVisible(),true);
-  for (const id of ['about','contact','licences']) {
+  for (const id of ['about','contact','tools','licences']) {
     await fallback.locator(`[data-window="${id}"]`).first().click();
     assert.equal(await fallback.locator(`dialog#${id}`).isVisible(),true);
     await fallback.locator(`dialog#${id} [data-close]`).click();

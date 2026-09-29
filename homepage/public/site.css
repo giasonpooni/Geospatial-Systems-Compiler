@@ -56,8 +56,10 @@ dt { font-weight: 500; } dd { margin: 0; color: #b5c0ca; }
 .window .small { font-size: 11px; color: var(--muted); margin: 17px 0 0; }
 kbd { font: inherit; color: var(--paper); }
 .author { margin-left: 12px; }
-.window-contact { width: min(560px, calc(100vw - 40px)); }
+.window-contact, .window-tools { width: min(560px, calc(100vw - 40px)); }
 .email-link { display: inline-block; max-width: 100%; overflow-wrap: anywhere; font-size: clamp(16px, 3.7vw, 22px); letter-spacing: -.02em; padding: 5px 0 9px; border-bottom: 1px solid #5b6f81; }
+.launch-commands { padding: 12px 14px; border: 1px solid var(--line); background: #07101a; font: 12px/1.8 var(--mono); max-width: 100%; overflow-x: auto; }
+.tools-guide { display: inline-block; text-decoration: underline; margin-top: 6px; font-size: 13px; }
 .document-links { display: grid; gap: 12px; font-size: 13px; }
 .document-links a, .source-links a { text-decoration: underline; }
 /* Same-document fallback for visitors with scripting disabled. Enhancement

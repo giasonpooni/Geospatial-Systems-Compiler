@@ -91,9 +91,9 @@ export function assertShell(html, css, script) {
   assert.equal(typeof script, 'string', 'Review the shipped window module too');
   assert.doesNotMatch(script, /fetch\s*\(|XMLHttpRequest|WebSocket|EventSource|sendBeacon|postMessage|contentWindow|contentDocument|payloadEarth|localStorage|sessionStorage|document\.cookie|import\s*\(|eval\s*\(|new\s+Function/i);
   assert.doesNotMatch(script, BLOCKED_BUNDLE_TEXT);
-  const allowedLinks = new Set(['#main', '#about', '#contact', '#licences', './favicon.svg', './site.css', './build-manifest.json', './licenses/GSV-GPL-3.0.txt', './licenses/THIRD-PARTY-NOTICES.txt', './source/gsv-source.tar.gz', './source/homepage-source.tar.gz', 'https://github.com/giasonpooni/Geospatial-State-Visualization', 'https://github.com/giasonpooni/Geospatial-Systems-Compiler', 'https://notation.systems/privacy-policy', 'https://notation.systems/terms-of-service', 'mailto:info@notationsystems.com']);
+  const allowedLinks = new Set(['#main', '#about', '#contact', '#tools', '#licences', './favicon.svg', './site.css', './build-manifest.json', './licenses/GSV-GPL-3.0.txt', './licenses/THIRD-PARTY-NOTICES.txt', './source/gsv-source.tar.gz', './source/homepage-source.tar.gz', 'https://github.com/giasonpooni/Geospatial-State-Visualization', 'https://github.com/giasonpooni/Geospatial-Systems-Compiler', 'https://notation.systems/privacy-policy', 'https://notation.systems/terms-of-service', 'mailto:info@notationsystems.com', 'https://github.com/giasonpooni/Notations-Engineering-Terminal/blob/main/deploy/README.md']);
   for (const match of html.matchAll(/\bhref="([^"]+)"/g)) assert.ok(allowedLinks.has(match[1]), `Unreviewed link: ${match[1]}`);
-  for (const id of ['about', 'contact', 'licences']) {
+  for (const id of ['about', 'contact', 'tools', 'licences']) {
     assert.match(html, new RegExp(`<dialog id="${id}"[^>]*aria-labelledby="${id}-title"`));
     const body = new RegExp(`<dialog id="${id}"[\\s\\S]*?<\\/dialog>`).exec(html)?.[0] ?? '';
     assert.match(body, /class="window-close"[^>]*data-close[^>]*aria-label="Close /);
@@ -107,6 +107,17 @@ export function assertShell(html, css, script) {
   const landing = html.slice(html.indexOf('<body>'), html.indexOf('<dialog'));
   assert.doesNotMatch(landing, /PAYLOAD|TRADEWIND|LANDSHARK|class="pipeline"|<table/i);
   assert.match(landing, /class="primary-nav"[\s\S]*?>About<\/a>[\s\S]*?>Contact<\/a>/);
+  const primaryNav = /<nav class="primary-nav"[\s\S]*?<\/nav>/.exec(landing)?.[0] ?? '';
+  const navItems = [...primaryNav.matchAll(/<a\b([^>]*)>([^<]*)<\/a>/g)];
+  assert.deepEqual(navItems.map(([, , text]) => text), ['About', 'Contact', 'Tools'], 'Header order is About, Contact, Tools');
+  for (const [, attrs, label] of navItems) {
+    const id = label.toLowerCase();
+    assert.ok(attrs.includes(`href="#${id}"`) && attrs.includes(`data-window="${id}"`), 'Navigation opens its own same-page window');
+  }
+  const tools = /<dialog id="tools"[\s\S]*?<\/dialog>/.exec(html)?.[0] ?? '';
+  assert.match(tools, /data-launch-state="local-only"/);
+  assert.ok(tools.includes('A browser-hosted Terminal is not connected to this page.'));
+  assert.doesNotMatch(tools, /<iframe\b|<form\b|<input\b|<textarea\b|contenteditable|(?:https?|wss?):\/\/(?:127\.|localhost)/i, 'A launch window is not a terminal emulator or local-port client');
   assert.ok(landing.includes('class="legal-footer"'));
 }
 

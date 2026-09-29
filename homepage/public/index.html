@@ -21,6 +21,7 @@
       <nav class="primary-nav" aria-label="Company">
         <a href="#about" data-window="about" aria-haspopup="dialog" aria-controls="about">About</a>
         <a href="#contact" data-window="contact" aria-haspopup="dialog" aria-controls="contact">Contact</a>
+        <a href="#tools" data-window="tools" aria-haspopup="dialog" aria-controls="tools">Tools</a>
       </nav>
     </header>
     <main id="main" aria-label="Geographic exhibition">
@@ -74,6 +75,21 @@
       <p>For enquiries about logistics, commodity state or the built site:</p>
       <a class="email-link" href="mailto:info@notationsystems.com">info@notationsystems.com</a>
       <p class="small">This opens your email application. This page does not submit or store a message.</p>
+    </div>
+  </dialog>
+
+  <dialog id="tools" class="window window-tools" aria-labelledby="tools-title" data-launch-state="local-only">
+    <header class="window-header"><h2 id="tools-title">Notations Terminal</h2><a class="window-close" href="#main" data-close aria-label="Close Tools">×</a></header>
+    <div class="window-content">
+      <p class="eyebrow">Workbench · Local installation</p>
+      <p class="purpose">Notations Engineering Terminal</p>
+      <p>The workbench currently runs on your computer. A browser-hosted Terminal is not connected to this page.</p>
+      <p>From your Terminal checkout in PowerShell:</p>
+      <pre class="launch-commands"><code>.\scripts\workbench.ps1 Setup
+.\scripts\workbench.ps1 Start
+.\scripts\workbench.ps1 Status</code></pre>
+      <a class="tools-guide" href="https://github.com/giasonpooni/Notations-Engineering-Terminal/blob/main/deploy/README.md" target="_blank" rel="noopener noreferrer">Installation &amp; launch instructions <span class="visually-hidden">(opens in a new tab)</span></a>
+      <p class="small">Run commands locally. This homepage does not start the workbench or connect to local ports.</p>
     </div>
   </dialog>
 

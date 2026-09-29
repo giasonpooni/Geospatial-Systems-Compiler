@@ -1,6 +1,6 @@
 # Notation Systems — exhibition homepage
 
-**One globe. Notation Systems at the upper left; About and Contact at the upper
+**One globe. Notation Systems at the upper left; About, Contact and Tools at the upper
 right; legal links centered along the bottom.** Company information is in
 closable, same-page windows, not a long landing page or repository census.
 
@@ -32,7 +32,7 @@ been tested. Neither placeholder phone numbers nor template addresses are used.
 ## Company windows
 
 A small, locally served `windows.js` module opens native HTML dialogs. About,
-Contact and Licences each have a labelled top-right × control, Escape dismissal,
+Contact, Tools and Licences each have a labelled top-right × control, Escape dismissal,
 keyboard focus containment and focus return. The underlying globe is inert
 while a modal is open and is not reloaded when it closes. Without JavaScript,
 same-document anchors and a `:target` fallback expose the same content and close
@@ -41,6 +41,26 @@ controls; those fallback windows are not represented as native modal dialogs.
 This intentionally extends the earlier zero-script shell with **one UI-only
 module**. CSP permits that local script while keeping `connect-src 'none'`.
 The module has no network, storage, forms, message bridge or frame access.
+
+## Tools → Notations Terminal
+
+The top-right navigation is **About · Contact · Tools**, in that order. Tools
+opens a same-page **Notations Terminal** window through the existing dialog
+controller, with the same ×, Escape and keyboard-focus behavior.
+
+The current NET deployment guide documents a local workbench, not a hosted
+browser launch endpoint. The window states this explicitly, shows the existing
+PowerShell Setup/Start/Status commands, and links to the real NET installation
+and deployment guide. It is not a terminal emulator, a connected session, or an
+installer. The user runs those commands locally; a webpage click does not execute
+them. The external guide opens with `noopener noreferrer`.
+
+No invented `/terminal` route, localhost probe, WebSocket bridge, custom URI
+handler or NET backend is included. A direct launch of a running hosted NET
+still requires its separately deployed, authenticated URL; no URL is guessed
+from the repository name. This change adds the navigation and honest launch
+window, **not a working browser-hosted Terminal**. Keep the public homepage and
+the operational workbench separate. No terminal repository files are modified.
 
 ## Legal links and publication
 
@@ -90,7 +110,7 @@ identities `payload-earth`, `window.payloadEarth`, and `payload:spatial` remain.
 The homepage workflow uses Node 24, separate GSV source, provenance and boundary
 regressions, the original GSV test/build sequence, and real Chromium testing.
 It checks desktop, tablet, phone and landscape exhibition viewports, square
-rendering, header/footer geometry, synthetic chip, native dialog X/Escape/focus,
+rendering, header/footer geometry, synthetic chip, native dialog X/Escape/focus (including Tools),
 no iframe reload, drag/zoom, immutable state, four view-command hints, retained
 full inspection, and usable no-JavaScript windows. Resource requests must stay
 local and read-only. Operational routes return actual 404s; writes return 405.

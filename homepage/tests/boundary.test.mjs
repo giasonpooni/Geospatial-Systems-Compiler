@@ -128,3 +128,21 @@ test('company contact and existing legal destinations are explicit, not invented
   assert.match(html, /href="https:\/\/notation\.systems\/terms-of-service"/);
   assert.doesNotMatch(html, /aeye\.email|000 234|Hanoi|<form/i);
 });
+
+
+test('the primary navigation is exactly About, Contact, Tools in that order', () => {
+  assert.throws(() => assertShell(html.replace('>Contact</a>', '>Tools</a>'), css, script));
+  assert.throws(() => assertShell(html.replace('href="#tools"', 'href="#contact"'), css, script));
+  assert.throws(() => assertShell(html.replace('aria-controls="tools">Tools</a>', 'aria-controls="tools">Terminal</a>'), css, script));
+});
+test('Tools identifies the real local workbench without pretending to launch it', () => {
+  assert.match(html, /id="tools"[^>]*data-launch-state="local-only"/);
+  assert.match(html, /id="tools-title">Notations Terminal/);
+  assert.match(html, /workbench\.ps1 Setup/);
+  assert.match(html, /workbench\.ps1 Start/);
+  assert.match(html, /workbench\.ps1 Status/);
+  assert.match(html, /Notations-Engineering-Terminal\/blob\/main\/deploy\/README\.md" target="_blank" rel="noopener noreferrer"/);
+  assert.throws(() => assertShell(html.replace('A browser-hosted Terminal is not connected to this page.', 'Terminal is connected.'), css, script));
+  assert.throws(() => assertShell(html.replace('data-launch-state="local-only"', 'data-launch-state="running"'), css, script));
+  assert.throws(() => assertShell(html.replace('Run commands locally.', '<textarea></textarea>'), css, script));
+});
