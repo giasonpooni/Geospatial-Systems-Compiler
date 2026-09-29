@@ -26,6 +26,8 @@ export type ISODateTime = string;
 export type Hash = string;
 
 export interface Provenance {
+  /** Acquisition metadata, not a new observation time or evidence class. */
+  acquisition?: import('./sensorCards').SensorAcquisition;
   /** Stable id of the source, e.g. "usgs-mcs-2025". */
   sourceId: string;
   sourceName: string;

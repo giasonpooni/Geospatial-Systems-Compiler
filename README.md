@@ -88,6 +88,8 @@ The [procurement specifications](docs/commercial/PROCUREMENT.md) define three
 separate order schedules, support hours and ceiling/draw-down requirements.
 The pre-registered [continue criterion](docs/CONTINUE_CRITERION.md) is unchanged.
 
+Design note: [industrial pipe and Pipe 1 boundaries](docs/INDUSTRIAL_PIPE.md).
+
 ## Run the existing application
 
 Use Node.js 22 and the [existing application instructions](TECHNICAL_REFERENCE.md#run-the-existing-application)

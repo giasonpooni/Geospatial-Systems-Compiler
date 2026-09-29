@@ -1,3 +1,4 @@
+import { registerSource } from './sourceRegistry';
 import { describe, it, expect } from 'vitest';
 import {
   DEFERRED_DECISIONS, EXTRAPOLATION_BOUND_DAYS, dailyPhysicalStreamCount,
@@ -45,6 +46,7 @@ describe('validWhile guards on deferred ledger decisions', () => {
     // The trap the pre-registration names: a literal partition list is
     // subject to the defect it certifies. Plant a novel partition value in
     // the register and assert the scope notices.
+    registerSourceForFixture('test-planted-commodity');
     registerAdapter({
       providerId: 'test-planted-commodity',
       providerName: 'Planted partition (test)',
@@ -168,3 +170,10 @@ describe('validWhile guards on deferred ledger decisions', () => {
     expect(EXTRAPOLATION_BOUND_DAYS).toBe(730);
   });
 });
+
+/** Dynamic test adapters obey the same sensor-registration boundary as production. */
+function registerSourceForFixture(id: string) {
+  if (SOURCE_REGISTRY.some(s => s.sourceId === id)) return;
+  registerSource({ ...SOURCE_REGISTRY[0], sourceId: id, adapter: id, additionalAdapters: [],
+    sensor: { ...SOURCE_REGISTRY[0].sensor!, sourceId: id } });
+}

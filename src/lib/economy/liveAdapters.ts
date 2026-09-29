@@ -29,7 +29,7 @@
 import type { Observation, Provenance, UnresolvedIdentifier } from './types';
 import type { AdapterPayload, EconomyAdapter, RowAccounting } from './adapters';
 import { buildUnresolvedRecords } from './resolution';
-import { cachedSource } from '@/lib/sourceCache';
+import { cachedSourceWithReceipt } from '@/lib/sourceCache';
 import { MCS_SNAPSHOT_CSV, MCS_SNAPSHOT_CAPTURED_AT } from '@/data/economy/snapshots/mcs2025-world-copper';
 import { MCS2024_SNAPSHOT_CSV, MCS2024_SNAPSHOT_CAPTURED_AT, MCS2024_PUBLISHED_AT } from '@/data/economy/snapshots/mcs2024-world-copper';
 import { MCS_AL_SNAPSHOT_CSV, MCS_AL_SNAPSHOT_CAPTURED_AT } from '@/data/economy/snapshots/mcs2025-world-aluminium';
@@ -85,15 +85,19 @@ function withSnapshotFallback(
   liveFetch: () => Promise<Observation[]>,
   snapshot: (note: string) => Observation[],
 ): () => Promise<Observation[]> {
-  const cached = cachedSource<Observation>(cacheKey, liveFetch, ttlMs);
+  const cached = cachedSourceWithReceipt<Observation>(cacheKey, liveFetch, ttlMs);
+  const stamp = (rows: Observation[], rung: import('./sensorCards').SensorRung, lastLiveAt: string | null) => {
+    const readAt = new Date().toISOString();
+    return rows.map(o => ({ ...o, provenance: { ...o.provenance, acquisition: { rung, readAt, lastLiveAt } } }));
+  };
   return async () => {
-    if (liveDisabled()) return snapshot('live fetch disabled in this environment');
+    if (liveDisabled()) return stamp(snapshot('live fetch disabled in this environment'), 'snapshot', null);
     try {
-      const live = await cached();
-      if (live.length > 0) return live;
-      return snapshot('live fetch returned no records');
+      const read = await cached();
+      if (read.data.length > 0) return stamp(read.data, read.rung, read.acquiredAt);
+      return stamp(snapshot('live fetch returned no records'), 'snapshot', null);
     } catch (e) {
-      return snapshot(`live fetch failed: ${e instanceof Error ? e.message : String(e)}`);
+      return stamp(snapshot(`live fetch failed: ${e instanceof Error ? e.message : String(e)}`), 'snapshot', null);
     }
   };
 }

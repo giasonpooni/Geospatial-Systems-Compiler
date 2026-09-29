@@ -175,6 +175,8 @@ describe('every number-bearing type in the layer is accounted for', () => {
     McpCallRecord: 'counts of our own refusals',
     RouteAroundEstimate: 'counts over our own session log',
     SessionDigest: 'counts over our own session log',
+    SensorReading: 'counts of rows returned by an adapter, with acquisition rungs, not measured quantities',
+    SeatArtifactPage: 'physical-line cursor and row accounting over the operator journal, not world measurements',
     RateStats: 'our own outbound throttle timings',
     ValidationResult: 'count of claims extracted from a text',
     UnresolvedIdentifier: 'how many times WE failed to resolve a string',

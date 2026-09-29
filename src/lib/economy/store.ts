@@ -13,8 +13,11 @@ import { validateState } from './types';
 import { adaptersFor, type RowAccounting } from './adapters';
 import { processSingleton } from './processSingleton';
 import { nameCandidates, sortUnresolved } from './resolution';
+import { readAdapterSensor, type SensorReading } from './seatProjection';
 
 export interface AssembledState {
+  assembledAt: string;
+  sensorReadings: SensorReading[];
   state: EconomyState;
   issues: ValidationIssue[];
   providers: string[];
@@ -104,9 +107,11 @@ async function assemble(commodity: string): Promise<AssembledState> {
   const issues: ValidationIssue[] = [];
   const settled = await Promise.allSettled(adapters.map(a => a.load(commodity)));
   const payloads = [];
+  const sensorReadings: SensorReading[] = [];
   const providers: string[] = [];
   for (let i = 0; i < settled.length; i++) {
     const result = settled[i];
+    sensorReadings.push(readAdapterSensor(adapters[i].providerId, result.status === 'fulfilled' ? result.value : null));
     if (result.status === 'fulfilled') {
       payloads.push(result.value);
       providers.push(adapters[i].providerId);
@@ -182,7 +187,7 @@ async function assemble(commodity: string): Promise<AssembledState> {
     });
 
   const accounting = payloads.flatMap(p => p.accounting ?? []);
-  return { state, issues: [...issues, ...validation], providers, accounting };
+  return { state, issues: [...issues, ...validation], providers, accounting, assembledAt: new Date().toISOString(), sensorReadings };
 }
 
 /* ── Lookup helpers ── */

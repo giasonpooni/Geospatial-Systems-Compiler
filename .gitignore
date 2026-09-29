@@ -63,3 +63,7 @@ scanner_backend_backup.js
 
 # Security - Prevent accidental manual leaks
 *Manual*.md
+
+# Private Pipe 1 operator journals (never fixtures or repository evidence)
+/data-archive/session-inspections.jsonl
+/data-archive/refusal-records.jsonl
