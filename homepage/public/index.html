@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'self'; img-src 'self' data:; frame-src 'self'; script-src 'none'; connect-src 'none'; object-src 'none'; base-uri 'none'; form-action 'none'">
+  <meta name="referrer" content="no-referrer">
+  <title>Notation Systems</title>
+  <meta name="description" content="Provenance-bearing computational corpora for industrial systems. A read-only geographic exhibit using a deterministic synthetic snapshot.">
+  <meta property="og:title" content="Notation Systems">
+  <meta property="og:description" content="Provenance-bearing computational corpora for industrial systems.">
+  <meta property="og:type" content="website">
+  <link rel="icon" href="./favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="./site.css">
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+  <header class="masthead">
+    <a class="wordmark" href="#main" aria-label="Notation Systems home"><span class="mark" aria-hidden="true">N/</span><span>Notation Systems</span></a>
+    <nav aria-label="Page sections"><a href="#exhibit">Exhibit</a><a href="#architecture">Architecture</a><a href="#sources">Sources</a></nav>
+    <span class="status-chip" id="build-status"><span aria-hidden="true">●</span> Synthetic snapshot</span>
+  </header>
+
+  <main id="main">
+    <section class="org-strip" aria-labelledby="org-title">
+      <div class="intro">
+        <p class="eyebrow">Industrial information</p>
+        <h1 id="org-title">Notation Systems</h1>
+        <p class="deck">Provenance-bearing computational corpora for industrial systems.</p>
+        <p class="description">An industrial information company operating provenance-bearing computational corpora.</p>
+      </div>
+      <div class="identity">
+        <p class="eyebrow">Shared identity</p>
+        <p class="identity-lines"><span>Organization</span><span>Site / parcel</span><span>Shipment / contract</span></p>
+      </div>
+      <p class="pipeline" aria-label="Information processing chain">Acquire → Extract → Engineer → Resolve → Index → Graph → Compute → Verify → Serve</p>
+      <div class="surfaces" aria-label="Product identities, not live applications">
+        <span><strong>PAYLOAD</strong><span>Logistics</span></span>
+        <span><strong>TRADEWIND</strong><span>Commodities</span></span>
+        <span><strong>LANDSHARK</strong><span>AEC / site</span></span>
+      </div>
+      <p class="byline">Giason Pooni <span aria-hidden="true">·</span> GPL-3.0 on the shown tools</p>
+    </section>
+
+    <section class="exhibit" id="exhibit" aria-labelledby="exhibit-title">
+      <div class="exhibit-heading">
+        <div><p class="eyebrow">01 / Exhibit</p><h2 id="exhibit-title">Geospatial State Visualization</h2><p>Read-only geographic inspection.</p></div>
+        <a class="open-exhibit" href="./exhibit/">Open exhibit on its own <span aria-hidden="true">↗</span></a>
+      </div>
+      <figure>
+        <iframe id="gsv-exhibit" src="./exhibit/" title="Geospatial State Visualization — synthetic, read-only globe" aria-describedby="exhibit-caption exhibit-status" loading="eager" sandbox="allow-scripts allow-same-origin" referrerpolicy="no-referrer" allow="camera 'none'; microphone 'none'; geolocation 'none'; payment 'none'; usb 'none'"></iframe>
+        <figcaption id="exhibit-caption">Read-only projection of a deterministic synthetic snapshot. Not live shipments, not a person map, not connected plant.</figcaption>
+      </figure>
+      <div class="exhibit-notes">
+        <p id="exhibit-status"><strong>Synthetic snapshot.</strong> Compiler and evidence stores are separate repositories and are not running on this page.</p>
+        <div class="controls"><p>Drag to rotate · Wheel to zoom · Click to inspect · <kbd>/</kbd> command bar inside the exhibit.</p><p class="commands"><code>show maritime</code><code>show copper flows</code><code>find toronto</code><code>help</code></p></div>
+      </div>
+      <p class="fallback-note">The globe requires JavaScript and WebGL. When rendering is unavailable, the company information, source links, and synthetic-data disclosure remain readable.</p>
+    </section>
+
+    <section class="architecture content-section" id="architecture" aria-labelledby="architecture-title">
+      <div class="section-intro"><p class="eyebrow">02 / Architecture</p><h2 id="architecture-title">One view.<br>Separate responsibilities.</h2><p>Provider snapshot → validate → immutable WorldStore → globe.</p><p class="muted">A projection is not the evidence store, compiler, or investigation runtime.</p></div>
+      <div class="table-wrap"><table><caption>What runs on this page</caption><thead><tr><th scope="col">Piece</th><th scope="col">Job</th><th scope="col">On this page</th></tr></thead><tbody>
+        <tr><th scope="row">GSV</th><td>Projects</td><td><span class="table-tag">Synthetic exhibit</span></td></tr>
+        <tr><th scope="row">GSC / Frame Mapper</th><td>Compiles</td><td>Repository link only</td></tr>
+        <tr><th scope="row">ESM</th><td>Admits evidence</td><td>Not in this bundle</td></tr>
+        <tr><th scope="row">NET</th><td>Operates investigations</td><td>Not in this bundle</td></tr>
+      </tbody></table></div>
+    </section>
+
+    <footer class="content-section sources" id="sources">
+      <div><p class="eyebrow">03 / Sources</p><h2>Inspect the work.</h2><nav class="source-links" aria-label="Source repositories and organization"><a href="https://github.com/giasonpooni/Geospatial-State-Visualization" rel="noreferrer">GSV repository <span aria-hidden="true">↗</span></a><a href="https://github.com/giasonpooni/Geospatial-Systems-Compiler" rel="noreferrer">GSC repository <small>Compiler; not the public plant</small><span aria-hidden="true">↗</span></a><a href="https://notation.systems" rel="noreferrer">notation.systems <span aria-hidden="true">↗</span></a></nav></div>
+      <div class="policy"><p class="eyebrow">Collection boundary</p><h3>No person path on the public surface.</h3><p>No natural-person profiling, dossiers, phones, MAIDs, ad-tech location, breach corpora, host/port scanning, or intelligence lookups.</p><p class="muted">This exhibit inspects synthetic geographic records. It does not collect people, admit evidence, or connect to operational systems.</p></div>
+      <div class="footer-meta"><span>Notation Systems <span aria-hidden="true">/</span> Giason Pooni</span><span><a href="./build-manifest.json">Build manifest</a> <span aria-hidden="true">·</span> <a href="./licenses/GSV-GPL-3.0.txt">GPL-3.0</a> <span aria-hidden="true">·</span> <a href="./source/gsv-source.tar.gz">GSV source</a> <span aria-hidden="true">·</span> <a href="./source/homepage-source.tar.gz">Homepage source</a></span></div>
+    </footer>
+  </main>
+</body>
+</html>
