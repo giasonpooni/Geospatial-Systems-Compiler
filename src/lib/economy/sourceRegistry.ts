@@ -13,6 +13,8 @@
  * pins this.
  */
 
+import { DEGRADATION_LADDER, SENSOR_LEDGERS, type SensorCard, type SensorLedger } from './sensorCards';
+
 export type SourceYield = 'entity' | 'observation' | 'flow' | 'event' | 'dependency' | 'capacity';
 export type AccessClass = 'open' | 'registered' | 'licensed' | 'blocked';
 
@@ -37,6 +39,10 @@ export type RedistributionPosture = 'public_domain' | 'attributed' | 'internal_o
 
 export interface RegisteredSource {
   sourceId: string;
+  /** Additional implementations of this same source; never duplicate source identity. */
+  additionalAdapters?: string[];
+  /** Required at runtime registration; optional only for legacy definition literals. */
+  sensor?: SensorCard;
   name: string;
   category: 'production' | 'trade' | 'stocks' | 'price' | 'positioning' | 'events' | 'ownership' | 'movement' | 'registration' | 'fuel';
   yields: SourceYield[];
@@ -77,16 +83,16 @@ export function mayRedistributeToMachines(source: RegisteredSource): boolean {
   return p === 'public_domain' || p === 'attributed';
 }
 
-export const SOURCE_REGISTRY: RegisteredSource[] = [
+const sources: RegisteredSource[] = [
   /* ── Built ── */
-  { sourceId: 'usgs-mcs', name: 'USGS Mineral Commodity Summaries (ScienceBase)', category: 'production', yields: ['observation'], cadence: 'annual', accessClass: 'open', adapter: 'usgs-mcs-live', keywords: ['production', 'reserves', 'usgs', 'mine'], note: 'Multi-vintage (2024+2025), supersedes chains.', owner: 'operator', maintenance: 'Ingest each MCS edition when it lands (annual, ~late January); the new edition supersedes-chains onto the held vintages.', redistribution: 'public_domain', redistributionNote: 'USGS is a US federal agency; Mineral Commodity Summaries are US Government works in the public domain. Onward serving to machine consumers is unrestricted.' },
-  { sourceId: 'un-comtrade', name: 'UN Comtrade public preview', category: 'trade', yields: ['observation'], cadence: 'annual', accessClass: 'open', adapter: 'comtrade-trade', keywords: ['trade', 'export', 'import', 'bilateral', 'mirror'], note: 'Single-version source; every retrieval archived (the only vintage archive there will ever be).', owner: 'operator', maintenance: 'Archival continues on every live retrieval (archive-before-parse, sealed against test writes); commit new day-directories and regenerate the manifest; refresh the archive mirror.', redistribution: 'attributed', redistributionNote: "UN Comtrade's public preview permits reuse with attribution to UN Comtrade; the source id travels on every record and in every claim sentence, which is the attribution the terms ask for. Bulk redistribution of the whole dataset is NOT what this serves — per-query rows with provenance are." },
+  { sourceId: 'usgs-mcs', name: 'USGS Mineral Commodity Summaries (ScienceBase)', category: 'production', yields: ['observation'], cadence: 'annual', accessClass: 'open', adapter: 'usgs-mcs-live', additionalAdapters: ['usgs-mcs-aluminium-live'], keywords: ['production', 'reserves', 'usgs', 'mine'], note: 'Multi-vintage (2024+2025), supersedes chains.', owner: 'operator', maintenance: 'Ingest each MCS edition when it lands (annual, ~late January); the new edition supersedes-chains onto the held vintages.', redistribution: 'public_domain', redistributionNote: 'USGS is a US federal agency; Mineral Commodity Summaries are US Government works in the public domain. Onward serving to machine consumers is unrestricted.' },
+  { sourceId: 'un-comtrade', name: 'UN Comtrade public preview', category: 'trade', yields: ['observation'], cadence: 'annual', accessClass: 'open', adapter: 'comtrade-trade', additionalAdapters: ['comtrade-flow-vintages'], keywords: ['trade', 'export', 'import', 'bilateral', 'mirror'], note: 'Single-version source; every retrieval archived (the only vintage archive there will ever be).', owner: 'operator', maintenance: 'Archival continues on every live retrieval (archive-before-parse, sealed against test writes); commit new day-directories and regenerate the manifest; refresh the archive mirror.', redistribution: 'attributed', redistributionNote: "UN Comtrade's public preview permits reuse with attribution to UN Comtrade; the source id travels on every record and in every claim sentence, which is the attribution the terms ask for. Bulk redistribution of the whole dataset is NOT what this serves — per-query rows with provenance are." },
   { sourceId: 'yahoo-hg', name: 'COMEX HG=F via Yahoo Finance', category: 'price', yields: ['observation'], cadence: 'continuous', accessClass: 'open', adapter: 'yahoo-copper-price', keywords: ['price', 'comex', 'futures'], note: 'Benchmark only; roll-bearing, excluded from physical analytics.', owner: 'operator', maintenance: 'Monitor only — corpus health flags staleness; benchmark, never load-bearing.', redistribution: 'internal_only', redistributionNote: "Yahoo Finance's terms cover personal, non-commercial use and do not clearly permit onward machine redistribution. Benchmark series only — never load-bearing for a physical figure — so refusing it to external clients costs nothing analytically." },
   { sourceId: 'cftc-cot', name: 'CFTC Commitments of Traders', category: 'positioning', yields: ['observation'], cadence: 'weekly', accessClass: 'open', adapter: 'cftc-positioning', keywords: ['positioning', 'cot', 'managed money'], note: 'Reflexive market context; never wakes anyone.', owner: 'operator', maintenance: 'Monitor only — corpus health flags staleness; context, never load-bearing.', redistribution: 'public_domain', redistributionNote: 'CFTC Commitments of Traders is a US federal publication in the public domain.' },
   { sourceId: 'fmcsa-qcmobile', name: 'FMCSA QCMobile carrier registry', category: 'registration', yields: ['entity', 'observation'], cadence: 'continuous', accessClass: 'registered', adapter: 'fmcsa-qcmobile', keywords: ['carrier', 'usdot', 'authority', 'out of service', 'registration', 'safety'], note: 'Server-side USDOT lookup for carrier identity, operating status, authority and out-of-service records. Contact fields are discarded. Public registry data does not stand in for a cargo insurance certificate.', owner: 'operator', maintenance: 'Keep the WebKey valid; verify the response contract after FMCSA changes; never weaken missing authority or insurance fields into clearance.', redistribution: 'public_domain', redistributionNote: 'FMCSA is a US federal agency and the queried carrier registry records are federal public records; Payload returns only normalized company/regulatory fields with source evidence.' },
   { sourceId: 'eia-weekly-diesel', name: 'EIA weekly U.S. on-highway diesel benchmark', category: 'fuel', yields: ['observation'], cadence: 'weekly', accessClass: 'registered', adapter: 'eia-weekly-diesel', keywords: ['diesel', 'fuel', 'price', 'linehaul', 'surcharge'], note: 'Latest weekly U.S. retail on-highway diesel price from EIA API v2, retained as market context with its period and unit; never substituted for a carrier quote.', owner: 'operator', maintenance: 'Keep the free EIA key valid and monitor the fixed series and API v2 response contract on each release.', redistribution: 'public_domain', redistributionNote: 'EIA is a US federal statistical agency; its Open Data API provides federal public data with the series identity retained.' },
   { sourceId: 'westmetall-lme', name: 'LME daily stocks via Westmetall', category: 'stocks', yields: ['observation'], cadence: 'daily', accessClass: 'open', adapter: 'westmetall-lme-stocks', keywords: ['stocks', 'inventory', 'warehouse', 'lme'], note: 'Republisher scrape; plausibility-gated; licensed feed is the recorded remedy.', owner: 'operator', maintenance: 'Watch the plausibility gate (source_suspect in corpus health): a markup change degrades the ONLY daily physical stream. The licensed LME feed is the standing remedy.', redistribution: 'internal_only', redistributionNote: "A republisher scrape of LME data carried for internal research; onward machine redistribution is a different act from internal reading and is NOT covered. The licensed LME feed is the standing remedy and would change this posture. This is the source the shipping order's access decision already flagged." },
-  { sourceId: 'curated-flow-snapshot', name: 'Curated facility flow snapshot (annual topology)', category: 'trade', yields: ['flow', 'dependency'], cadence: 'annual', accessClass: 'open', adapter: 'curated-copper-v1', keywords: ['flow', 'topology', 'corridor', 'snapshot', 'structure'], note: 'The facility-granularity flow topology, curated annually. Corpus health reports its age against the annual cadence (curated-flow-snapshot signal, 365d + 90d grace); the extrapolation guard holds the 730d hard ceiling. The two are different questions: the cadence asks \"is it due\", the ceiling asks \"is it still admissible\".', owner: 'operator', maintenance: 'Refresh the facility flow snapshot annually against current trade patterns; re-measure the corridor grades; the STRUCTURE HAS MOVED evidence list is the refresh worklist.', redistribution: 'attributed', redistributionNote: 'Curated in-house from public sources; ours to serve, with the representative attestation already on every record.' },
+  { sourceId: 'curated-flow-snapshot', name: 'Curated facility flow snapshot (annual topology)', category: 'trade', yields: ['flow', 'dependency'], cadence: 'annual', accessClass: 'open', adapter: 'curated-copper-v1', additionalAdapters: ['curated-aluminium-v1'], keywords: ['flow', 'topology', 'corridor', 'snapshot', 'structure'], note: 'The facility-granularity flow topology, curated annually. Corpus health reports its age against the annual cadence (curated-flow-snapshot signal, 365d + 90d grace); the extrapolation guard holds the 730d hard ceiling. The two are different questions: the cadence asks \"is it due\", the ceiling asks \"is it still admissible\".', owner: 'operator', maintenance: 'Refresh the facility flow snapshot annually against current trade patterns; re-measure the corridor grades; the STRUCTURE HAS MOVED evidence list is the refresh worklist.', redistribution: 'attributed', redistributionNote: 'Curated in-house from public sources; ours to serve, with the representative attestation already on every record.' },
   /* ── Reconned, deferred ── */
   { sourceId: 'wb-pink-sheet', name: 'World Bank Pink Sheet (commodity prices)', category: 'price', yields: ['observation'], cadence: 'monthly', accessClass: 'open', adapter: null, keywords: ['price', 'monthly', 'historical'], note: 'Reconned phase 2: works ($/mt since 1960) but xlsx parsing + hash discovery; Yahoo covers price.' },
   { sourceId: 'lme-licensed', name: 'LME licensed data feed', category: 'stocks', yields: ['observation'], cadence: 'daily', accessClass: 'licensed', adapter: null, keywords: ['stocks', 'inventory', 'warehouse', 'lme', 'warrant'], note: 'The remedy for the single-scrape fragility: converts Westmetall into a divergence check.' },
@@ -105,11 +111,87 @@ export const SOURCE_REGISTRY: RegisteredSource[] = [
   { sourceId: 'openownership', name: 'OpenOwnership beneficial-ownership register', category: 'ownership', yields: ['dependency'], cadence: 'irregular', accessClass: 'open', adapter: null, keywords: ['ownership', 'parent', 'beneficial', 'holding', 'shareholder'], note: 'Parent chains — who stands behind each JV vehicle. RECON 2026-08-27 (work order 3.4, captures in data-archive/openownership/2026-08-27): the Register app is RETIRED (register.openownership.org redirects to a www topic page behind a Cloudflare challenge; bulk-data host does not resolve); the BODS statement exports remain public on S3, FROZEN at 2023-07-19. A full scan of the frozen export (32,813,462 statements; Glencore positive control 53 hits) finds NEITHER Compañía Minera Antamina S.A. NOR Compañía Minera Doña Inés de Collahuasi SCM — the only substring hit is FANTAMINA LTD, an unrelated Bristol company (the name-collision species the resolution gate refuses). Structural cause, not a data gap: the source registers (UK PSC, DK CVR, SK RPVS, UA EDR) record who CONTROLS domestic companies — the direction is inbound; a Peruvian S.A. or Chilean SCM can never appear as a subject. This source cannot serve the two vehicles; parents stay curated or wait for a jurisdiction-appropriate register. The finding is about the source CLASS, not this export: any BO register of this shape records inbound control of its own domestic companies, so no foreign-held operating vehicle is ever a subject — re-attempting with a fresher OpenOwnership export cannot change that, and a re-attempt should target a register in the vehicle\'s own jurisdiction instead.' },
 ];
 
+/** The one registry, now with checked, serialisable sensor metadata on every entry.
+ * Static cards persist in this source artifact. Runtime registrations are process-local.
+ * The posture describes a source class; existing redistribution permissions still govern use.
+ */
+function defaultSensor(source: RegisteredSource): SensorCard {
+  const byCategory: Record<RegisteredSource['category'], SensorLedger[]> = {
+    production: ['physical_flow', 'physical_stock'], trade: ['physical_flow'], stocks: ['physical_stock'],
+    price: ['market_price'], positioning: ['financial_positioning'], events: ['physical_flow'],
+    ownership: ['organisational_attribution'], movement: ['physical_flow'], registration: ['organisational_attribution'], fuel: ['market_price'],
+  };
+  const curated = source.adapter?.startsWith('curated-') ?? false;
+  const hasLadder = ['usgs-mcs-live', 'comtrade-trade', 'yahoo-copper-price', 'cftc-positioning', 'westmetall-lme-stocks'].includes(source.adapter ?? '');
+  return {
+    sourceId: source.sourceId, ledgers: curated ? ['physical_flow', 'physical_stock', 'organisational_attribution'] : byCategory[source.category], forbiddenYield: ['natural_person'],
+    degradationLadder: [...DEGRADATION_LADDER],
+    availableRungs: curated ? ['snapshot'] : hasLadder ? [...DEGRADATION_LADDER] : source.adapter ? ['live'] : [],
+    postingWindow: null,
+    freshness: { cadence: source.cadence, policy: 'horizon.corpusHealthSignals', postingWindowKnown: false },
+    licensePosture: curated ? 'curated_representative'
+      : source.redistribution === 'public_domain' || source.sourceId === 'un-comtrade' ? 'public_official'
+        : source.accessClass === 'licensed' ? 'licensed_third_party' : 'research_only_not_for_resale',
+  };
+}
+
+export function assertRegisteredSource(source: RegisteredSource): void {
+  if (!source || !Array.isArray(source.yields) || source.yields.length === 0 ||
+      source.yields.some(y => !['entity', 'observation', 'flow', 'event', 'dependency', 'capacity'].includes(y))) {
+    throw new Error('source_yield_refused: only canonical industrial-object yields may register');
+  }
+  const card = source.sensor;
+  if (!card || card.sourceId !== source.sourceId ||
+      JSON.stringify(card.forbiddenYield) !== '["natural_person"]' ||
+      !Array.isArray(card.ledgers) || card.ledgers.length === 0 || card.ledgers.some(l => !SENSOR_LEDGERS.includes(l)) ||
+      JSON.stringify(card.degradationLadder) !== JSON.stringify(DEGRADATION_LADDER) ||
+      !Array.isArray(card.availableRungs) || card.availableRungs.some(r => !DEGRADATION_LADDER.includes(r)) ||
+      !['public_official', 'curated_representative', 'research_only_not_for_resale', 'licensed_third_party'].includes(card.licensePosture) ||
+      card.postingWindow !== null || card.freshness?.cadence !== source.cadence ||
+      card.freshness.policy !== 'horizon.corpusHealthSignals' || card.freshness.postingWindowKnown !== false) {
+    throw new Error('sensor_card_refused: declare ledgers, natural-person exclusion, ladder and source posture');
+  }
+  if (source.sourceId === 'westmetall-lme' && card.licensePosture !== 'research_only_not_for_resale') {
+    throw new Error('sensor_rights_refused: the republisher remains research-only');
+  }
+}
+function retainedSource(source: RegisteredSource): RegisteredSource {
+  const copy = structuredClone(source);
+  assertRegisteredSource(copy);
+  const freeze = (value: unknown): void => {
+    if (value && typeof value === 'object') {
+      Object.values(value).forEach(freeze);
+      Object.freeze(value);
+    }
+  };
+  freeze(copy);
+  return copy;
+}
+for (let i = 0; i < sources.length; i++) sources[i] = retainedSource({ ...sources[i], sensor: defaultSensor(sources[i]) });
+/** Existing register export; additions must go through registerSource. Entries are frozen. */
+export const SOURCE_REGISTRY: RegisteredSource[] = new Proxy(sources, {
+  set() { throw new Error('source_registry_read_only: use registerSource'); },
+  deleteProperty() { throw new Error('source_registry_read_only'); },
+  defineProperty() { throw new Error('source_registry_read_only'); },
+});
+export function registerSource(source: RegisteredSource): void {
+  const copy = retainedSource(source); // validate BEFORE mutating the register
+  if (sources.some(s => s.sourceId === copy.sourceId)) throw new Error('source_identity_conflict');
+  sources.push(copy);
+}
+export function sensorCardsForAdapter(adapterId: string): SensorCard[] {
+  return sources.filter(s => s.adapter === adapterId || s.additionalAdapters?.includes(adapterId))
+    .map(s => ({ ...structuredClone(s.sensor!),
+      // Comtrade vintages are committed captures, not a live fetch capability.
+      ...(adapterId === 'comtrade-flow-vintages' ? { availableRungs: ['snapshot' as const] } : {}),
+    }));
+}
+
 const tokenize = (s: string): string[] => s.toLowerCase().split(/[^a-z0-9]+/).filter(t => t.length >= 2);
 
 /** Vocabulary the registry itself declares (categories + keyword tokens);
  *  callers extend it with state-derived tokens via `extraVocabulary`. */
-const REGISTRY_VOCABULARY: ReadonlySet<string> = new Set(
+const registryVocabulary = (): ReadonlySet<string> => new Set(
   SOURCE_REGISTRY.flatMap(s => [s.category as string, ...s.keywords.flatMap(tokenize)]),
 );
 
@@ -127,7 +209,7 @@ const REGISTRY_VOCABULARY: ReadonlySet<string> = new Set(
  * analytically; such misses are counted without their strings.
  */
 export function missLoggable(query: string, extraVocabulary: Iterable<string> = []): boolean {
-  const vocab = new Set(REGISTRY_VOCABULARY);
+  const vocab = new Set(registryVocabulary());
   for (const term of extraVocabulary) for (const t of tokenize(term)) vocab.add(t);
   return tokenize(query).some(t => vocab.has(t));
 }

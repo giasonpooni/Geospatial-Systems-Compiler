@@ -9,6 +9,8 @@
  * anywhere downstream of the registry.
  */
 
+import { sensorCardsForAdapter } from './sourceRegistry';
+
 import type {
   EconomyState, Entity, Observation, Flow, Capacity, Dependency, EconEvent,
   UnresolvedIdentifier,
@@ -113,6 +115,9 @@ export function adaptersFor(commodity: string): EconomyAdapter[] {
 }
 
 export function registerAdapter(adapter: EconomyAdapter): void {
+  if (sensorCardsForAdapter(adapter.providerId).length === 0) {
+    throw new Error('adapter_sensor_missing: register an industrial source with a sensor card first');
+  }
   // Re-registering the same providerId replaces it — lets tests inject fakes.
   const i = ADAPTERS.findIndex(a => a.providerId === adapter.providerId);
   if (i >= 0) ADAPTERS[i] = adapter;

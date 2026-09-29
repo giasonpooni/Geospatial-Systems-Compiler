@@ -114,3 +114,7 @@ export function resetSessionTelemetry(): void {
   state.exportsServed = 0;
   state.entitiesInspected.clear();
 }
+
+/** Pipe 1: typed durable records alongside the existing S-7 process counters.
+ * The operator journal does not increment, reclassify, or reset those counters. */
+export { appendSeatArtifact, readSeatArtifacts, validateSeatArtifact } from './seatArtifacts';

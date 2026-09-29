@@ -15,10 +15,18 @@
  *                  rather than dropping the layer to zero cameras.
  */
 
+export interface SourceCacheReceipt<T> {
+  data: T[];
+  rung: 'live' | 'ttl_cache' | 'last_good';
+  acquiredAt: string | null;
+}
+
 interface Entry<T> {
   data: T[];
   expiresAt: number;
-  inflight: Promise<T[]> | null;
+  inflight: Promise<SourceCacheReceipt<T>> | null;
+  acquiredAt: string | null;
+  degraded: boolean;
 }
 
 const store = new Map<string, Entry<unknown>>();
@@ -46,16 +54,16 @@ function evictIfNeeded(): void {
  * Wrap a camera fetcher with TTL caching, in-flight dedup and stale fallback.
  * Returns a drop-in replacement with the same signature.
  */
-export function cachedSource<T>(
+export function cachedSourceWithReceipt<T>(
   key: string,
   fetcher: () => Promise<T[]>,
   ttlMs: number = DEFAULT_TTL_MS,
-): () => Promise<T[]> {
+): () => Promise<SourceCacheReceipt<T>> {
   return async () => {
     const now = Date.now();
     const entry = store.get(key) as Entry<T> | undefined;
 
-    if (entry && now < entry.expiresAt && entry.data.length > 0) return entry.data;
+    if (entry && now < entry.expiresAt && entry.data.length > 0) return { data: entry.data, rung: entry.degraded ? 'last_good' : 'ttl_cache', acquiredAt: entry.acquiredAt };
     if (entry?.inflight) return entry.inflight;
 
     const inflight = (async () => {
@@ -63,21 +71,22 @@ export function cachedSource<T>(
         const data = await fetcher();
         // An empty result is treated as a failed refresh: keep whatever we had.
         if (data.length === 0 && entry?.data.length) {
-          store.set(key, { data: entry.data, expiresAt: now + ttlMs, inflight: null });
-          return entry.data;
+          store.set(key, { data: entry.data, expiresAt: now + ttlMs, inflight: null, acquiredAt: entry.acquiredAt, degraded: true });
+          return { data: entry.data, rung: 'last_good' as const, acquiredAt: entry.acquiredAt };
         }
-        store.set(key, { data, expiresAt: now + ttlMs, inflight: null });
-        return data;
+        const acquiredAt = data.length ? new Date().toISOString() : null;
+        store.set(key, { data, expiresAt: now + ttlMs, inflight: null, acquiredAt, degraded: false });
+        return { data, rung: 'live' as const, acquiredAt };
       } catch (e) {
         if (entry?.data.length) {
           console.warn(`[Payload Terminal] ${key} refresh failed — serving ${entry.data.length} cached cameras`);
           // Retry sooner than a full TTL, but don't hammer the failing upstream.
-          store.set(key, { data: entry.data, expiresAt: now + 60_000, inflight: null });
-          return entry.data;
+          store.set(key, { data: entry.data, expiresAt: now + 60_000, inflight: null, acquiredAt: entry.acquiredAt, degraded: true });
+          return { data: entry.data, rung: 'last_good' as const, acquiredAt: entry.acquiredAt };
         }
         console.warn(`[Payload Terminal] ${key} fetch failed with no cache to fall back on:`, e);
-        store.set(key, { data: [], expiresAt: now + 60_000, inflight: null });
-        return [];
+        store.set(key, { data: [], expiresAt: now + 60_000, inflight: null, acquiredAt: null, degraded: true });
+        return { data: [], rung: 'last_good' as const, acquiredAt: null };
       }
     })();
 
@@ -85,6 +94,8 @@ export function cachedSource<T>(
       data: entry?.data ?? [],
       expiresAt: entry?.expiresAt ?? 0,
       inflight,
+      acquiredAt: entry?.acquiredAt ?? null,
+      degraded: entry?.degraded ?? false,
     } as Entry<unknown>);
     evictIfNeeded();
 
@@ -95,4 +106,10 @@ export function cachedSource<T>(
 /** Test seam — drops all cached indexes. */
 export function clearSourceCache(): void {
   store.clear();
+}
+
+/** Existing consumers still receive the unchanged array shape. */
+export function cachedSource<T>(key: string, fetcher: () => Promise<T[]>, ttlMs = DEFAULT_TTL_MS): () => Promise<T[]> {
+  const read = cachedSourceWithReceipt(key, fetcher, ttlMs);
+  return async () => (await read()).data;
 }

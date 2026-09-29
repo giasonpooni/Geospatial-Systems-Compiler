@@ -1,3 +1,4 @@
+import { registerSource, SOURCE_REGISTRY } from './sourceRegistry';
 import { describe, it, expect, afterEach } from 'vitest';
 import { getEconomyState, entityDetail } from './store';
 import { strongestAttestingClass, structuralClassProfile } from './analytics';
@@ -119,6 +120,7 @@ describe('economy store (curated copper assembly)', () => {
     afterEach(() => unregisterAdapter('test-dead-provider'));
 
     it('tolerates a failing adapter with a warning instead of losing the state', async () => {
+      registerSourceForFixture('test-dead-provider');
       registerAdapter({
         providerId: 'test-dead-provider',
         providerName: 'Deliberately broken test provider',
@@ -133,6 +135,7 @@ describe('economy store (curated copper assembly)', () => {
     });
 
     it('throws only when every adapter fails', async () => {
+      registerSourceForFixture('test-dead-provider');
       registerAdapter({
         providerId: 'test-dead-provider',
         providerName: 'Only provider, broken',
@@ -169,3 +172,10 @@ describe('economy store (curated copper assembly)', () => {
     expect(entityDetail(state, 'ent:mine:nope')).toBeNull();
   });
 });
+
+/** Dynamic test adapters obey the same sensor-registration boundary as production. */
+function registerSourceForFixture(id: string) {
+  if (SOURCE_REGISTRY.some(s => s.sourceId === id)) return;
+  registerSource({ ...SOURCE_REGISTRY[0], sourceId: id, adapter: id, additionalAdapters: [],
+    sensor: { ...SOURCE_REGISTRY[0].sensor!, sourceId: id } });
+}
