@@ -18,7 +18,7 @@ const browser = await chromium.launch({headless:true, args:['--use-angle=swiftsh
 const records = [];
 const acceptanceErrors = [];
 try {
-  for (const viewport of [{width:1440,height:1100},{width:390,height:844}]) {
+  for (const viewport of [{width:1440,height:1100},{width:768,height:1000},{width:390,height:844},{width:320,height:844}]) {
     const context = await browser.newContext({viewport, reducedMotion:'reduce'});
     const page = await context.newPage();
     const requests = []; const errors = []; const failures = [];
@@ -46,6 +46,8 @@ try {
       return {left:r.left, right:r.right, top:r.top, bottom:r.bottom, width:innerWidth, height:innerHeight};
     });
     assert.ok(chipBounds.left >= 0 && chipBounds.right <= chipBounds.width + 1 && chipBounds.top >= 0 && chipBounds.bottom <= chipBounds.height + 1, 'Original synthetic chip must fit in the exhibit viewport');
+    const controlBounds = await frame.evaluate(() => Object.fromEntries(['.pe-commandbar','.pe-cb-search','.pe-cb-follow','.pi-timeline','.pe-statusbar'].map(selector => { const r = document.querySelector(selector).getBoundingClientRect(); return [selector, {left:r.left,right:r.right,top:r.top,bottom:r.bottom,width:innerWidth,height:innerHeight}]; })));
+    for (const [selector,r] of Object.entries(controlBounds)) assert.ok(r.left >= 0 && r.right <= r.width + 1 && r.top >= 0 && r.bottom <= r.height + 1, `Control outside viewport: ${selector}`);
     const original = await frame.evaluate(() => JSON.stringify(window.payloadEarth.api.store.snapshot));
     const sourceCheck = await frame.evaluate(() => {
       const snapshot = window.payloadEarth.api.store.snapshot;
@@ -58,10 +60,12 @@ try {
     await frame.locator('.pe-cb-tab').first().press('/');
     const input = frame.locator('.pe-cb-search');
     assert.equal(await input.evaluate(el => el===document.activeElement), true, 'Slash from a focused exhibit control must focus the command input');
+    const commandResults = [];
     for (const command of manifest.gsv.commandHints) {
       await input.fill(command); await input.press('Enter');
       await frame.locator('.pe-cb-result').waitFor({state:'visible'});
       assert.equal(await frame.locator('.pe-cb-result').evaluate(el=>el.classList.contains('err')), false, `Unsupported hint: ${command}`);
+      commandResults.push({command,message:await frame.locator('.pe-cb-result').innerText()});
     }
     await input.press('Escape');
     assert.equal(await frame.evaluate(() => JSON.stringify(window.payloadEarth.api.store.snapshot)), original, 'View commands must not replace or mutate the snapshot');
@@ -76,7 +80,7 @@ try {
     assert.deepEqual(failures, [], 'Failed resource requests');
     assert.ok(requests.every(req=>req.url.startsWith(origin+'/') && ['GET','HEAD'].includes(req.method)), 'Only local static read requests');
     assert.ok(requests.every(req=>!new URL(req.url).pathname.startsWith('/api/')), 'No operational API requests');
-    records.push({viewport,sourceCheck,chipBounds,requests,errors,failures});
+    records.push({viewport,sourceCheck,chipBounds,controlBounds,commandResults,snapshotUnchanged:true,requests,errors,failures});
     } catch (error) {
       await page.screenshot({path:resolve(evidence,`failure-${viewport.width}.png`),fullPage:true}).catch(() => {});
       await writeFile(resolve(evidence,`failure-${viewport.width}.json`), JSON.stringify({message:String(error),stack:error.stack,errors,failures,requests},null,2)+'\n');
@@ -92,7 +96,7 @@ try {
   await noJS.close();
   for (const path of ['/api/economy','/api/economy/shipments','/api/freight','/operations','/.env','/spatial.map']) assert.equal((await fetch(origin+path)).status,404);
   for (const method of ['POST','PUT','PATCH','DELETE']) assert.equal((await fetch(origin+'/api/economy',{method})).status,405);
-  await writeFile(resolve(evidence,'browser-report.json'), JSON.stringify({gsvCommit:manifest.gsv.commit,records,noJavaScriptFallback:true,staticRouteChecks:true},null,2)+'\n');
+  await writeFile(resolve(evidence,'browser-report.json'), JSON.stringify({status:acceptanceErrors.length ? 'failed' : 'passed',gsvCommit:manifest.gsv.commit,records,noJavaScriptFallback:true,staticRouteChecks:true},null,2)+'\n');
   if (acceptanceErrors.length) throw new AggregateError(acceptanceErrors, 'Production-browser acceptance failed; see retained per-viewport evidence');
   console.log('Browser acceptance passed: real GSV, desktop + mobile, original synthetic chip, all four hints, unchanged immutable snapshot, no third-party or write requests, no-JS fallback.');
 } finally {

@@ -54,6 +54,12 @@ jobs:
         run: npm ci
       - name: GSV check + production build + synthetic-only packaging
         run: node homepage/scripts/build.mjs --gsv ../gsv-exhibit
+      - name: Record upstream dependency advisories without upgrading the lockfile
+        run: |
+          mkdir -p homepage/evidence
+          cd ../gsv-exhibit
+          npm audit --json > ../homepage-source/homepage/evidence/npm-audit.json || test "$?" -eq 1
+          npm audit --omit=dev --json > ../homepage-source/homepage/evidence/npm-audit-production.json
       - name: Isolated browser-test tooling (not a shipped dependency)
         run: |
           npm install --prefix "$RUNNER_TEMP/notation-browser" --ignore-scripts --no-audit --no-fund playwright@1.55.1

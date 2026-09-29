@@ -1,116 +1,105 @@
 # Notation Systems — read-only homepage
 
-A small static organization homepage, with the **existing Geospatial State
-Visualization (GSV) production client** as its only interactive globe. It is
-not a GSC application route and does not deploy the compiler's Next server.
+A static organization homepage with the existing **Geospatial State
+Visualization (GSV)** production client as its only interactive globe.
 
-**Public artifact: `homepage/dist/` only.** Never publish the repository root,
-GSC's `.next` output, or its Docker image as this homepage.
+**Publish `homepage/dist/` only.** This is not a GSC application route. Do not
+publish the repository root, `.next`, or the compiler's Docker image as this
+homepage. The older Next `/notation` and `/explore` proposal is not used.
 
-## What visitors see
+## The page
 
-An organization strip, the synthetic geographic exhibit, a compact stack table,
-and source/policy links. PAYLOAD, TRADEWIND and LANDSHARK are text identities,
-not launch buttons. The shell works without JavaScript; the globe requires
-JavaScript and WebGL. Both the sticky shell label and the original GSV status
-chip identify the snapshot as synthetic.
+Organization → synthetic exhibit → responsibility table → sources and policy.
+PAYLOAD, TRADEWIND and LANDSHARK are text identities, not launch buttons. The
+shell has no JavaScript, forms, tracking, lookup or command bridge. It remains
+readable without JavaScript; the globe requires JavaScript and WebGL.
 
-The shell contains no JavaScript, forms, tracking, lookup, credentials, or
-command bridge. GSV's existing commands change only local presentation. The
-homepage does not retain canonical evidence, admit state, execute science,
-or connect cross-repository adapters.
+The sticky shell label and original GSV chip both disclose synthetic data.
+GSV projects a validated immutable snapshot. It does not admit evidence,
+retain canonical corpora, operate investigations, or connect live adapters.
 
-## Independent build
+## Build and preview
 
-Use **Node.js 24 or newer**, Git, and npm. Run the following from this
-repository's root, with the GSV checkout outside it:
+Use **Node.js 24+**, Git and npm. From this repository's root:
 
 ```sh
 git clone https://github.com/giasonpooni/Geospatial-State-Visualization.git ../gsv-homepage
-git -C ../gsv-homepage checkout 6f1b339dfa103bc45b40f34170043bc23a010c57
+GSV_COMMIT=$(node -p "require('./homepage/gsv.lock.json').commit")
+git -C ../gsv-homepage checkout "$GSV_COMMIT"
 (cd ../gsv-homepage && npm ci)
 node --test homepage/tests/boundary.test.mjs
 node homepage/scripts/build.mjs --gsv ../gsv-homepage
 node homepage/scripts/serve.mjs homepage/dist 4173
 ```
 
-Open the local preview at `http://127.0.0.1:4173`. The preview server is a
-loopback-only development/test utility and is **not in the public bundle**.
-It permits GET/HEAD, returns 404 for absent paths, and has no API handlers or
-SPA fallback. Do not run GSC's root `npm install`, `npm run build`, or server
-for this build.
+Open `http://127.0.0.1:4173`. The preview utility binds only to loopback,
+permits GET/HEAD and returns actual 404s for missing/API paths. It is not in
+the public artifact. Do not install or start the parent GSC application.
 
-`gsv.lock.json` selects one reviewed, immutable upstream commit. The builder
-requires a clean, separately checked-out source tree matching that pin. It
-runs GSV's original `npm run build`, which includes its seam, provenance,
-provider/immutable replacement regressions, and TypeScript checks. No GSV
-source files, package identities, or original status-chip styles are changed.
+The two repositories must be separate filesystem siblings, not nested:
+Vite/PostCSS can otherwise discover GSC configuration in a parent folder.
+Both sets of build inputs must match their committed corresponding source.
+The full GSV commit is pinned in `gsv.lock.json`, never a moving branch.
 
-After those checks, an additional gate executes the actual synthetic dataset
-and requires **every domain record** to have `provenance.source =
-'synthetic:demo'`. It rejects missing, mixed, or empty domain data. Only the
-expected static Vite assets and the two bundled background topology files
-may enter the exhibit. Those geography files are background cartography;
-they are not a separately released public-official industrial data pack.
+## Exhibit boundary
 
-The builder removes external Google Fonts links from **built HTML only**,
-retains existing local fallback fonts, and adds restrictive browser policies.
-No new font files or third-party resources are distributed. The original GSV
-controls, inspector, synthetic chip, `payload-earth`, `window.payloadEarth`,
-and `payload:spatial` identities remain intact.
+The builder runs the original GSV `npm run build`, including `npm run check`:
+seams, provenance, provider/immutable replacement regressions and TypeScript.
+An additional gate evaluates the actual synthetic dataset and requires every
+domain record to have `provenance.source = 'synthetic:demo'`. Missing, mixed,
+nested non-synthetic and empty domain data refuse packaging.
 
-## Deployment boundary
+Only expected Vite assets and the two existing background topology files
+enter the exhibit. Background geography is not an official industrial data
+pack. No live provider or exporter is implemented. Compatibility identities
+`payload-earth`, `window.payloadEarth` and `payload:spatial` remain intact.
 
-Serve only `homepage/dist/` from a dedicated static origin. This directory
-contains the homepage, GSV exhibit, notices, corresponding source archives,
-and a build manifest with source pins and file SHA-256 digests. Source
-archives contain only the public GSV source and this homepage's build inputs,
-not the compiler application. They are downloadable files, not server code.
+The pinned GSV revision includes a small additive responsive HUD stylesheet.
+Production browser testing found that the original chip overflowed a 390px
+viewport. The fix wraps the metrics and controls, prioritizes the original
+chip and separates the timeline. It does not change provider, store,
+renderer, command implementations, chip wording, warning colors or type.
+See the corresponding source archive and GSV's responsive-exhibit notes.
 
-The artifact has no executable server, API routes, environment configuration,
-economy exporter, operator credentials, ESM store, or NET runtime. Build
-subprocesses receive a small environment allowlist rather than PAYLOAD,
-VITE, or operator variables. `.env` files in the GSV checkout are rejected.
-GSC is a repository link, not a runtime dependency.
+Packaging removes external Google Fonts links from built HTML only and adds
+restrictive policies. No font files, credentials, backend, API handlers,
+ESM store or NET runtime are included. Build subprocesses receive a small
+environment allowlist; `.env` files in the GSV checkout are refused.
 
-Apply the shipped `_headers` policies on hosts that support that format;
-equivalent CSP meta tags also travel with the two HTML entrypoints. Configure
-other hosts to serve static files only, reject non-read methods, return real
-404s for absent paths, and **never proxy or rewrite to GSC**. In particular,
-`/api/economy`, `/api/freight`, `/operations`, and `spatial.map` must not reach
-an operational upstream. Host configuration and domain routing are separate
-from producing a safe artifact and require verification after deployment.
+## Static deployment
 
-The same-origin iframe permits scripts and origin access for the existing
-module client. Its sandbox is not a boundary against malicious same-origin
-code. The meaningful boundaries here are the pinned reviewed build, no
-parent bridge, static-only deployment, and absence of any operational
-upstream or credential. The parent cannot make network connections under
-its CSP; the exhibit can read same-origin static assets. These policies are
-not a substitute for correct hosting configuration.
+Use a dedicated static origin with **no operational upstream**. Upload only
+`homepage/dist/`, retain the directory structure, allow GET/HEAD, and return
+404 for missing paths. Never proxy or rewrite `/api/economy`, `/api/freight`,
+`/operations` or `spatial.map` to GSC. Do not configure an SPA fallback.
 
-The older Next `/notation` / `/explore` proposal is not the deployment path
-for this brief. This folder is independently packaged while the compiler
-remains separately operated. No hostname, DNS record, live Webflow page,
-or existing operational deployment is changed by this build.
+Apply `_headers` on compatible hosts or equivalent host policies; both HTML
+entrypoints also carry CSP meta tags. The shell cannot make network requests;
+the exhibit can read same-origin static files. The iframe's same-origin
+sandbox is not protection against malicious same-origin code. The meaningful
+boundaries are the reviewed pin, static-only bundle, no bridge or credentials,
+and hosting with no compiler upstream. Host routing must be verified after
+publication; passing artifact tests does not establish a domain cutover.
 
-## Acceptance and evidence
+No DNS, existing domain, live Webflow page or operational deployment is
+changed by this workflow. It produces artifacts, not an automatic deployment.
 
-`.github/workflows/notation-homepage.yml` runs only the standalone homepage
-build, with Node 24 and a separate pinned GSV checkout. It does not install
-or start the compiler. It uploads the static artifact and browser evidence;
-it does not automatically deploy or change a domain.
+## Tests and retained evidence
 
-The browser acceptance test loads the **real production GSV** at desktop and
-mobile sizes, checks the original synthetic chip, exercises `/` and all four
-published command hints, verifies the immutable snapshot is unchanged, and
-rejects third-party or write requests. It also checks the JavaScript-disabled
-shell and absent operational routes. The pure boundary tests cover malicious
-or accidental file/copy/provenance regressions. Test fixtures never enter the
-public artifact.
+`.github/workflows/notation-homepage.yml` uses Node 24 and sibling checkouts,
+without installing or starting GSC. It runs 19 homepage boundary regressions,
+the original GSV suite and production build, then actual Chromium acceptance
+at 1440, 768, 390 and 320px widths. Checks cover the original chip and control
+bounds, all four command hints, unchanged immutable synthetic data, local-only
+read requests, missing operational routes and a JavaScript-disabled shell.
 
-To repeat the browser acceptance, install the pinned test tooling outside
-both source trees and set `PLAYWRIGHT_MODULE` to its `playwright/index.mjs`:
+`homepage/evidence/` holds screenshots, the browser report and dependency
+audit reports. Development-tool advisories are recorded without upgrading the
+upstream lockfile; the production-only audit is checked separately. A failed
+browser build is retained for two days as explicitly non-release diagnostics.
+Only a passing run produces the approved `notation-static-homepage` artifact.
+
+For local browser acceptance, install Playwright outside both repositories:
 
 ```sh
 npm install --prefix /tmp/notation-browser --ignore-scripts --no-audit --no-fund playwright@1.55.1
@@ -118,15 +107,14 @@ node /tmp/notation-browser/node_modules/playwright/cli.js install --with-deps ch
 PLAYWRIGHT_MODULE=/tmp/notation-browser/node_modules/playwright/index.mjs node homepage/tests/browser-smoke.mjs
 ```
 
-Read `homepage/evidence/browser-report.json` and its screenshots, plus the
-homepage workflow's GSV check/build log. A successful local/CI artifact test
-does not by itself prove that an existing public hostname has been migrated.
-
-## Collection scope and license
+## Scope, source and notices
 
 No natural-person profiling or dossiers; no phones, MAIDs, ad-tech location,
-breach corpora, host/port scanning, or intelligence lookup. No person path on
-this public surface. There is no sanctions feature. There is no live provider.
+breach corpora, host/port scanning or intelligence lookup. No person path on
+this public surface. No sanctions feature or live provider is added.
 
-Author: **Giason Pooni**. The homepage and shown tools use **GPL-3.0**; see the
-repository `LICENSE`, shipped notice, and corresponding source archives.
+Author: **Giason Pooni**. Homepage and shown tools: **GPL-3.0**. The artifact
+includes the GPL notice, bundled dependency notices, corresponding source
+archives and a manifest with source commits and SHA-256 file digests. Source
+archives contain only public GSV source and this homepage's build inputs,
+not the compiler application. They are static downloads, not server code.

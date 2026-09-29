@@ -1,6 +1,6 @@
 {
   "repository": "giasonpooni/Geospatial-State-Visualization",
-  "commit": "6f1b339dfa103bc45b40f34170043bc23a010c57",
+  "commit": "74288fb7822bf8a8f32e00ffb5cfebdf07733c1d",
   "packageName": "payload-earth",
   "provenanceSource": "synthetic:demo",
   "runtime": "Node.js >=24",

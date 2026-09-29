@@ -10,6 +10,7 @@ import { assertIndependentCheckouts, validatePin, assertSynthetic, assertShell, 
 assert.ok(Number(process.versions.node.split('.')[0]) >= 24, 'The public build requires Node.js 24+. Do not retarget GSV to Node 22.');
 assert.ok(process.argv.length === 4 && process.argv[2] === '--gsv', 'Usage: node homepage/scripts/build.mjs --gsv /path/to/separate/GSV/checkout');
 const home = resolve(dirname(fileURLToPath(import.meta.url)), '..');
+assert.equal(execFileSync('git', ['status','--porcelain','--','homepage','.github/workflows/notation-homepage.yml','LICENSE'], {cwd:resolve(home,'..'),encoding:'utf8'}).trim(), '', 'Homepage build inputs must match committed corresponding source');
 const gsv = await realpath(resolve(process.argv[3]));
 assertIndependentCheckouts(await realpath(resolve(home, '..')), gsv);
 const pin = validatePin(JSON.parse(await readFile(join(home, 'gsv.lock.json'), 'utf8')));
@@ -49,6 +50,13 @@ try {
   await writeFile(join(stage, 'exhibit/index.html'), hardenExhibitHtml(await readFile(join(stage, 'exhibit/index.html'), 'utf8')));
   await mkdir(join(stage, 'licenses'));
   await cp(join(gsv, 'LICENSE'), join(stage, 'licenses/GSV-GPL-3.0.txt'));
+  const notices = [];
+  for (const [name, licenseFile] of [['three','LICENSE'], ['topojson-client','LICENSE'], ['vite','LICENSE.md']]) {
+    const packageRoot = join(gsv, 'node_modules', name);
+    const pkg = JSON.parse(await readFile(join(packageRoot,'package.json'),'utf8'));
+    notices.push(`${name} ${pkg.version}\n${await readFile(join(packageRoot,licenseFile),'utf8')}`);
+  }
+  await writeFile(join(stage, 'licenses/THIRD-PARTY-NOTICES.txt'), notices.join('\n\n---\n\n'));
   await mkdir(join(stage, 'source'));
   await writeFile(join(stage, 'source/gsv-source.tar.gz'), execFileSync('git', ['archive', '--format=tar.gz', '--prefix=gsv/', pin.commit], { cwd: gsv, maxBuffer: 50 * 1024 * 1024 }));
   const shellCommit = execFileSync('git', ['rev-parse', 'HEAD'], { cwd: home, encoding: 'utf8' }).trim();
@@ -61,7 +69,7 @@ try {
     gsv: pin,
     domainRecords: provenance,
     publicSurface: { staticOnly: true, canonicalWrites: false, evidenceAdmission: false, liveProvider: false, connectedAdapters: false },
-    distributionChanges: ['Remove external Google Fonts links from GSV built HTML; retain local fallback fonts.', 'Add read-only CSP and no-referrer policy to GSV built HTML. No GSV source or status-chip changes.'],
+    distributionChanges: ['Remove external Google Fonts links from GSV built HTML; retain local fallback fonts.', 'Add read-only CSP and no-referrer policy to GSV built HTML. No packaging-time source or status-chip changes; responsive layout is part of the pinned GSV source.'],
     sha256: await fileHashes(stage),
   }, null, 2) + '\n');
   await rm(destination, { recursive: true, force: true });
