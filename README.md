@@ -1,114 +1,56 @@
-# Frame Mapper
+# Notations FrameMapper
 
-**Map supplied system state into explicit spatial, temporal and relational representations.**
+**Inspect spatial and temporal system representations while keeping source and entity context visible.**
 
-[Notation Systems](#notation-systems) · [Bounded workloads](#bounded-workloads-and-expertise-amplification) ·
-[Run the application](#run-the-existing-application) ·
-[Technical reference](TECHNICAL_REFERENCE.md) · [Security policy](SECURITY.md) ·
-[Copyright and licence](#copyright-and-attribution)
+[Run](#run-the-existing-application) · [Technical reference](TECHNICAL_REFERENCE.md) · [Research profile](#bounded-workloads-and-expertise-amplification) · [Security policy](SECURITY.md) · [Licence](LICENSE)
 
 ## NET micro-tool
 
 | Identity | Value |
 | --- | --- |
-| User-facing name | **Frame Mapper** |
+| User-facing name | **FrameMapper** |
 | Proposed NET operation | `spatial.map` |
-| Implementation repository | `Geospatial-Systems-Compiler` |
+| Current repository | `Notations-FrameMapper-RunTime` |
 | Existing project identity | Geospatial Systems Compiler / GSC |
-| Current scope | Existing browser inspection application; broader representation compilation and coordinate/frame adapters remain explicitly scoped integration work |
+| Current scope | Browser inspection application; broader representation compilation and frame adapters remain scoped integration work |
 
-The friendly name describes the representation capability to expose through
-[Notations Systems Terminal (NET)](https://github.com/giasonpooni/Notations-Systems-Terminal).
-`spatial.map` is an interface target, **not a newly implemented terminal command
-or a claim that arbitrary coordinate, Blender, Godot, Bevy or GIS conversions
-already work**. Existing application routes and configuration remain unchanged.
-The micro-tool does not replace GSC's broader representation responsibilities.
-
-GSC is the representation and inspection project in Notation Systems. Its
-existing browser application grew from Payload Terminal V0; the broader
-compiler and cross-project handoffs remain explicitly scoped integration work.
+`spatial.map` is an interface target, **not a newly installed Terminal command or proof that arbitrary coordinate, GIS, Blender or game-engine conversions work**. The existing browser application grew from Payload Terminal V0. Its route, package and configuration identities remain unchanged.
 
 ## Notation Systems
 
-[**Notation Systems**](https://notation.systems) develops evidence-backed
-industrial intelligence, computational instrumentation and tooling for physical
-systems. The purpose is to connect domain expertise, observations and declared
-models to inspectable computation, justified decisions and bounded production
-work. The service direction remains **verify → refresh → reconstruct** for an
-agreed scope, not generic AI output or an assumed universal digital twin.
+**Frontier Tooling and Instrumentation for Digital Futures.** Notation Systems develops computational instruments and operational tooling that connect scientific methods, specialized computation and human expertise.
 
-| Identity | Responsibility |
-| --- | --- |
-| **PAYLOAD** | Physical-economy and operational context: organizations, facilities, materials, shipments/custody and network dependencies; Caravan retains its movement/logistics interfaces. |
-| **LANDSHARK** | Land, parcels, sites, ownership/use, access, development and spatial constraints. |
-| **TRADEWIND** | Contracts, prices, commitments, exposure and physical-economic/market analysis. |
-| **PayloadOS / ESM** | Governed industrial evidence, identity, state, admission and release responsibilities; not replaced by GSC or NET. |
-| **Dossier Services** | Scoped service delivery and compilation of permitted customer-facing outputs. |
-| **NET** | The shared programmable workbench/control plane; existing NET / `net` / `ciw` identities remain intact. |
-| **Cartesian Graphics** | Notation Systems' games, graphics, physics and simulation studio/label; 1792 is primary, Garibaldi secondary, Geronimo on hold. |
+PAYLOAD and Caravan retain physical-economy/logistics roles; LANDSHARK retains land/site context; TRADEWIND retains contract, price and exposure analysis. PayloadOS/ESM govern industrial evidence and state; Dossier Services packages permitted outputs. These are domain responsibilities, not newly deployed services.
 
-Manufacturing, robotics, materials/chemistry, GIS/remote sensing, DSP, scientific
-computing and analytics are engineering workload families, not additional public
-product rooms or claims of completed integrations. The parent/studio relationship
-does not assert a separately incorporated subsidiary.
-
-**Shared primitives; separate state authority.** GSC remains an industrial
-representation component, not a game engine. NET remains the shared workbench;
-specialist repositories retain their mathematics, implementations and licences.
-ESM retains evidence, admission and release authority. Game-owned simulation state
-and clocks do not become industrial evidence through shared tools or parentage.
-Evidence, operation, execution and verification identities remain distinct.
-
-The work is by **[Giason Pooni](https://github.com/giasonpooni)**, with contributor
-and upstream attribution retained. Each repository keeps its own implementation,
-status and licence. Website publication and repository availability are separate;
-a project link does not imply that a hosted demo or released game exists.
+[Notations Systems Terminal](https://github.com/giasonpooni/Notations-Systems-Terminal) is the shared workbench. **Cartesian Graphics** develops interactive worlds, simulation technology and digital IP: 1792 primary, Hero of the Two Worlds secondary, Geronimo on hold. Public-interest tooling and private creative work do not themselves establish nonprofit status, transfer rights or merge state authority. [Public profile](https://github.com/giasonpooni/Notations-Systems-Terminal/blob/b41b84922d4963a9206202029afd1e78b9451f9c/PUBLIC_POSITIONING.md).
 
 ## Role, contribution and status
 
-| Field | This project |
-| --- | --- |
-| Role | Frame/state representation tool backed by GSC's representation compilation and browser inspection work; portfolio category: **Tools**, with simulation applications. |
-| Author's work | System design, application development, provenance-aware records, integration and inspection workflows built on credited foundations. |
-| Technology | TypeScript, Next.js, React and MapLibre. |
-| Status | Existing map-led physical-economy application; broader compiler, GSV/ESM and workbench integrations are not implied complete. |
+An existing TypeScript/Next.js/React/MapLibre application with provenance-aware records and inspection workflows built on credited foundations. General compiler, coordinate and cross-repository handoffs must be qualified individually. GSC is not a game engine or a second scientific runtime.
+
+Original contributions include system design, application development, representation and integration work. Specialist providers retain their mathematics; ESM retains admission/release authority; games retain live state, clocks and creative approval.
 
 ## Bounded workloads and expertise amplification
 
-GSC's contribution to the intended expertise-to-artifact workflow is **explicit
-representation**, not automatic truth creation. A reviewed site, terrain or
-historical-world specification can request a scoped transformation; it must
-retain source identities, units, coordinate frames, clocks, uncertainty and the
-difference between measurements, estimates and simulation. Oral accounts and
-expert heuristics remain attributed inputs until the relevant domain reviews them.
+**Research question:** what identity, spatial, temporal and provenance information must survive a representation transformation? A useful comparison tests preserved queries, frame/unit mistakes, stale source versions and loss of relevant context—not just visual resemblance.
 
-NET coordinates the work; GSC owns its declared transformations; GSV projects
-read-only; ESM admits industrial evidence under its own policy. A game's accepted
-terrain or scene remains game-owned. Cross-domain composition requires compatible
-versioned contracts, not a universal ontology or shared mutable world state.
+The wider programme builds instruments while testing their composition. NISE can propose relevant structure; FrameMapper's role is explicit representation, not automatic truth creation. A valid adapter needs declared semantics and reference tests. Python, Julia, Rust and C++ are possible external providers, not reasons to rewrite this TypeScript application or claim universal translation.
 
-General expertise capture, dependency-aware invalidation/rebuilds and bounded
-agent execution are development targets. Logical domain containers and MCP tool
-interfaces do not themselves establish OS isolation. Python, Julia, Rust and C++
-providers are optional explicit bindings, not an automatic language translator
-or a reason to replace this TypeScript implementation. Evaluate accepted,
-integrated work against human effort, cost, rework and domain-specific quality;
-no cross-domain productivity gain is asserted by this README.
+Measure task fidelity, transfer effort, runtime, memory and human review under fixed conditions. CUDA, automatic telemetry and provably minimum representations are not added by this documentation. [Research protocol](https://github.com/giasonpooni/Notations-Systems-Terminal/blob/b41b84922d4963a9206202029afd1e78b9451f9c/RESEARCH_PROGRAMME.md).
 
 ## Portfolio, explorer and workbench
 
 The intended **notation.systems public site is a thin, read-only organization
 shell**, not an operational launcher or a game engine. GSV is its only interactive
-globe and must remain visibly labelled `synthetic:demo`; GSC / Frame Mapper is a
+globe and must remain visibly labelled `synthetic:demo`; GSC / FrameMapper is a
 repository link only. PAYLOAD, TRADEWIND and LANDSHARK remain text identities,
 not operational launchers. Compiler servers, live providers, operational credentials,
 NET operations and ESM admission do not belong in that public bundle. This README
 documents the boundary; it does not deploy or alter the website.
 
-GSC remains a separately scoped application. NET retains investigation and
-execution history; specialist providers retain mathematical authority; ESM
-retains its own evidence and release boundaries. A display or navigation link
-does not authorize a computation or publish a private record.
+GSC remains a separately scoped application. A display link neither authorizes
+computation nor publishes a private record. The intended hosted Terminal at
+`notations.io` is a separate service direction, not a deployment claim here.
 
 The current application includes **write-capable freight APIs**. The intended
 read-only demonstration/explorer boundary does **not** describe every existing
@@ -127,14 +69,12 @@ not a new parallel project.
 
 ## Technical reference
 
-[TECHNICAL_REFERENCE.md](TECHNICAL_REFERENCE.md) preserves the complete previous
+[TECHNICAL_REFERENCE.md](TECHNICAL_REFERENCE.md) preserves the complete prior
 technical README verbatim, including configuration, route boundaries, collection
-policy, origin, licensing and acceptance criteria. It stays at the repository
-root to preserve relative link bases. This overview supersedes older user-facing
-positioning, not implementation limitations or operational policies.
+policy, origin, licensing and acceptance criteria. It remains unchanged at the
+repository root, preserving relative link bases.
 
-See also the [physical-economy design](docs/PHYSICAL_ECONOMY.md),
-[architecture ledger](docs/ARCHITECTURE_LEDGER.md) and [deployment guide](DOCKER.md).
+See the [physical-economy design](docs/PHYSICAL_ECONOMY.md), [architecture ledger](docs/ARCHITECTURE_LEDGER.md) and [deployment guide](DOCKER.md). This documentation changes no source, workflow, licence or deployment and claims no new runtime or browser qualification.
 
 The existing collection-policy block is retained unchanged below.
 
@@ -182,13 +122,6 @@ Registration was never the only door.
 
 ## Copyright and attribution
 
-**© 2026 Giason Pooni, for original contributions.** The Notation Systems parent
-and Cartesian Graphics studio relationship does not claim ownership of inherited
-code or third-party dependencies.
+**© 2026 Giason Pooni, for original contributions.** The Notation Systems and Cartesian Graphics relationship does not claim ownership of inherited code or third-party dependencies.
 
-This project began as a fork of [simplifaisoul/osiris](https://github.com/simplifaisoul/osiris)
-and retains its map/rendering foundation. The inherited MIT grant and notices
-remain applicable to that code. The project-wide **GNU GPL v3.0** terms remain
-in [LICENSE](LICENSE); contributor and dependency notices remain in force.
-This documentation update does not relicense code or add an incompatible
-blanket “all rights reserved” restriction.
+This project began as a fork of [simplifaisoul/osiris](https://github.com/simplifaisoul/osiris) and retains its map/rendering foundation. The inherited MIT grant and notices remain applicable to that code. The project-wide **GNU GPL v3.0** terms remain in [LICENSE](LICENSE); contributor and dependency notices remain in force. This documentation does not relicense code or add an incompatible blanket restriction.
