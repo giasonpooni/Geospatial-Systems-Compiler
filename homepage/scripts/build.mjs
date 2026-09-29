@@ -23,7 +23,8 @@ assert.equal(JSON.parse(await readFile(join(gsv, 'package.json'), 'utf8')).name,
 for (const seam of ['scripts/check-seam.mjs', 'scripts/validate-provenance.mjs']) assert.ok((await readFile(join(gsv, seam), 'utf8')).length > 0);
 const html = await readFile(join(home, 'public/index.html'), 'utf8');
 const css = await readFile(join(home, 'public/site.css'), 'utf8');
-assertShell(html, css);
+const script = await readFile(join(home, 'public/windows.js'), 'utf8');
+assertShell(html, css, script);
 
 // Deliberately do not forward PAYLOAD_*, VITE_*, tokens, or operator environment.
 const env = Object.fromEntries(['PATH', 'HOME', 'TMPDIR', 'TMP', 'TEMP', 'SystemRoot', 'WINDIR'].filter(key => process.env[key]).map(key => [key, process.env[key]]));
@@ -44,8 +45,8 @@ const destination = join(home, 'dist');
 await rm(stage, { recursive: true, force: true });
 try {
   await mkdir(stage, { recursive: true });
-  // Four explicit shell files; never recursively copy the GSC repository.
-  for (const name of ['index.html', 'site.css', 'favicon.svg', '404.html']) await cp(join(home, 'public', name), join(stage, name));
+  // Five explicit shell files; never recursively copy the GSC repository.
+  for (const name of ['index.html', 'site.css', 'windows.js', 'favicon.svg', '404.html']) await cp(join(home, 'public', name), join(stage, name));
   await cp(join(gsv, 'dist'), join(stage, 'exhibit'), { recursive: true });
   await writeFile(join(stage, 'exhibit/index.html'), hardenExhibitHtml(await readFile(join(stage, 'exhibit/index.html'), 'utf8')));
   await mkdir(join(stage, 'licenses'));
@@ -68,6 +69,8 @@ try {
     shellCommit,
     gsv: pin,
     domainRecords: provenance,
+    presentation: 'exhibition-with-company-windows',
+    legalDocuments: { privacy: 'https://notation.systems/privacy-policy', terms: 'https://notation.systems/terms-of-service', source: 'Existing Webflow pages; linked, not rewritten or bundled. Preserve these routes on domain cutover.' },
     publicSurface: { staticOnly: true, canonicalWrites: false, evidenceAdmission: false, liveProvider: false, connectedAdapters: false },
     distributionChanges: ['Remove external Google Fonts links from GSV built HTML; retain local fallback fonts.', 'Add read-only CSP and no-referrer policy to GSV built HTML. No packaging-time source or status-chip changes; responsive layout is part of the pinned GSV source.'],
     sha256: await fileHashes(stage),

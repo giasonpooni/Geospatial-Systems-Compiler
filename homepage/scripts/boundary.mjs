@@ -3,7 +3,7 @@ import { createHash } from 'node:crypto';
 import { readdir, readFile, lstat } from 'node:fs/promises';
 import { join, posix, resolve, sep } from 'node:path';
 
-export const SHELL_CSP = "default-src 'none'; style-src 'self'; img-src 'self' data:; frame-src 'self'; script-src 'none'; connect-src 'none'; object-src 'none'; base-uri 'none'; form-action 'none'";
+export const SHELL_CSP = "default-src 'none'; style-src 'self'; img-src 'self' data:; frame-src 'self'; script-src 'self'; connect-src 'none'; object-src 'none'; base-uri 'none'; form-action 'none'";
 // Existing GSV HUD uses inline style properties. No inline JavaScript is allowed.
 export const EXHIBIT_CSP = "default-src 'none'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self'; connect-src 'self'; object-src 'none'; base-uri 'none'; form-action 'none'; frame-src 'none'; worker-src 'none'";
 export const DOMAIN_COLLECTIONS = ['nodes', 'routes', 'flows', 'commodities', 'events', 'constraints', 'assertions', 'observations'];
@@ -75,24 +75,39 @@ export function hardenExhibitHtml(html) {
   return html.replace(/<head>/i, `<head>\n    <meta http-equiv="Content-Security-Policy" content="${EXHIBIT_CSP}">\n    <meta name="referrer" content="no-referrer">`);
 }
 
-export function assertShell(html, css) {
-  assert.equal([...html.matchAll(/<iframe\b/gi)].length, 1, 'Exactly one exhibit iframe');
-  assert.match(html, /<iframe[^>]+src="\.\/exhibit\/"/);
+export function assertShell(html, css, script) {
+  assert.equal([...html.matchAll(/<iframe\b/gi)].length, 1, 'Exactly one existing GSV client');
+  assert.match(html, /<iframe[^>]+src="\.\/exhibit\/\?presentation=exhibit"/);
   assert.match(html, /sandbox="allow-scripts allow-same-origin"/);
-  assert.match(html, /id="build-status"[^>]*>[\s\S]*?Synthetic snapshot<\/span>/);
   assert.ok(html.includes(SHELL_CSP), 'Shell CSP missing');
-  assert.doesNotMatch(html, /<script\b|<form\b|<input\b|<canvas\b|<base\b|\bon[a-z]+\s*=/i);
+  const scripts = [...html.matchAll(/<script\b([^>]*)>([\s\S]*?)<\/script>/gi)];
+  assert.equal(scripts.length, 1, 'Only the local company-window module is permitted');
+  assert.equal(scripts[0][1].trim(), 'type="module" src="./windows.js"');
+  assert.equal(scripts[0][2].trim(), '', 'No inline script');
+  assert.doesNotMatch(html, /<form\b|<input\b|<canvas\b|<base\b|\bon[a-z]+\s*=/i);
   assert.doesNotMatch(html, FORBIDDEN_COPY);
   assert.doesNotMatch(html, BLOCKED_BUNDLE_TEXT);
   assert.doesNotMatch(css, /@import\b|\burl\s*\(|pe-sb-chip|pe-statusbar|\bexpression\s*\(/i);
-  const allowedLinks = new Set(['#main', '#exhibit', '#architecture', '#sources', './favicon.svg', './site.css', './exhibit/', './build-manifest.json', './licenses/GSV-GPL-3.0.txt', './source/gsv-source.tar.gz', './source/homepage-source.tar.gz', 'https://github.com/giasonpooni/Geospatial-State-Visualization', 'https://github.com/giasonpooni/Geospatial-Systems-Compiler', 'https://notation.systems']);
+  assert.equal(typeof script, 'string', 'Review the shipped window module too');
+  assert.doesNotMatch(script, /fetch\s*\(|XMLHttpRequest|WebSocket|EventSource|sendBeacon|postMessage|contentWindow|contentDocument|payloadEarth|localStorage|sessionStorage|document\.cookie|import\s*\(|eval\s*\(|new\s+Function/i);
+  assert.doesNotMatch(script, BLOCKED_BUNDLE_TEXT);
+  const allowedLinks = new Set(['#main', '#about', '#contact', '#licences', './favicon.svg', './site.css', './build-manifest.json', './licenses/GSV-GPL-3.0.txt', './licenses/THIRD-PARTY-NOTICES.txt', './source/gsv-source.tar.gz', './source/homepage-source.tar.gz', 'https://github.com/giasonpooni/Geospatial-State-Visualization', 'https://github.com/giasonpooni/Geospatial-Systems-Compiler', 'https://notation.systems/privacy-policy', 'https://notation.systems/terms-of-service', 'mailto:info@notationsystems.com']);
   for (const match of html.matchAll(/\bhref="([^"]+)"/g)) assert.ok(allowedLinks.has(match[1]), `Unreviewed link: ${match[1]}`);
-  const surfaces = /<div class="surfaces"[\s\S]*?<\/div>/.exec(html)?.[0] ?? '';
-  for (const name of ['PAYLOAD', 'TRADEWIND', 'LANDSHARK']) assert.ok(surfaces.includes(name));
-  assert.doesNotMatch(surfaces, /<a\b|<button\b|<form\b/i, 'Product identities are not launchers');
-  assert.ok(html.indexOf('class="org-strip"') < html.indexOf('id="exhibit"'));
-  assert.ok(html.indexOf('id="exhibit"') < html.indexOf('id="architecture"'));
-  assert.ok(html.indexOf('id="architecture"') < html.indexOf('id="sources"'));
+  for (const id of ['about', 'contact', 'licences']) {
+    assert.match(html, new RegExp(`<dialog id="${id}"[^>]*aria-labelledby="${id}-title"`));
+    const body = new RegExp(`<dialog id="${id}"[\\s\\S]*?<\\/dialog>`).exec(html)?.[0] ?? '';
+    assert.match(body, /class="window-close"[^>]*data-close[^>]*aria-label="Close /);
+  }
+  const about = /<dialog id="about"[\s\S]*?<\/dialog>/.exec(html)?.[0] ?? '';
+  const domains = /<dl class="domains"[\s\S]*?<\/dl>/.exec(about)?.[0] ?? '';
+  for (const name of ['PAYLOAD', 'TRADEWIND', 'LANDSHARK']) assert.ok(domains.includes(name));
+  assert.doesNotMatch(domains, /<a\b|<button\b|<form\b/i, 'Domains are identities, not launchers');
+  for (const name of ['Modelling', 'Simulation', 'Compilation', 'Verification']) assert.ok(about.includes(`<dt>${name}</dt>`));
+  assert.ok(about.includes('We turn heterogeneous industrial observation into verified state you can inspect, price, and move.'));
+  const landing = html.slice(html.indexOf('<body>'), html.indexOf('<dialog'));
+  assert.doesNotMatch(landing, /PAYLOAD|TRADEWIND|LANDSHARK|class="pipeline"|<table/i);
+  assert.match(landing, /class="primary-nav"[\s\S]*?>About<\/a>[\s\S]*?>Contact<\/a>/);
+  assert.ok(landing.includes('class="legal-footer"'));
 }
 
 export async function filesUnder(root, prefix = '') {

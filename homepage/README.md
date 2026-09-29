@@ -1,26 +1,67 @@
-# Notation Systems — read-only homepage
+# Notation Systems — exhibition homepage
 
-A static organization homepage with the existing **Geospatial State
-Visualization (GSV)** production client as its only interactive globe.
+**One globe. Notation Systems at the upper left; About and Contact at the upper
+right; legal links centered along the bottom.** Company information is in
+closable, same-page windows, not a long landing page or repository census.
 
-**Publish `homepage/dist/` only.** This is not a GSC application route. Do not
-publish the repository root, `.next`, or the compiler's Docker image as this
-homepage. The older Next `/notation` and `/explore` proposal is not used.
+Publish **`homepage/dist/` only**, never GSC's repository root, Next server,
+`.next` directory or Docker image. This remains an independently built static
+homepage. No operational compiler, evidence store, backend, live provider or
+canonical write path is included.
 
-## The page
+## Presentation
 
-Organization → synthetic exhibit → responsibility table → sources and policy.
-PAYLOAD, TRADEWIND and LANDSHARK are text identities, not launch buttons. The
-shell has no JavaScript, forms, tracking, lookup or command bridge. It remains
-readable without JavaScript; the globe requires JavaScript and WebGL.
+The homepage embeds the existing GSV production client with the explicit
+`?presentation=exhibit` view option. Geographic contours are rendered on the
+existing sphere in a square viewport: no horizontal/vertical stretching and no
+new renderer. The original generalized cartography and schematic textures are
+retained. This is not a survey-grade ellipsoid, literal physical 1:1 Earth,
+satellite photograph, or connected digital twin.
 
-The sticky shell label and original GSV chip both disclose synthetic data.
-GSV projects a validated immutable snapshot. It does not admit evidence,
-retain canonical corpora, operate investigations, or connect live adapters.
+At arrival, thematic overlays, automatic rotation and dashboard panels are off.
+Drag and wheel remain available; `/` inside the frame reveals the existing view
+commands and Escape puts the controls away. The original synthetic-data warning
+chip remains visible and unchanged. The ordinary `/exhibit/` inspection view is
+still available. No domain record or provider is changed by the presentation.
 
-## Build and preview
+About holds the firm's purpose, three domains and four crafts. Contact uses the
+email displayed on the existing company Contact page, with a `mailto:` link;
+no form is copied, submitted or stored by this page. The email's delivery has not
+been tested. Neither placeholder phone numbers nor template addresses are used.
 
-Use **Node.js 24+**, Git and npm. From this repository's root:
+## Company windows
+
+A small, locally served `windows.js` module opens native HTML dialogs. About,
+Contact and Licences each have a labelled top-right × control, Escape dismissal,
+keyboard focus containment and focus return. The underlying globe is inert
+while a modal is open and is not reloaded when it closes. Without JavaScript,
+same-document anchors and a `:target` fallback expose the same content and close
+controls; those fallback windows are not represented as native modal dialogs.
+
+This intentionally extends the earlier zero-script shell with **one UI-only
+module**. CSP permits that local script while keeping `connect-src 'none'`.
+The module has no network, storage, forms, message bridge or frame access.
+
+## Legal links and publication
+
+Privacy and Terms link to the existing company document destinations:
+`https://notation.systems/privacy-policy` and
+`https://notation.systems/terms-of-service`. These documents are **not rewritten
+or bundled** in this revision. The centered Licences window links to bundled
+GPL/third-party notices and corresponding source archives.
+
+Those existing Webflow legal documents still contain template-era statements
+and mailto targets inconsistent with their displayed addresses. They require a
+separate review; this design change does not silently amend an existing policy.
+Preserve or intentionally migrate the existing legal routes before a hostname
+cutover. Deploying this artifact alone at `/` does not create those legal paths.
+No Webflow publication, DNS change or domain cutover is performed by this build.
+
+## Independent build
+
+Use **Node.js 24+**, Git and npm. Keep the source repositories as filesystem
+siblings so Vite does not discover GSC's PostCSS configuration in an ancestor.
+From this repository root:
 
 ```sh
 git clone https://github.com/giasonpooni/Geospatial-State-Visualization.git ../gsv-homepage
@@ -32,74 +73,29 @@ node homepage/scripts/build.mjs --gsv ../gsv-homepage
 node homepage/scripts/serve.mjs homepage/dist 4173
 ```
 
-Open `http://127.0.0.1:4173`. The preview utility binds only to loopback,
-permits GET/HEAD and returns actual 404s for missing/API paths. It is not in
-the public artifact. Do not install or start the parent GSC application.
+Both trees must match committed build inputs and the full immutable GSV pin.
+The builder runs GSV's original `npm run build` / `npm run check`, validates the
+actual synthetic dataset, and packages only eligible static files. The shell
+and GSV remain separate packages; the compiler is never installed or started.
+Build subprocesses receive a small environment allowlist, not operator values.
 
-The two repositories must be separate filesystem siblings, not nested:
-Vite/PostCSS can otherwise discover GSC configuration in a parent folder.
-Both sets of build inputs must match their committed corresponding source.
-The full GSV commit is pinned in `gsv.lock.json`, never a moving branch.
+Only expected Vite assets and the existing two background topology files enter
+the exhibit. Every domain record must retain `provenance.source='synthetic:demo'`.
+Remote font links are removed from built HTML only; no font files are shipped.
+The original seam and immutable-snapshot tests remain mandatory. Package/browser
+identities `payload-earth`, `window.payloadEarth`, and `payload:spatial` remain.
 
-## Exhibit boundary
+## Acceptance
 
-The builder runs the original GSV `npm run build`, including `npm run check`:
-seams, provenance, provider/immutable replacement regressions and TypeScript.
-An additional gate evaluates the actual synthetic dataset and requires every
-domain record to have `provenance.source = 'synthetic:demo'`. Missing, mixed,
-nested non-synthetic and empty domain data refuse packaging.
+The homepage workflow uses Node 24, separate GSV source, provenance and boundary
+regressions, the original GSV test/build sequence, and real Chromium testing.
+It checks desktop, tablet, phone and landscape exhibition viewports, square
+rendering, header/footer geometry, synthetic chip, native dialog X/Escape/focus,
+no iframe reload, drag/zoom, immutable state, four view-command hints, retained
+full inspection, and usable no-JavaScript windows. Resource requests must stay
+local and read-only. Operational routes return actual 404s; writes return 405.
 
-Only expected Vite assets and the two existing background topology files
-enter the exhibit. Background geography is not an official industrial data
-pack. No live provider or exporter is implemented. Compatibility identities
-`payload-earth`, `window.payloadEarth` and `payload:spatial` remain intact.
-
-The pinned GSV revision includes a small additive responsive HUD stylesheet.
-Production browser testing found that the original chip overflowed a 390px
-viewport. The fix wraps the metrics and controls, prioritizes the original
-chip and separates the timeline. It does not change provider, store,
-renderer, command implementations, chip wording, warning colors or type.
-See the corresponding source archive and GSV's responsive-exhibit notes.
-
-Packaging removes external Google Fonts links from built HTML only and adds
-restrictive policies. No font files, credentials, backend, API handlers,
-ESM store or NET runtime are included. Build subprocesses receive a small
-environment allowlist; `.env` files in the GSV checkout are refused.
-
-## Static deployment
-
-Use a dedicated static origin with **no operational upstream**. Upload only
-`homepage/dist/`, retain the directory structure, allow GET/HEAD, and return
-404 for missing paths. Never proxy or rewrite `/api/economy`, `/api/freight`,
-`/operations` or `spatial.map` to GSC. Do not configure an SPA fallback.
-
-Apply `_headers` on compatible hosts or equivalent host policies; both HTML
-entrypoints also carry CSP meta tags. The shell cannot make network requests;
-the exhibit can read same-origin static files. The iframe's same-origin
-sandbox is not protection against malicious same-origin code. The meaningful
-boundaries are the reviewed pin, static-only bundle, no bridge or credentials,
-and hosting with no compiler upstream. Host routing must be verified after
-publication; passing artifact tests does not establish a domain cutover.
-
-No DNS, existing domain, live Webflow page or operational deployment is
-changed by this workflow. It produces artifacts, not an automatic deployment.
-
-## Tests and retained evidence
-
-`.github/workflows/notation-homepage.yml` uses Node 24 and sibling checkouts,
-without installing or starting GSC. It runs 19 homepage boundary regressions,
-the original GSV suite and production build, then actual Chromium acceptance
-at 1440, 768, 390 and 320px widths. Checks cover the original chip and control
-bounds, all four command hints, unchanged immutable synthetic data, local-only
-read requests, missing operational routes and a JavaScript-disabled shell.
-
-`homepage/evidence/` holds screenshots, the browser report and dependency
-audit reports. Development-tool advisories are recorded without upgrading the
-upstream lockfile; the production-only audit is checked separately. A failed
-browser build is retained for two days as explicitly non-release diagnostics.
-Only a passing run produces the approved `notation-static-homepage` artifact.
-
-For local browser acceptance, install Playwright outside both repositories:
+A local browser run uses isolated Playwright tooling, not a shipped dependency:
 
 ```sh
 npm install --prefix /tmp/notation-browser --ignore-scripts --no-audit --no-fund playwright@1.55.1
@@ -107,14 +103,20 @@ node /tmp/notation-browser/node_modules/playwright/cli.js install --with-deps ch
 PLAYWRIGHT_MODULE=/tmp/notation-browser/node_modules/playwright/index.mjs node homepage/tests/browser-smoke.mjs
 ```
 
-## Scope, source and notices
+Artifacts retain screenshots, source/build pins, per-file SHA-256 hashes,
+commands, UI checks and dependency-audit results. A passing build is not a live
+site migration. The preview utility is loopback-only and is not in the bundle.
 
-No natural-person profiling or dossiers; no phones, MAIDs, ad-tech location,
-breach corpora, host/port scanning or intelligence lookup. No person path on
-this public surface. No sanctions feature or live provider is added.
+## Host and source boundary
 
-Author: **Giason Pooni**. Homepage and shown tools: **GPL-3.0**. The artifact
-includes the GPL notice, bundled dependency notices, corresponding source
-archives and a manifest with source commits and SHA-256 file digests. Source
-archives contain only public GSV source and this homepage's build inputs,
-not the compiler application. They are static downloads, not server code.
+Use a static origin without an operational upstream. Apply `_headers` or
+host-equivalent browser policies; both HTML entrypoints carry CSP meta tags.
+Never proxy `/api/economy`, `/api/freight`, `/operations` or `spatial.map` to GSC;
+do not add an SPA fallback. The same-origin iframe sandbox is not isolation from
+malicious same-origin code: reviewed source, absence of credentials/bridges and
+correct static hosting are the meaningful boundaries.
+
+No person path. Author: **Giason Pooni**. Homepage and shown tools: **GPL-3.0**,
+with third-party notices and scoped corresponding source retained. The firm's
+public domains are PAYLOAD, TRADEWIND and LANDSHARK; games and internal plant do
+not become homepage products.

@@ -8,6 +8,7 @@ import { startStaticServer } from '../scripts/serve.mjs';
 const publicRoot = new URL('../public/', import.meta.url);
 const html = await readFile(new URL('index.html', publicRoot), 'utf8');
 const css = await readFile(new URL('site.css', publicRoot), 'utf8');
+const script = await readFile(new URL('windows.js', publicRoot), 'utf8');
 const pin = JSON.parse(await readFile(new URL('../gsv.lock.json', import.meta.url), 'utf8'));
 const snapshot = () => Object.fromEntries(DOMAIN_COLLECTIONS.map(key => [key, [{id: `${key}:fixture`, provenance: {source: 'synthetic:demo'}}]]));
 const sampleHtml = '<html><head><link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Inter" rel="stylesheet"><link href="./assets/index-abc.css" rel="stylesheet"></head><body><canvas id="scene"></canvas><p>SYNTHETIC DATA</p><script type="module" src="./assets/index-abc.js"></script></body></html>';
@@ -23,17 +24,17 @@ async function fixture(t) {
   return root;
 }
 
-test('the real shell follows page order and has exactly one static GSV frame', () => assertShell(html, css));
-test('product identities cannot turn into launch buttons', () => assert.throws(() => assertShell(html.replace('<strong>PAYLOAD</strong>', '<button>PAYLOAD</button>'), css)));
-test('new compiler or operator links are rejected', () => assert.throws(() => assertShell(html.replace('href="#sources"', 'href="/api/economy/orders"'), css)));
+test('the real shell follows page order and has exactly one static GSV frame', () => assertShell(html, css, script));
+test('product identities cannot turn into launch buttons', () => assert.throws(() => assertShell(html.replace('<dt>PAYLOAD</dt>', '<button>PAYLOAD</button>'), css, script)));
+test('new compiler or operator links are rejected', () => assert.throws(() => assertShell(html.replace('href="#about"', 'href="/api/economy/orders"'), css, script)));
 test('a second map or script in the shell is rejected', () => {
-  assert.throws(() => assertShell(html.replace('</main>', '<canvas></canvas></main>'), css));
-  assert.throws(() => assertShell(html.replace('</main>', '<script src="x.js"></script></main>'), css));
+  assert.throws(() => assertShell(html.replace('</main>', '<canvas></canvas></main>'), css, script));
+  assert.throws(() => assertShell(html.replace('</main>', '<script src="x.js"></script></main>'), css, script));
 });
-test('marketing claims outside the brief are rejected', () => assert.throws(() => assertShell(html.replace('Industrial information', 'Live copper intelligence'), css)));
+test('marketing claims outside the brief are rejected', () => assert.throws(() => assertShell(html.replace('Industrial information', 'Live copper intelligence'), css, script)));
 test('CSS cannot import remote assets or target the original synthetic chip', () => {
-  assert.throws(() => assertShell(html, css + '@import "https://example.org/a.css";'));
-  assert.throws(() => assertShell(html, css + '.pe-sb-chip{display:none}'));
+  assert.throws(() => assertShell(html, css + '@import "https://example.org/a.css";', script));
+  assert.throws(() => assertShell(html, css + '.pe-sb-chip{display:none}', script));
 });
 test('pin requires exact repository, full commit, source and hint list', () => {
   validatePin(pin);
@@ -106,4 +107,24 @@ test('independent Git checkouts cannot share a parent application config', () =>
   assertIndependentCheckouts('/work/homepage-source', '/work/gsv-exhibit');
   assertIndependentCheckouts('/work/gsc', '/work/gsc-other');
   for (const [shell, gsv] of [['/work/gsc', '/work/gsc'], ['/work/gsc', '/work/gsc/.gsv'], ['/work/gsv/gsc', '/work/gsv']]) assert.throws(() => assertIndependentCheckouts(shell, gsv));
+});
+
+
+test('company-window code cannot grow a network client, tracking, or globe bridge', () => {
+  for (const added of ['fetch("https://example.org")', 'window.postMessage({})', 'iframe.contentWindow', 'localStorage.setItem("key", "value")', 'document.cookie', 'eval("x")']) {
+    assert.throws(() => assertShell(html, css, script + added));
+  }
+});
+test('company windows remain labelled and independently closable', () => {
+  assert.throws(() => assertShell(html.replace('aria-labelledby="contact-title"', ''), css, script));
+  assert.throws(() => assertShell(html.replace('aria-label="Close About"', ''), css, script));
+  assert.match(script, /dialog\.showModal\(\)/);
+  assert.match(script, /dialog\.close\(\)/);
+  assert.match(script, /event\.key !== 'Tab'/);
+});
+test('company contact and existing legal destinations are explicit, not invented form handlers', () => {
+  assert.match(html, /href="mailto:info@notationsystems\.com"/);
+  assert.match(html, /href="https:\/\/notation\.systems\/privacy-policy"/);
+  assert.match(html, /href="https:\/\/notation\.systems\/terms-of-service"/);
+  assert.doesNotMatch(html, /aeye\.email|000 234|Hanoi|<form/i);
 });

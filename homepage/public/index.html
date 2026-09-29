@@ -2,77 +2,95 @@
 <html lang="en">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'self'; img-src 'self' data:; frame-src 'self'; script-src 'none'; connect-src 'none'; object-src 'none'; base-uri 'none'; form-action 'none'">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'self'; img-src 'self' data:; frame-src 'self'; script-src 'self'; connect-src 'none'; object-src 'none'; base-uri 'none'; form-action 'none'">
   <meta name="referrer" content="no-referrer">
   <title>Notation Systems</title>
-  <meta name="description" content="Provenance-bearing computational corpora for industrial systems. A read-only geographic exhibit using a deterministic synthetic snapshot.">
+  <meta name="description" content="An industrial information company. Provenance-bearing corpora for organizations, sites, parcels, shipments and contracts.">
   <meta property="og:title" content="Notation Systems">
-  <meta property="og:description" content="Provenance-bearing computational corpora for industrial systems.">
+  <meta property="og:description" content="We turn heterogeneous industrial observation into verified state you can inspect, price, and move.">
   <meta property="og:type" content="website">
   <link rel="icon" href="./favicon.svg" type="image/svg+xml">
   <link rel="stylesheet" href="./site.css">
+  <script type="module" src="./windows.js"></script>
 </head>
 <body>
-  <a class="skip-link" href="#main">Skip to content</a>
-  <header class="masthead">
-    <a class="wordmark" href="#main" aria-label="Notation Systems home"><span class="mark" aria-hidden="true">N/</span><span>Notation Systems</span></a>
-    <nav aria-label="Page sections"><a href="#exhibit">Exhibit</a><a href="#architecture">Architecture</a><a href="#sources">Sources</a></nav>
-    <span class="status-chip" id="build-status"><span aria-hidden="true">●</span> Synthetic snapshot</span>
-  </header>
-
-  <main id="main">
-    <section class="org-strip" aria-labelledby="org-title">
-      <div class="intro">
-        <p class="eyebrow">Industrial information</p>
-        <h1 id="org-title">Notation Systems</h1>
-        <p class="deck">Provenance-bearing computational corpora for industrial systems.</p>
-        <p class="description">An industrial information company operating provenance-bearing computational corpora.</p>
-      </div>
-      <div class="identity">
-        <p class="eyebrow">Shared identity</p>
-        <p class="identity-lines"><span>Organization</span><span>Site / parcel</span><span>Shipment / contract</span></p>
-      </div>
-      <p class="pipeline" aria-label="Information processing chain">Acquire → Extract → Engineer → Resolve → Index → Graph → Compute → Verify → Serve</p>
-      <div class="surfaces" aria-label="Product identities, not live applications">
-        <span><strong>PAYLOAD</strong><span>Logistics</span></span>
-        <span><strong>TRADEWIND</strong><span>Commodities</span></span>
-        <span><strong>LANDSHARK</strong><span>AEC / site</span></span>
-      </div>
-      <p class="byline">Giason Pooni <span aria-hidden="true">·</span> GPL-3.0 on the shown tools</p>
-    </section>
-
-    <section class="exhibit" id="exhibit" aria-labelledby="exhibit-title">
-      <div class="exhibit-heading">
-        <div><p class="eyebrow">01 / Exhibit</p><h2 id="exhibit-title">Geospatial State Visualization</h2><p>Read-only geographic inspection.</p></div>
-        <a class="open-exhibit" href="./exhibit/">Open exhibit on its own <span aria-hidden="true">↗</span></a>
-      </div>
-      <figure>
-        <iframe id="gsv-exhibit" src="./exhibit/" title="Geospatial State Visualization — synthetic, read-only globe" aria-describedby="exhibit-caption exhibit-status" loading="eager" sandbox="allow-scripts allow-same-origin" referrerpolicy="no-referrer" allow="camera 'none'; microphone 'none'; geolocation 'none'; payment 'none'; usb 'none'"></iframe>
-        <figcaption id="exhibit-caption">Read-only projection of a deterministic synthetic snapshot. Not live shipments, not a person map, not connected plant.</figcaption>
+  <div class="site">
+    <header class="masthead">
+      <h1><a class="wordmark" href="#main">Notation Systems</a></h1>
+      <nav class="primary-nav" aria-label="Company">
+        <a href="#about" data-window="about" aria-haspopup="dialog" aria-controls="about">About</a>
+        <a href="#contact" data-window="contact" aria-haspopup="dialog" aria-controls="contact">Contact</a>
+      </nav>
+    </header>
+    <main id="main" aria-label="Geographic exhibition">
+      <figure class="exhibition">
+        <iframe id="gsv-exhibit" src="./exhibit/?presentation=exhibit" title="Geographic globe — synthetic, read-only exhibition" aria-describedby="exhibit-description" sandbox="allow-scripts allow-same-origin" referrerpolicy="no-referrer" allow="camera 'none'; microphone 'none'; geolocation 'none'; payment 'none'; usb 'none'"></iframe>
+        <figcaption id="exhibit-description" class="visually-hidden">Read-only projection of a deterministic synthetic snapshot. Not live shipments, not a person map, not connected plant.</figcaption>
       </figure>
-      <div class="exhibit-notes">
-        <p id="exhibit-status"><strong>Synthetic snapshot.</strong> Compiler and evidence stores are separate repositories and are not running on this page.</p>
-        <div class="controls"><p>Drag to rotate · Wheel to zoom · Click to inspect · <kbd>/</kbd> command bar inside the exhibit.</p><p class="commands"><code>show maritime</code><code>show copper flows</code><code>find toronto</code><code>help</code></p></div>
-      </div>
-      <p class="fallback-note">The globe requires JavaScript and WebGL. When rendering is unavailable, the company information, source links, and synthetic-data disclosure remain readable.</p>
-    </section>
-
-    <section class="architecture content-section" id="architecture" aria-labelledby="architecture-title">
-      <div class="section-intro"><p class="eyebrow">02 / Architecture</p><h2 id="architecture-title">One view.<br>Separate responsibilities.</h2><p>Provider snapshot → validate → immutable WorldStore → globe.</p><p class="muted">A projection is not the evidence store, compiler, or investigation runtime.</p></div>
-      <div class="table-wrap"><table><caption>What runs on this page</caption><thead><tr><th scope="col">Piece</th><th scope="col">Job</th><th scope="col">On this page</th></tr></thead><tbody>
-        <tr><th scope="row">GSV</th><td>Projects</td><td><span class="table-tag">Synthetic exhibit</span></td></tr>
-        <tr><th scope="row">GSC / Frame Mapper</th><td>Compiles</td><td>Repository link only</td></tr>
-        <tr><th scope="row">ESM</th><td>Admits evidence</td><td>Not in this bundle</td></tr>
-        <tr><th scope="row">NET</th><td>Operates investigations</td><td>Not in this bundle</td></tr>
-      </tbody></table></div>
-    </section>
-
-    <footer class="content-section sources" id="sources">
-      <div><p class="eyebrow">03 / Sources</p><h2>Inspect the work.</h2><nav class="source-links" aria-label="Source repositories and organization"><a href="https://github.com/giasonpooni/Geospatial-State-Visualization" rel="noreferrer">GSV repository <span aria-hidden="true">↗</span></a><a href="https://github.com/giasonpooni/Geospatial-Systems-Compiler" rel="noreferrer">GSC repository <small>Compiler; not the public plant</small><span aria-hidden="true">↗</span></a><a href="https://notation.systems" rel="noreferrer">notation.systems <span aria-hidden="true">↗</span></a></nav></div>
-      <div class="policy"><p class="eyebrow">Collection boundary</p><h3>No person path on the public surface.</h3><p>No natural-person profiling, dossiers, phones, MAIDs, ad-tech location, breach corpora, host/port scanning, or intelligence lookups.</p><p class="muted">This exhibit inspects synthetic geographic records. It does not collect people, admit evidence, or connect to operational systems.</p></div>
-      <div class="footer-meta"><span>Notation Systems <span aria-hidden="true">/</span> Giason Pooni</span><span><a href="./build-manifest.json">Build manifest</a> <span aria-hidden="true">·</span> <a href="./licenses/GSV-GPL-3.0.txt">GPL-3.0</a> <span aria-hidden="true">·</span> <a href="./source/gsv-source.tar.gz">GSV source</a> <span aria-hidden="true">·</span> <a href="./source/homepage-source.tar.gz">Homepage source</a></span></div>
+      <noscript><p class="fallback">Synthetic geographic exhibit. JavaScript and WebGL are required for the globe. <a href="#about">About Notation Systems</a> · <a href="#contact">Contact</a></p></noscript>
+    </main>
+    <footer class="legal-footer">
+      <nav aria-label="Legal documents">
+        <a href="https://notation.systems/privacy-policy" rel="noreferrer">Privacy</a>
+        <span aria-hidden="true">·</span>
+        <a href="https://notation.systems/terms-of-service" rel="noreferrer">Terms</a>
+        <span aria-hidden="true">·</span>
+        <a href="#licences" data-window="licences" aria-haspopup="dialog" aria-controls="licences">Licences</a>
+      </nav>
     </footer>
-  </main>
+  </div>
+
+  <dialog id="about" class="window" aria-labelledby="about-title">
+    <header class="window-header"><h2 id="about-title">About</h2><a class="window-close" href="#main" data-close aria-label="Close About">×</a></header>
+    <div class="window-content">
+      <p class="eyebrow">Notation Systems · Industrial information</p>
+      <p class="purpose">We turn heterogeneous industrial observation into verified state you can inspect, price, and move.</p>
+      <p>We operate provenance-bearing computational corpora for the physical economy. Our objects are organizations, sites and parcels, shipments and contracts. We keep lineage from source to served state.</p>
+      <h3>Three domains</h3>
+      <dl class="domains" aria-label="Company domains">
+        <div><dt>PAYLOAD</dt><dd>Goods, sites and voyages.</dd></div>
+        <div><dt>TRADEWIND</dt><dd>Commodity and contract state.</dd></div>
+        <div><dt>LANDSHARK</dt><dd>Parcels, zoning, design intent and the built site.</dd></div>
+      </dl>
+      <h3>Four crafts</h3>
+      <dl class="crafts" aria-label="How the firm works">
+        <div><dt>Modelling</dt><dd>Declare the object and preserve its identity.</dd></div>
+        <div><dt>Simulation</dt><dd>Explore time and consequence on a declared model.</dd></div>
+        <div><dt>Compilation</dt><dd>Bring observations into spatial, temporal and relational state.</dd></div>
+        <div><dt>Verification</dt><dd>Check the result, retain its limits and refuse a bad merge.</dd></div>
+      </dl>
+      <p class="exhibit-note">The globe is a read-only exhibition of synthetic state, not a live feed. The compiler and evidence stores are not running on this page. Its generalized geographic contours are rendered on an undistorted sphere; it is not a survey or satellite photograph.</p>
+      <p class="small">Drag to rotate · Wheel to zoom · <kbd>/</kbd> inside the globe for view commands · <kbd>Esc</kbd> to put the controls away.</p>
+      <p class="small">No person path. <span class="author">Giason Pooni</span></p>
+    </div>
+  </dialog>
+
+  <dialog id="contact" class="window window-contact" aria-labelledby="contact-title">
+    <header class="window-header"><h2 id="contact-title">Contact</h2><a class="window-close" href="#main" data-close aria-label="Close Contact">×</a></header>
+    <div class="window-content">
+      <p class="eyebrow">Notation Systems</p>
+      <p class="purpose">Industrial questions.<br>Direct correspondence.</p>
+      <p>For enquiries about logistics, commodity state or the built site:</p>
+      <a class="email-link" href="mailto:info@notationsystems.com">info@notationsystems.com</a>
+      <p class="small">This opens your email application. This page does not submit or store a message.</p>
+    </div>
+  </dialog>
+
+  <dialog id="licences" class="window window-licences" aria-labelledby="licences-title">
+    <header class="window-header"><h2 id="licences-title">Licences &amp; source</h2><a class="window-close" href="#main" data-close aria-label="Close Licences">×</a></header>
+    <div class="window-content">
+      <p>Giason Pooni · GPL-3.0 on the homepage and shown tools. Third-party notices are retained separately.</p>
+      <nav class="document-links" aria-label="Licences and corresponding source">
+        <a href="./licenses/GSV-GPL-3.0.txt">GNU General Public License v3.0</a>
+        <a href="./licenses/THIRD-PARTY-NOTICES.txt">Third-party notices</a>
+        <a href="./source/gsv-source.tar.gz" download>Exhibit source archive</a>
+        <a href="./source/homepage-source.tar.gz" download>Homepage source archive</a>
+        <a href="./build-manifest.json">Build manifest</a>
+      </nav>
+      <p class="small source-links"><a href="https://github.com/giasonpooni/Geospatial-State-Visualization" rel="noreferrer">Exhibit repository</a> · <a href="https://github.com/giasonpooni/Geospatial-Systems-Compiler" rel="noreferrer">Compiler repository</a></p>
+      <p class="small">The compiler is a source link, not an operational service on this page.</p>
+    </div>
+  </dialog>
 </body>
 </html>
