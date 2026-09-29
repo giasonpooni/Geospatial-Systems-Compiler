@@ -1,0 +1,183 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "id": "synthetic-clear",
+      "collection": "landsat-c2l2-sr",
+      "stac_version": "1.0.0",
+      "stac_extensions": [],
+      "links": [],
+      "bbox": [
+        -80,
+        43,
+        -79,
+        44
+      ],
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              -80,
+              43
+            ],
+            [
+              -79,
+              43
+            ],
+            [
+              -79,
+              44
+            ],
+            [
+              -80,
+              44
+            ],
+            [
+              -80,
+              43
+            ]
+          ]
+        ]
+      },
+      "properties": {
+        "datetime": "2025-07-14T15:42:49.236576Z",
+        "platform": "LANDSAT_9",
+        "eo:cloud_cover": 5,
+        "gsd": 30,
+        "proj:epsg": 32617
+      },
+      "assets": {
+        "red": {
+          "href": "https://example.invalid/DO-NOT-FETCH.tif",
+          "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+          "eo:bands": [
+            {
+              "common_name": "red"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "synthetic-cloudy",
+      "collection": "landsat-c2l2-sr",
+      "stac_version": "1.0.0",
+      "stac_extensions": [],
+      "links": [],
+      "bbox": [
+        -80,
+        43,
+        -79,
+        44
+      ],
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              -80,
+              43
+            ],
+            [
+              -79,
+              43
+            ],
+            [
+              -79,
+              44
+            ],
+            [
+              -80,
+              44
+            ],
+            [
+              -80,
+              43
+            ]
+          ]
+        ]
+      },
+      "properties": {
+        "datetime": "2025-07-14T15:42:49.236576Z",
+        "platform": "LANDSAT_9",
+        "eo:cloud_cover": 85,
+        "gsd": 30,
+        "proj:epsg": 32617
+      },
+      "assets": {
+        "red": {
+          "href": "https://example.invalid/DO-NOT-FETCH.tif",
+          "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+          "eo:bands": [
+            {
+              "common_name": "red"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "synthetic-cloud-unknown",
+      "collection": "landsat-c2l2-sr",
+      "stac_version": "1.0.0",
+      "stac_extensions": [],
+      "links": [],
+      "bbox": [
+        -80,
+        43,
+        -79,
+        44
+      ],
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              -80,
+              43
+            ],
+            [
+              -79,
+              43
+            ],
+            [
+              -79,
+              44
+            ],
+            [
+              -80,
+              44
+            ],
+            [
+              -80,
+              43
+            ]
+          ]
+        ]
+      },
+      "properties": {
+        "datetime": "2025-07-14T15:42:49.236576Z",
+        "platform": "LANDSAT_9",
+        "gsd": 30,
+        "proj:epsg": 32617
+      },
+      "assets": {
+        "red": {
+          "href": "https://example.invalid/DO-NOT-FETCH.tif",
+          "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+          "eo:bands": [
+            {
+              "common_name": "red"
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "links": [],
+  "synthetic": true
+}

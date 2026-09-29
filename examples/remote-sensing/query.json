@@ -1,0 +1,19 @@
+{
+  "schemaVersion": "rs.scene.query.v1",
+  "aoi": {
+    "crs": "OGC:CRS84",
+    "bbox": [
+      -80.25,
+      42.95,
+      -78.5,
+      44.5
+    ]
+  },
+  "interval": {
+    "start": "2025-07-01T00:00:00Z",
+    "end": "2025-07-31T23:59:59Z"
+  },
+  "maxCloudCoverPercent": 30,
+  "knownAtOrBefore": null,
+  "limit": 10
+}

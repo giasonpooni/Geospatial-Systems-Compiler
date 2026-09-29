@@ -26,3 +26,54 @@ jobs:
           path: /tmp/rs-source/
           retention-days: 7
           if-no-files-found: error
+  qualify:
+    env:
+      GSC_IMPLEMENTATION_REF: ${{ github.sha }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Targeted hermetic tests and actual CLI replay
+        run: |
+          mkdir -p /tmp/rs-evidence
+          npx tsc --noEmit
+          npx vitest run src/lib/remoteSensing/ --reporter=junit --outputFile=/tmp/rs-evidence/junit.xml
+          npx tsx scripts/rs-scenes.ts demo /tmp/rs-evidence/demo
+          npx tsx scripts/rs-scenes.ts replay /tmp/rs-evidence/demo /tmp/rs-evidence/replay
+          node - <<'NODE'
+          const fs = require('node:fs'), assert = require('node:assert/strict');
+          const a = JSON.parse(fs.readFileSync('/tmp/rs-evidence/demo/inspection.json'));
+          const b = JSON.parse(fs.readFileSync('/tmp/rs-evidence/replay/inspection.json'));
+          assert.equal(a.representationId, b.representationId);
+          assert.notEqual(a.executionRef, b.executionRef);
+          assert.equal(a.accounting.fetched, 3);
+          assert.equal(a.accounting.selected, 1);
+          assert.equal(a.accounting.filtered, 1);
+          assert.equal(a.accounting.undetermined, 1);
+          NODE
+      - name: One-page official catalog probe (separate from hermetic tests)
+        if: github.event_name == 'push'
+        run: |
+          npx tsx scripts/rs-scenes.ts discover examples/remote-sensing/query.json /tmp/rs-evidence/live
+          node - <<'NODE'
+          const fs = require('node:fs'), assert = require('node:assert/strict');
+          const r = JSON.parse(fs.readFileSync('/tmp/rs-evidence/live/inspection.json'));
+          assert.equal(r.mode, 'operational');
+          assert.equal(r.limits.pixelsRead, 0);
+          assert.ok(r.accounting.selected + r.accounting.filtered + r.accounting.undetermined > 0,
+            'Live probe did not yield any supported scene metadata; inspect rejection accounting.');
+          NODE
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        if: always()
+        with:
+          name: rs-qualification-${{ github.sha }}
+          path: /tmp/rs-evidence/
+          retention-days: 7
+          if-no-files-found: error

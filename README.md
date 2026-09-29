@@ -74,6 +74,17 @@ Existing package, `PAYLOAD_*` configuration, route, schema and retained-record
 identities remain unchanged. The prior application title is historical context,
 not a new parallel project.
 
+## GIS and remote-sensing scene metadata
+
+The [scene inspection tool](docs/remote-sensing-scenes.md) provides explicit,
+bounded USGS Landsat STAC discovery, source/query/byte-bound receipts,
+metadata filtering, GeoJSON scene envelopes, and offline replay. It does not
+read raster pixels, admit evidence or change the public homepage.
+
+```sh
+npx tsx scripts/rs-scenes.ts demo rs-demo
+```
+
 ## Technical reference
 
 [TECHNICAL_REFERENCE.md](TECHNICAL_REFERENCE.md) preserves the complete previous
