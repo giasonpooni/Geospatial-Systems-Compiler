@@ -89,7 +89,20 @@ try {
       const sourceCheck=await provenance(frame);
       const original=await frame.evaluate(()=>JSON.stringify(window.payloadEarth.api.store.snapshot));
       const timeOrigin=await frame.evaluate(()=>performance.timeOrigin),pageUrl=page.url();
-      await page.screenshot({path:resolve(evidence,`homepage-${label}.png`)});
+      const screenshot = await page.screenshot({path:resolve(evidence,`homepage-${label}.png`)});
+      // Check the rendered pixels, not just CSS tokens: the existing GSV
+      // output pass converts its clear color before displaying it.
+      const background = await page.evaluate(async ({bytes, rect}) => {
+        const image = await createImageBitmap(new Blob([new Uint8Array(bytes)], {type:'image/png'}));
+        const canvas = new OffscreenCanvas(image.width, image.height);
+        const context = canvas.getContext('2d');
+        context.drawImage(image, 0, 0);
+        const pixel = (x,y) => [...context.getImageData(Math.floor(x), Math.floor(y), 1, 1).data];
+        const samples = {page:pixel(1,1), exhibit:pixel(rect.left+4,rect.top+4)};
+        image.close();
+        return samples;
+      }, {bytes:[...screenshot], rect:frameRect});
+      assert.deepEqual(background.exhibit,background.page,'Globe viewport must not appear as a contrasting rectangle');
       const dialogResults=[];
       for (const id of ['about','contact','licences']) {
         const trigger=page.locator(`[data-window="${id}"]`).first();
@@ -130,7 +143,7 @@ try {
       assert.deepEqual(pageErrors,[]); assert.deepEqual(failed,[]); assert.deepEqual(badResponses,[]);
       assert.ok(requests.every(request=>request.url.startsWith(origin+'/') && ['GET','HEAD'].includes(request.method)));
       assert.ok(requests.every(request=>!new URL(request.url).pathname.startsWith('/api/')));
-      records.push({viewport,presentation:'exhibit',sourceCheck,chip,frameRect,dialogResults,commandResults,dragChangedRender:true,wheelChangedCamera:true,snapshotUnchanged:true,iframeNotReloaded:true,requests});
+      records.push({viewport,presentation:'exhibit',sourceCheck,chip,frameRect,background,dialogResults,commandResults,dragChangedRender:true,wheelChangedCamera:true,snapshotUnchanged:true,iframeNotReloaded:true,requests});
     } catch(error) {
       errors.push({viewport,message:String(error),stack:error.stack,pageErrors,failed,badResponses});
       await page.screenshot({path:resolve(evidence,`failure-${label}.png`),fullPage:true}).catch(()=>{});
