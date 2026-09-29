@@ -2,7 +2,8 @@
 
 **Map supplied system state into explicit spatial, temporal and relational representations.**
 
-[Notation Systems](https://notation.systems) · [Run the application](#run-the-existing-application) ·
+[Notation Systems](#notation-systems) · [Bounded workloads](#bounded-workloads-and-expertise-amplification) ·
+[Run the application](#run-the-existing-application) ·
 [Technical reference](TECHNICAL_REFERENCE.md) · [Security policy](SECURITY.md) ·
 [Copyright and licence](#copyright-and-attribution)
 
@@ -17,7 +18,7 @@
 | Current scope | Existing browser inspection application; broader representation compilation and coordinate/frame adapters remain explicitly scoped integration work |
 
 The friendly name describes the representation capability to expose through
-[Notations Engineering Terminal (NET)](https://github.com/giasonpooni/Notations-Engineering-Terminal).
+[Notations Systems Terminal (NET)](https://github.com/giasonpooni/Notations-Systems-Terminal).
 `spatial.map` is an interface target, **not a newly implemented terminal command
 or a claim that arbitrary coordinate, Blender, Godot, Bevy or GIS conversions
 already work**. Existing application routes and configuration remain unchanged.
@@ -29,12 +30,27 @@ compiler and cross-project handoffs remain explicitly scoped integration work.
 
 ## Notation Systems
 
-[**Notation Systems**](https://notation.systems) is the parent organization,
-focused on **industrial tooling, computational instrumentation and scientific
-computing**. **Cartesian Graphics** is its games, graphics and simulation
-studio/label, with historically grounded biographical interactive worlds as a
-central creative focus. Physics-engine and coupled simulation research are part
-of that studio's development direction, not new capabilities claimed for GSC.
+[**Notation Systems**](https://notation.systems) develops evidence-backed
+industrial intelligence, computational instrumentation and tooling for physical
+systems. The purpose is to connect domain expertise, observations and declared
+models to inspectable computation, justified decisions and bounded production
+work. The service direction remains **verify → refresh → reconstruct** for an
+agreed scope, not generic AI output or an assumed universal digital twin.
+
+| Identity | Responsibility |
+| --- | --- |
+| **PAYLOAD** | Physical-economy and operational context: organizations, facilities, materials, shipments/custody and network dependencies; Caravan retains its movement/logistics interfaces. |
+| **LANDSHARK** | Land, parcels, sites, ownership/use, access, development and spatial constraints. |
+| **TRADEWIND** | Contracts, prices, commitments, exposure and physical-economic/market analysis. |
+| **PayloadOS / ESM** | Governed industrial evidence, identity, state, admission and release responsibilities; not replaced by GSC or NET. |
+| **Dossier Services** | Scoped service delivery and compilation of permitted customer-facing outputs. |
+| **NET** | The shared programmable workbench/control plane; existing NET / `net` / `ciw` identities remain intact. |
+| **Cartesian Graphics** | Notation Systems' games, graphics, physics and simulation studio/label; 1792 is primary, Garibaldi secondary, Geronimo on hold. |
+
+Manufacturing, robotics, materials/chemistry, GIS/remote sensing, DSP, scientific
+computing and analytics are engineering workload families, not additional public
+product rooms or claims of completed integrations. The parent/studio relationship
+does not assert a separately incorporated subsidiary.
 
 **Shared primitives; separate state authority.** GSC remains an industrial
 representation component, not a game engine. NET remains the shared workbench;
@@ -56,6 +72,28 @@ a project link does not imply that a hosted demo or released game exists.
 | Author's work | System design, application development, provenance-aware records, integration and inspection workflows built on credited foundations. |
 | Technology | TypeScript, Next.js, React and MapLibre. |
 | Status | Existing map-led physical-economy application; broader compiler, GSV/ESM and workbench integrations are not implied complete. |
+
+## Bounded workloads and expertise amplification
+
+GSC's contribution to the intended expertise-to-artifact workflow is **explicit
+representation**, not automatic truth creation. A reviewed site, terrain or
+historical-world specification can request a scoped transformation; it must
+retain source identities, units, coordinate frames, clocks, uncertainty and the
+difference between measurements, estimates and simulation. Oral accounts and
+expert heuristics remain attributed inputs until the relevant domain reviews them.
+
+NET coordinates the work; GSC owns its declared transformations; GSV projects
+read-only; ESM admits industrial evidence under its own policy. A game's accepted
+terrain or scene remains game-owned. Cross-domain composition requires compatible
+versioned contracts, not a universal ontology or shared mutable world state.
+
+General expertise capture, dependency-aware invalidation/rebuilds and bounded
+agent execution are development targets. Logical domain containers and MCP tool
+interfaces do not themselves establish OS isolation. Python, Julia, Rust and C++
+providers are optional explicit bindings, not an automatic language translator
+or a reason to replace this TypeScript implementation. Evaluate accepted,
+integrated work against human effort, cost, rework and domain-specific quality;
+no cross-domain productivity gain is asserted by this README.
 
 ## Portfolio, explorer and workbench
 
