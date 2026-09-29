@@ -2,7 +2,7 @@
 
 **Map supplied system state into explicit spatial, temporal and relational representations.**
 
-[Portfolio](https://notation.systems) · [Run the application](#run-the-existing-application) ·
+[Notation Systems](https://notation.systems) · [Run the application](#run-the-existing-application) ·
 [Technical reference](TECHNICAL_REFERENCE.md) · [Security policy](SECURITY.md) ·
 [Copyright and licence](#copyright-and-attribution)
 
@@ -29,14 +29,24 @@ compiler and cross-project handoffs remain explicitly scoped integration work.
 
 ## Notation Systems
 
-[notation.systems](https://notation.systems) is the portfolio umbrella for
-independent computational systems, simulation and interactive-software projects
-by **[Giason Pooni](https://github.com/giasonpooni)**. The website presents the
-work; each repository retains its own implementation, status and licence.
+[**Notation Systems**](https://notation.systems) is the parent organization,
+focused on **industrial tooling, computational instrumentation and scientific
+computing**. **Cartesian Graphics** is its games, graphics and simulation
+studio/label, with historically grounded biographical interactive worlds as a
+central creative focus. Physics-engine and coupled simulation research are part
+of that studio's development direction, not new capabilities claimed for GSC.
 
-Portfolio areas: **Games & Interactive · Simulation · Tools · Research · About**.
-Website publication and repository availability are separate; a project link
-does not imply that a hosted demo or released game exists.
+**Shared primitives; separate state authority.** GSC remains an industrial
+representation component, not a game engine. NET remains the shared workbench;
+specialist repositories retain their mathematics, implementations and licences.
+ESM retains evidence, admission and release authority. Game-owned simulation state
+and clocks do not become industrial evidence through shared tools or parentage.
+Evidence, operation, execution and verification identities remain distinct.
+
+The work is by **[Giason Pooni](https://github.com/giasonpooni)**, with contributor
+and upstream attribution retained. Each repository keeps its own implementation,
+status and licence. Website publication and repository availability are separate;
+a project link does not imply that a hosted demo or released game exists.
 
 ## Role, contribution and status
 
@@ -49,10 +59,13 @@ does not imply that a hosted demo or released game exists.
 
 ## Portfolio, explorer and workbench
 
-**notation.systems is the independent portfolio container**, not an instruction
-to turn GSC into a game engine or place the entire portfolio inside a map.
-Project pages should expose work, status, contributions, source and useful
-technical explanations before the underlying architecture.
+The intended **notation.systems public site is a thin, read-only organization
+shell**, not an operational launcher or a game engine. GSV is its only interactive
+globe and must remain visibly labelled `synthetic:demo`; GSC / Frame Mapper is a
+repository link only. PAYLOAD, TRADEWIND and LANDSHARK remain text identities,
+not operational launchers. Compiler servers, live providers, operational credentials,
+NET operations and ESM admission do not belong in that public bundle. This README
+documents the boundary; it does not deploy or alter the website.
 
 GSC remains a separately scoped application. NET retains investigation and
 execution history; specialist providers retain mathematical authority; ESM
@@ -61,14 +74,14 @@ does not authorize a computation or publish a private record.
 
 The current application includes **write-capable freight APIs**. The intended
 read-only demonstration/explorer boundary does **not** describe every existing
-route. Public portfolio content must remain separate from authenticated
+route. Public organization content must remain separate from authenticated
 operations and operational credentials.
 
 ## Run the existing application
 
 Use Node.js 22 and the [existing application instructions](TECHNICAL_REFERENCE.md#run-the-existing-application)
 for setup, tests and deployment. These start the current application, not the
-new portfolio site or a completed unified scientific workbench.
+public organization site or a completed unified scientific workbench.
 
 Existing package, `PAYLOAD_*` configuration, route, schema and retained-record
 identities remain unchanged. The prior application title is historical context,
@@ -131,9 +144,9 @@ Registration was never the only door.
 
 ## Copyright and attribution
 
-**© 2026 Giason Pooni, for original contributions.** Notation Systems is the
-independent project umbrella. This attribution does not claim ownership of
-inherited code or third-party dependencies.
+**© 2026 Giason Pooni, for original contributions.** The Notation Systems parent
+and Cartesian Graphics studio relationship does not claim ownership of inherited
+code or third-party dependencies.
 
 This project began as a fork of [simplifaisoul/osiris](https://github.com/simplifaisoul/osiris)
 and retains its map/rendering foundation. The inherited MIT grant and notices
