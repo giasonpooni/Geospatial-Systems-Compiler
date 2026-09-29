@@ -24,6 +24,7 @@ try {
     page.on('request', req => requests.push({url:req.url(), method:req.method()}));
     page.on('pageerror', err => errors.push(err.message));
     page.on('requestfailed', req => failures.push({url:req.url(), error:req.failure()?.errorText}));
+    try {
     const response = await page.goto(origin, {waitUntil:'networkidle'});
     assert.equal(response.status(), 200);
     const frame = page.frames().find(frame => frame.url().startsWith(origin+'/exhibit/'));
@@ -35,9 +36,15 @@ try {
     assert.equal(await page.locator('canvas').count(), 0);
     assert.equal(await page.locator('.surfaces a, .surfaces button').count(), 0);
     assert.equal(await page.locator('#build-status').isVisible(), true);
-    assert.match(await page.locator('#build-status').innerText(), /Synthetic snapshot/);
+    assert.match(await page.locator('#build-status').innerText(), /Synthetic snapshot/i);
     assert.equal(await frame.locator('.pe-sb-chip').isVisible(), true);
     assert.equal(await frame.locator('.pe-sb-chip').innerText(), 'SYNTHETIC / DEMO DATA');
+    await page.screenshot({path:resolve(evidence,`arrival-${viewport.width}.png`),fullPage:true});
+    const chipBounds = await frame.locator('.pe-sb-chip').evaluate(el => {
+      const r = el.getBoundingClientRect();
+      return {left:r.left, right:r.right, top:r.top, bottom:r.bottom, width:innerWidth, height:innerHeight};
+    });
+    assert.ok(chipBounds.left >= 0 && chipBounds.right <= chipBounds.width + 1 && chipBounds.top >= 0 && chipBounds.bottom <= chipBounds.height + 1, 'Original synthetic chip must fit in the exhibit viewport');
     const original = await frame.evaluate(() => JSON.stringify(window.payloadEarth.api.store.snapshot));
     const sourceCheck = await frame.evaluate(() => {
       const snapshot = window.payloadEarth.api.store.snapshot;
@@ -68,8 +75,12 @@ try {
     assert.deepEqual(failures, [], 'Failed resource requests');
     assert.ok(requests.every(req=>req.url.startsWith(origin+'/') && ['GET','HEAD'].includes(req.method)), 'Only local static read requests');
     assert.ok(requests.every(req=>!new URL(req.url).pathname.startsWith('/api/')), 'No operational API requests');
-    records.push({viewport,sourceCheck,requests,errors,failures});
-    await context.close();
+    records.push({viewport,sourceCheck,chipBounds,requests,errors,failures});
+    } catch (error) {
+      await page.screenshot({path:resolve(evidence,`failure-${viewport.width}.png`),fullPage:true}).catch(() => {});
+      await writeFile(resolve(evidence,`failure-${viewport.width}.json`), JSON.stringify({message:String(error),errors,failures,requests},null,2)+'\n');
+      throw error;
+    } finally { await context.close(); }
   }
   const noJS = await browser.newContext({javaScriptEnabled:false,viewport:{width:390,height:844}});
   const fallback = await noJS.newPage(); await fallback.goto(origin);
