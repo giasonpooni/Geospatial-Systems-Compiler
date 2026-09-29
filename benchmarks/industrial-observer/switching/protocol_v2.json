@@ -1,0 +1,15 @@
+{
+  "schema": "synthetic-switching-protocol.v2",
+  "reason": "New attempt after v1 failed; interval-start loss jumps and persistent modes. V1 evidence is retained.",
+  "steps": 96,
+  "developmentSeeds": { "start": 6000, "count": 8 },
+  "heldOutSeeds": { "start": 7000, "count": 16 },
+  "developmentRegimes": ["nominal", "dev_loss", "dev_bias", "dev_joint", "loss_pulse_reversal", "bias_negative_pulse"],
+  "heldOutRegimes": ["nominal", "flow_flip", "sawtooth_flow", "short_offset_pulses", "offset_ramp_reset", "overlapping_changes", "delayed_offset_flow", "unseen_blackout_change"],
+  "candidates": [{"jumpProbability":0.02,"modePersistence":0.8},{"jumpProbability":0.08,"modePersistence":0.8},{"jumpProbability":0.02,"modePersistence":0.95},{"jumpProbability":0.08,"modePersistence":0.95}],
+  "fixedParameters": {"quietLossVariance":0.00001,"quietBiasVariance":0.00001,"jumpLossVariance":0.25,"jumpBiasVariance":2.25,"initialLossVariance":0.001,"initialBiasVariance":0.001,"lossJumpCoupling":1},
+  "selection": "Minimum pooled development non-nominal volume MSE among nominal ratio <=1.15; retain best as ineligible if no candidate passes.",
+  "gates": { "nominalRmseRatioMaximum":1.0, "changedRegimeRmseRatioToLossMaximum":1.0, "eachChangedRegimeCoverageMinimum":0.9, "biasRegimeRmseRatioToBaselineMaximum":1.0, "intervalWidthRatioToLossMaximum":2.0 },
+  "noPostHoldoutRetuning": true,
+  "promotion": "never_auto_promote"
+}

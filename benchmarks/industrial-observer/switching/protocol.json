@@ -1,0 +1,15 @@
+{
+  "schema": "synthetic-switching-protocol.v1",
+  "baseCommit": "d7cb35762568d1766d29989cfd3f15c90db09b80",
+  "steps": 96,
+  "developmentSeeds": { "start": 3000, "count": 8 },
+  "developmentRegimes": ["nominal", "dev_loss", "dev_bias", "dev_joint"],
+  "heldOutSeeds": { "start": 4000, "count": 16 },
+  "heldOutRegimes": ["nominal", "loss_pulse_reversal", "loss_ramp_break", "bias_negative_pulse", "bias_drift", "joint_changes", "delayed_joint", "blackout_change"],
+  "candidateJumpProbabilities": [0.002, 0.01, 0.03],
+  "fixedParameters": { "quietLossVariance": 0.00001, "quietBiasVariance": 0.00001, "jumpLossVariance": 0.25, "jumpBiasVariance": 2.25, "initialLossVariance": 0.001, "initialBiasVariance": 0.001 },
+  "selection": "minimum_equal_weight_development_non_nominal_volume_MSE_among_candidates_with_nominal_RMSE_ratio_le_1.15; otherwise_retain_best_as_ineligible",
+  "gates": { "nominalRmseRatioMaximum": 1.0, "changedRegimeRmseRatioToLossMaximum": 1.0, "eachChangedRegimeCoverageMinimum": 0.9, "biasRegimeRmseRatioToBaselineMaximum": 1.0, "intervalWidthRatioToLossMaximum": 2.0 },
+  "consistency": { "firstSeed": 5000, "count": 128, "terminalStep": 48 },
+  "status": "never_auto_promote; no_post_holdout_retuning; finite_regime_suite_not_field_validation"
+}
