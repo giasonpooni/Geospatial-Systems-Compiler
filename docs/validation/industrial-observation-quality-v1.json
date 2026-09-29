@@ -1,0 +1,36 @@
+{
+  "scope": "targeted offline validation; not full-repository CI",
+  "baseCommit": "bdfcb041836e86ab1ce93688b127f8960e8d08cf",
+  "node": "v22.16.0",
+  "typescript": "Version 5.8.3",
+  "sharedRegressionCases": {
+    "runner": "node:test",
+    "passed": 58,
+    "failed": 0
+  },
+  "strictCompilation": {
+    "result": "passed",
+    "files": [
+      "src/lib/economy/industrialObservationQuality.ts",
+      "src/lib/economy/industrialObservationQuality.cases.ts"
+    ],
+    "target": "ES2017",
+    "skipLibCheck": "true, matching repository tsconfig",
+    "checks": [
+      "commonjs emit with noEmitOnError",
+      "esnext/bundler isolatedModules noEmit"
+    ]
+  },
+  "notRunLocally": [
+    "Vitest including the two registry-wrapper checks",
+    "full-project typecheck",
+    "full policy-gate suite",
+    "Next.js build"
+  ],
+  "sourceGitBlobs": {
+    "src/lib/economy/industrialObservationQuality.cases.ts": "7a3021d957a03da57e3d52e7e7c763af69d0122c",
+    "src/lib/economy/industrialObservationQuality.test.ts": "4e3abee31ea2aae3da410a09b3ab75ae9916cb92",
+    "src/lib/economy/industrialObservationQuality.ts": "419026984379760a6b07207ed9cb9ced3eeac394",
+    "src/lib/economy/industrialObservationQualityRegistry.ts": "d19ba2facf901c6928f791e1af0db5d9a5f7e5fe"
+  }
+}
