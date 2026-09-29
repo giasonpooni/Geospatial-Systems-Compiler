@@ -1,0 +1,30 @@
+name: Industrial pipe verification workspace
+on:
+  push:
+    branches: [ci-verify/industrial-pipe-workspace]
+permissions:
+  contents: read
+jobs:
+  workspace:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Package tracked source and locked dependencies for offline verification
+        run: |
+          mkdir -p /tmp/gsc-workspace
+          git archive HEAD | tar -xf - -C /tmp/gsc-workspace
+          cp -a node_modules /tmp/gsc-workspace/node_modules
+          tar -czf /tmp/gsc-pipe-workspace.tgz -C /tmp/gsc-workspace .
+      - uses: actions/upload-artifact@v4
+        with:
+          name: industrial-pipe-workspace
+          path: /tmp/gsc-pipe-workspace.tgz
+          retention-days: 1
+          compression-level: 0
