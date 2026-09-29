@@ -16,6 +16,7 @@ const server = await startStaticServer(root);
 const origin = `http://127.0.0.1:${server.address().port}`;
 const browser = await chromium.launch({headless:true, args:['--use-angle=swiftshader', '--enable-unsafe-swiftshader']});
 const records = [];
+const acceptanceErrors = [];
 try {
   for (const viewport of [{width:1440,height:1100},{width:390,height:844}]) {
     const context = await browser.newContext({viewport, reducedMotion:'reduce'});
@@ -54,9 +55,9 @@ try {
     assert.equal(sourceCheck.allSynthetic,true); assert.equal(sourceCheck.frozen,true);
     assert.equal(sourceCheck.count,manifest.domainRecords.count);
     // Actual keyboard command path, not a homepage proxy or fabricated buttons.
-    await frame.locator('body').press('/');
+    await frame.locator('.pe-cb-tab').first().press('/');
     const input = frame.locator('.pe-cb-search');
-    assert.equal(await input.evaluate(el => el===document.activeElement), true);
+    assert.equal(await input.evaluate(el => el===document.activeElement), true, 'Slash from a focused exhibit control must focus the command input');
     for (const command of manifest.gsv.commandHints) {
       await input.fill(command); await input.press('Enter');
       await frame.locator('.pe-cb-result').waitFor({state:'visible'});
@@ -78,8 +79,8 @@ try {
     records.push({viewport,sourceCheck,chipBounds,requests,errors,failures});
     } catch (error) {
       await page.screenshot({path:resolve(evidence,`failure-${viewport.width}.png`),fullPage:true}).catch(() => {});
-      await writeFile(resolve(evidence,`failure-${viewport.width}.json`), JSON.stringify({message:String(error),errors,failures,requests},null,2)+'\n');
-      throw error;
+      await writeFile(resolve(evidence,`failure-${viewport.width}.json`), JSON.stringify({message:String(error),stack:error.stack,errors,failures,requests},null,2)+'\n');
+      acceptanceErrors.push(error);
     } finally { await context.close(); }
   }
   const noJS = await browser.newContext({javaScriptEnabled:false,viewport:{width:390,height:844}});
@@ -92,6 +93,7 @@ try {
   for (const path of ['/api/economy','/api/economy/shipments','/api/freight','/operations','/.env','/spatial.map']) assert.equal((await fetch(origin+path)).status,404);
   for (const method of ['POST','PUT','PATCH','DELETE']) assert.equal((await fetch(origin+'/api/economy',{method})).status,405);
   await writeFile(resolve(evidence,'browser-report.json'), JSON.stringify({gsvCommit:manifest.gsv.commit,records,noJavaScriptFallback:true,staticRouteChecks:true},null,2)+'\n');
+  if (acceptanceErrors.length) throw new AggregateError(acceptanceErrors, 'Production-browser acceptance failed; see retained per-viewport evidence');
   console.log('Browser acceptance passed: real GSV, desktop + mobile, original synthetic chip, all four hints, unchanged immutable snapshot, no third-party or write requests, no-JS fallback.');
 } finally {
   await browser.close(); await new Promise(resolve=>server.close(resolve));

@@ -68,6 +68,15 @@ jobs:
           include-hidden-files: true
           if-no-files-found: error
           retention-days: 14
+      - name: Retain failed build for local diagnosis (not a release)
+        if: failure()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: diagnostic-only-not-approved-for-deployment
+          path: homepage-source/homepage/dist/
+          include-hidden-files: true
+          if-no-files-found: ignore
+          retention-days: 2
       - name: Retain browser evidence
         if: always()
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
