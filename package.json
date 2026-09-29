@@ -9,6 +9,7 @@
     "lint": "eslint",
     "test": "vitest run",
     "test:watch": "vitest",
+    "test:commercial": "node scripts/test-commercial.cjs",
     "test:live": "RUN_LIVE_TESTS=1 vitest run",
     "mcp": "tsx src/mcp/server.ts",
     "smoke": "node scripts/smoke.mjs"

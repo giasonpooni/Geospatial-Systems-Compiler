@@ -212,6 +212,12 @@ type ArtifactRole =
 
 const DESCRIPTION_ARTIFACTS: Readonly<Record<string, ArtifactRole>> = {
   'README.md': 'outward-facing',
+  'TECHNICAL_REFERENCE.md': 'outward-facing',
+  'src/app/products/page.tsx': 'outward-facing',
+  'src/lib/commercial/catalog.ts': 'outward-facing',
+  'docs/commercial/README.md': 'outward-facing',
+  'docs/commercial/INTEGRATION.md': 'outward-facing',
+  'docs/commercial/PROCUREMENT.md': 'outward-facing',
   'DOCKER.md': 'outward-facing',
   'SECURITY.md': 'outward-facing',
   'src/app/layout.tsx': 'outward-facing',
@@ -234,6 +240,16 @@ function candidateArtifacts(): string[] {
   }
   for (const entry of readdirSync(join(process.cwd(), 'public'))) {
     if (entry.endsWith('.webmanifest') || entry === 'manifest.json') out.push(`public/${entry}`);
+  }
+  for (const relative of ['src/app/products', 'docs/commercial']) {
+    const walk = (dir: string) => {
+      for (const entry of readdirSync(join(process.cwd(), dir))) {
+        const file = `${dir}/${entry}`;
+        if (statSync(join(process.cwd(), file)).isDirectory()) walk(file);
+        else if (/\.(?:md|tsx|ts)$/.test(entry)) out.push(file);
+      }
+    };
+    walk(relative);
   }
   return out.sort();
 }
