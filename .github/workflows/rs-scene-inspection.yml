@@ -1,0 +1,28 @@
+name: RS scene inspection
+on:
+  push:
+    branches: [ci-verify/rs-scene-inspection-v1]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  source:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+      - name: Retain exact tracked source
+        run: |
+          mkdir -p /tmp/rs-source
+          git archive --format=tar.gz HEAD > /tmp/rs-source/source.tar.gz
+          git rev-parse HEAD > /tmp/rs-source/commit.txt
+          git rev-parse HEAD^{tree} > /tmp/rs-source/tree.txt
+          sha256sum /tmp/rs-source/source.tar.gz > /tmp/rs-source/source.sha256
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: rs-source-${{ github.sha }}
+          path: /tmp/rs-source/
+          retention-days: 7
+          if-no-files-found: error
