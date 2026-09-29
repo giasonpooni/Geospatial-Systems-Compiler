@@ -34,6 +34,7 @@ jobs:
       - name: Explicit live source capture
         run: |
           /tmp/industrial-python/bin/python scripts/industrial/capture.py --capture-live --output artifacts/industrial/capture
+          /tmp/industrial-python/bin/python scripts/industrial/verify_terrain.py artifacts/industrial/capture --output artifacts/industrial/terrain-recompute.json
           if test -f scripts/industrial/test_capture.py; then
             /tmp/industrial-python/bin/python -m unittest discover -s scripts/industrial -p 'test_*.py'
           fi
