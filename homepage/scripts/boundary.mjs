@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import { createHash } from 'node:crypto';
 import { readdir, readFile, lstat } from 'node:fs/promises';
-import { join, posix } from 'node:path';
+import { join, posix, resolve, sep } from 'node:path';
 
 export const SHELL_CSP = "default-src 'none'; style-src 'self'; img-src 'self' data:; frame-src 'self'; script-src 'none'; connect-src 'none'; object-src 'none'; base-uri 'none'; form-action 'none'";
 // Existing GSV HUD uses inline style properties. No inline JavaScript is allowed.
@@ -9,6 +9,14 @@ export const EXHIBIT_CSP = "default-src 'none'; script-src 'self'; style-src 'se
 export const DOMAIN_COLLECTIONS = ['nodes', 'routes', 'flows', 'commodities', 'events', 'constraints', 'assertions', 'observations'];
 const BLOCKED_BUNDLE_TEXT = /\/api\/(?:economy|freight)\b|PAYLOAD_[A-Z][A-Z0-9_]*|NEXT_PUBLIC_|live\s+comtrade/i;
 const FORBIDDEN_COPY = /\$\s*(?:20k|650k|25m)|\b(?:data broker|OSINT|CAI|HAFD|pairing-field|live copper intelligence)\b/i;
+
+// Git repositories must also be separate filesystem siblings, so Vite/PostCSS
+// cannot discover an operational application's configuration in a parent folder.
+export function assertIndependentCheckouts(shellRoot, gsvRoot) {
+  shellRoot = resolve(shellRoot);
+  gsvRoot = resolve(gsvRoot);
+  assert.ok(shellRoot !== gsvRoot && !gsvRoot.startsWith(shellRoot + sep) && !shellRoot.startsWith(gsvRoot + sep), 'GSV and homepage repositories must not be nested inside one another');
+}
 
 export function validatePin(pin) {
   assert.equal(pin.repository, 'giasonpooni/Geospatial-State-Visualization', 'Only the reviewed GSV repository is eligible');

@@ -18,11 +18,15 @@ jobs:
   static-homepage:
     runs-on: ubuntu-latest
     timeout-minutes: 15
+    defaults:
+      run:
+        working-directory: homepage-source
     steps:
       - name: Checkout homepage sources only (no parent install)
         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
         with:
           persist-credentials: false
+          path: homepage-source
       - name: Use GSV runtime, not GSC runtime
         uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
         with:
@@ -41,15 +45,15 @@ jobs:
         with:
           repository: giasonpooni/Geospatial-State-Visualization
           ref: ${{ steps.exhibit.outputs.commit }}
-          path: .gsv
+          path: gsv-exhibit
           persist-credentials: false
       - name: Homepage boundary regressions
         run: node --test homepage/tests/boundary.test.mjs
       - name: Install only the GSV lockfile
-        working-directory: .gsv
+        working-directory: gsv-exhibit
         run: npm ci
       - name: GSV check + production build + synthetic-only packaging
-        run: node homepage/scripts/build.mjs --gsv .gsv
+        run: node homepage/scripts/build.mjs --gsv ../gsv-exhibit
       - name: Isolated browser-test tooling (not a shipped dependency)
         run: |
           npm install --prefix "$RUNNER_TEMP/notation-browser" --ignore-scripts --no-audit --no-fund playwright@1.55.1
@@ -60,7 +64,7 @@ jobs:
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
         with:
           name: notation-static-homepage
-          path: homepage/dist/
+          path: homepage-source/homepage/dist/
           include-hidden-files: true
           if-no-files-found: error
           retention-days: 14
@@ -69,6 +73,6 @@ jobs:
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
         with:
           name: notation-homepage-browser-evidence
-          path: homepage/evidence/
+          path: homepage-source/homepage/evidence/
           if-no-files-found: ignore
           retention-days: 14

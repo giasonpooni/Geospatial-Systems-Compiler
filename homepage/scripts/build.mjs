@@ -5,12 +5,13 @@ import { execFileSync } from 'node:child_process';
 import { cp, mkdir, readFile, readdir, realpath, rename, rm, writeFile } from 'node:fs/promises';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 import { dirname, join, resolve } from 'node:path';
-import { validatePin, assertSynthetic, assertShell, inspectExhibit, hardenExhibitHtml, fileHashes, SHELL_CSP, EXHIBIT_CSP } from './boundary.mjs';
+import { assertIndependentCheckouts, validatePin, assertSynthetic, assertShell, inspectExhibit, hardenExhibitHtml, fileHashes, SHELL_CSP, EXHIBIT_CSP } from './boundary.mjs';
 
 assert.ok(Number(process.versions.node.split('.')[0]) >= 24, 'The public build requires Node.js 24+. Do not retarget GSV to Node 22.');
 assert.ok(process.argv.length === 4 && process.argv[2] === '--gsv', 'Usage: node homepage/scripts/build.mjs --gsv /path/to/separate/GSV/checkout');
 const home = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const gsv = await realpath(resolve(process.argv[3]));
+assertIndependentCheckouts(await realpath(resolve(home, '..')), gsv);
 const pin = validatePin(JSON.parse(await readFile(join(home, 'gsv.lock.json'), 'utf8')));
 const git = (...args) => execFileSync('git', args, { cwd: gsv, encoding: 'utf8' }).trim();
 assert.equal(await realpath(git('rev-parse', '--show-toplevel')), gsv, 'GSV must be a separate checkout');

@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import { mkdtemp, writeFile, mkdir, readFile, rm, symlink } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
-import { assertExhibitAsset, assertShell, assertSynthetic, DOMAIN_COLLECTIONS, EXHIBIT_CSP, fileHashes, filesUnder, hardenExhibitHtml, inspectExhibit, validatePin } from '../scripts/boundary.mjs';
+import { assertIndependentCheckouts, assertExhibitAsset, assertShell, assertSynthetic, DOMAIN_COLLECTIONS, EXHIBIT_CSP, fileHashes, filesUnder, hardenExhibitHtml, inspectExhibit, validatePin } from '../scripts/boundary.mjs';
 import { startStaticServer } from '../scripts/serve.mjs';
 const publicRoot = new URL('../public/', import.meta.url);
 const html = await readFile(new URL('index.html', publicRoot), 'utf8');
@@ -100,4 +100,10 @@ test('static preview has no auth and rejects all non-read methods and API paths'
   assert.equal((await fetch(base, {method:'HEAD'})).status, 200);
   for (const method of ['POST','PUT','PATCH','DELETE','OPTIONS']) assert.equal((await fetch(base + '/api/economy', {method})).status, 405);
   for (const path of ['/api/economy','/api/economy/shipments','/api/freight','/spatial.map','/.env','/missing','/%2e%2e/secret']) assert.equal((await fetch(base+path)).status, 404);
+});
+
+test('independent Git checkouts cannot share a parent application config', () => {
+  assertIndependentCheckouts('/work/homepage-source', '/work/gsv-exhibit');
+  assertIndependentCheckouts('/work/gsc', '/work/gsc-other');
+  for (const [shell, gsv] of [['/work/gsc', '/work/gsc'], ['/work/gsc', '/work/gsc/.gsv'], ['/work/gsv/gsc', '/work/gsv']]) assert.throws(() => assertIndependentCheckouts(shell, gsv));
 });
