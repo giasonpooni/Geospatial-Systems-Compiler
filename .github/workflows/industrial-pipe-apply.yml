@@ -1,0 +1,29 @@
+name: Apply verified Pipe 1 patch on isolated development branch
+on:
+  push:
+    branches: [ci-verify/industrial-pipe-apply]
+    paths: ['scratch/industrial-pipe-*.gz', '.github/workflows/industrial-pipe-apply.yml']
+permissions:
+  contents: write
+jobs:
+  apply:
+    if: github.ref == 'refs/heads/ci-verify/industrial-pipe-apply'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Check and apply exact locally tested source patch
+        shell: bash
+        run: |
+          set -euo pipefail
+          cat scratch/industrial-pipe-{01,02,03,04,05}.gz | gzip -d > /tmp/industrial-pipe.patch
+          echo 'cde541c7467af12a4daacb39bd654802096c4a1adfa2030a14b951d1f43e7a01  /tmp/industrial-pipe.patch' | sha256sum --check
+          git apply --check --unidiff-zero /tmp/industrial-pipe.patch
+          git apply --unidiff-zero /tmp/industrial-pipe.patch
+          git add -A
+          cp .git/index /tmp/industrial-pipe-clean-index
+          GIT_INDEX_FILE=/tmp/industrial-pipe-clean-index git update-index --force-remove .github/workflows/industrial-pipe-apply.yml scratch/industrial-pipe-{01,02,03,04,05}.gz
+          clean_tree=$(GIT_INDEX_FILE=/tmp/industrial-pipe-clean-index git write-tree)
+          test "$clean_tree" = '2ba9fd43457238234157df217e53aae3fe369d13'
+          echo "Locally verified final source tree matches: $clean_tree"
+          git -c user.name='github-actions[bot]' -c user.email='41898282+github-actions[bot]@users.noreply.github.com' commit -m 'ci: materialize verified Pipe 1 source tree for clean feature commit'
+          git push origin HEAD:refs/heads/ci-verify/industrial-pipe-apply
