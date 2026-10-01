@@ -6,18 +6,51 @@
 [Technical reference](TECHNICAL_REFERENCE.md) · [Security policy](SECURITY.md) ·
 [Copyright and licence](#copyright-and-attribution)
 
+## Mathematical motivation and review
+
+Frame Mapper exposes a concrete part of Notation Systems' representation
+problem: **what must survive when the same modeled state is shown in different
+spatial, temporal or relational forms?** Let $S$ be a declared state model,
+$r_i:S\to A_i$ a representation and $T_{ij}:A_i\to A_j$ a transformation.
+For compatible observables $F_i:A_i\to Y$ and $F_j:A_j\to Y$, exact
+preservation requires $F_j\circ T_{ij}=F_i$ on a declared admissible domain.
+Approximate preservation needs an explicit metric and error bound.
+
+A representation may aggregate or omit distinctions. Identical displays,
+matching aggregates and preservation of a statewise intervention are different
+claims. Coordinate reference systems, units, time basis, geometry, topology,
+uncertainty and entity bindings must be specified when a workload depends on
+them; displaying records alone verifies none of those transformations.
+
+The unresolved research questions concern which observables are sufficient for
+a task, which reductions can support its interventions, and which additional
+mathematical structure a domain requires. NET's
+[research README](https://github.com/giasonpooni/Notations-Systems-Terminal/blob/docs/research-whitepaper-foundations-20260929/README.md)
+and [mathematical review note](https://github.com/giasonpooni/Notations-Systems-Terminal/blob/docs/research-whitepaper-foundations-20260929/docs/REPRESENTATION_PROBLEM.md)
+give a small finite counterexample: equal coarse output distributions can
+coexist with failed statewise preservation. These are **review-branch
+documents**, and their linked preservation implementations remain
+**draft/unmerged** in NET. They do not qualify GSC's current rendering or
+implement new frame adapters here.
+
+The computational-interlingua or **universal-adapter** direction asks whether
+new domains can attach through explicit representation, transformation, loss
+and verification contracts while retaining their specialist mathematics.
+Its generality is a research hypothesis; this project contributes a spatial
+representation and inspection workload to that investigation.
+
 ## NET micro-tool
 
 | Identity | Value |
 | --- | --- |
 | User-facing name | **Frame Mapper** |
 | Proposed NET operation | `spatial.map` |
-| Implementation repository | `Geospatial-Systems-Compiler` |
+| Implementation repository | `Notations-FrameMapper-RunTime` (formerly `Geospatial-Systems-Compiler`) |
 | Existing project identity | Geospatial Systems Compiler / GSC |
 | Current scope | Existing browser inspection application; broader representation compilation and coordinate/frame adapters remain explicitly scoped integration work |
 
 The friendly name describes the representation capability to expose through
-[Notations Engineering Terminal (NET)](https://github.com/giasonpooni/Notations-Engineering-Terminal).
+[Notations Engineering Terminal (NET)](https://github.com/giasonpooni/Notations-Systems-Terminal).
 `spatial.map` is an interface target, **not a newly implemented terminal command
 or a claim that arbitrary coordinate, Blender, Godot, Bevy or GIS conversions
 already work**. Existing application routes and configuration remain unchanged.
@@ -141,3 +174,4 @@ remain applicable to that code. The project-wide **GNU GPL v3.0** terms remain
 in [LICENSE](LICENSE); contributor and dependency notices remain in force.
 This documentation update does not relicense code or add an incompatible
 blanket “all rights reserved” restriction.
+

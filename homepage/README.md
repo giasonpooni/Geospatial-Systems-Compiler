@@ -44,6 +44,25 @@ The module has no network, storage, forms, message bridge or frame access.
 
 ## Tools → Notations Terminal
 
+### Research context for portfolio readers
+
+The [Frame Mapper overview](../README.md#mathematical-motivation-and-review)
+introduces the representation-preservation problem. NET's
+[research README](https://github.com/giasonpooni/Notations-Systems-Terminal/blob/docs/research-whitepaper-foundations-20260929/README.md)
+and [mathematical review note](https://github.com/giasonpooni/Notations-Systems-Terminal/blob/docs/research-whitepaper-foundations-20260929/docs/REPRESENTATION_PROBLEM.md)
+provide the formal objects, an implemented finite counterexample and open
+questions for mathematical review. Both links point to an **unmerged
+documentation branch**; the finite checker is in a separately identified
+draft NET increment.
+
+The portfolio distinguishes representation, transformation, information loss
+and verification. A rendered globe or a matching aggregate is an inspection
+surface, not evidence of general invariant preservation. These links are
+documentation for reviewing the project; the homepage build still contains no
+NET runtime or scientific verification service.
+
+### Existing local workbench guidance
+
 The top-right navigation is **About · Contact · Tools**, in that order. Tools
 opens a same-page **Notations Terminal** window through the existing dialog
 controller, with the same ×, Escape and keyboard-focus behavior.
@@ -140,3 +159,4 @@ No person path. Author: **Giason Pooni**. Homepage and shown tools: **GPL-3.0**,
 with third-party notices and scoped corresponding source retained. The firm's
 public domains are PAYLOAD, TRADEWIND and LANDSHARK; games and internal plant do
 not become homepage products.
+
