@@ -29,22 +29,37 @@ compiler and cross-project handoffs remain explicitly scoped integration work.
 
 ## Organization
 
-**Notation Systems Inc.** is the parent organization.
+**Notation Systems Inc.** is the parent organization in the owner-declared
+parent/child company hierarchy. It is a scientific computing and systems
+engineering company developing computational instruments, software and
+interactive environments for understanding and building physical and virtual
+systems.
 
-| Operating division | Focus |
+Its development direction connects measurement, state estimation and sensor
+fusion, scientific modelling, simulation and execution, from materials and
+machines to interactive worlds. Each repository's implemented capabilities and
+qualification limits remain those documented for that component.
+
+| Activity area | Focus |
 | --- | --- |
-| **Notations Gaming** | Games, graphics and interactive worlds; replaces the Cartesian Graphics studio label. |
-| **Notations Manufacturing** | Industrial design, materials, manufacturing and production systems. |
-| **Notations Laboratories** | Research, scientific computing, simulation and experimental validation. |
+| **Notations Gaming** | Games, graphics, world building, interactive environments and gameplay simulation; replaces the Cartesian Graphics studio label. |
+| **Notations Manufacturing** | Design, machinery integration, process development, fabrication and production systems. |
+| **Notations Laboratories** | Research and experimental validation in scientific computing, measurement, physics and chemistry modelling, materials and simulation. |
 
 Frame Mapper is shared representation and inspection infrastructure across
-these divisions. Its GSC implementation retains its own scope, operational
+these companies. Its GSC implementation retains its own scope, operational
 interfaces and separately tracked integration work.
 
 Evidence, operation, execution and verification identities remain separate.
 Game and simulation state do not acquire industrial evidence or canonical-state
-authority through shared tooling. Cross-division handoffs use explicit contracts
+authority through shared tooling. Cross-company handoffs use explicit contracts
 and the existing admission, execution and release boundaries.
+
+Scientific and industrial applications require calibration, uncertainty,
+repeatability, validation and documented operating envelopes appropriate to the
+application. Simulation alone does not validate a physical model or authorize
+machinery control. Gaming prioritizes interaction, visual quality and play;
+reusable simulations do not make gameplay state scientific evidence.
 
 [notation.systems](https://notation.systems) presents the organization's work.
 Each repository retains its implementation, status and applicable licence.
