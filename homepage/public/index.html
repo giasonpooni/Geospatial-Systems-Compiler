@@ -1,0 +1,112 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'self'; img-src 'self' data:; frame-src 'self'; script-src 'self'; connect-src 'none'; object-src 'none'; base-uri 'none'; form-action 'none'">
+  <meta name="referrer" content="no-referrer">
+  <title>Notation Systems</title>
+  <meta name="description" content="An industrial information company. Provenance-bearing corpora for organizations, sites, parcels, shipments and contracts.">
+  <meta property="og:title" content="Notation Systems">
+  <meta property="og:description" content="We turn heterogeneous industrial observation into verified state you can inspect, price, and move.">
+  <meta property="og:type" content="website">
+  <link rel="icon" href="./favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="./site.css">
+  <script type="module" src="./windows.js"></script>
+</head>
+<body>
+  <div class="site">
+    <header class="masthead">
+      <h1><a class="wordmark" href="#main">Notation Systems</a></h1>
+      <nav class="primary-nav" aria-label="Company">
+        <a href="#about" data-window="about" aria-haspopup="dialog" aria-controls="about">About</a>
+        <a href="#contact" data-window="contact" aria-haspopup="dialog" aria-controls="contact">Contact</a>
+        <a href="#tools" data-window="tools" aria-haspopup="dialog" aria-controls="tools">Tools</a>
+      </nav>
+    </header>
+    <main id="main" aria-label="Geographic exhibition">
+      <figure class="exhibition">
+        <iframe id="gsv-exhibit" src="./exhibit/?presentation=exhibit" title="Geographic globe — synthetic, read-only exhibition" aria-describedby="exhibit-description" sandbox="allow-scripts allow-same-origin" referrerpolicy="no-referrer" allow="camera 'none'; microphone 'none'; geolocation 'none'; payment 'none'; usb 'none'"></iframe>
+        <figcaption id="exhibit-description" class="visually-hidden">Read-only projection of a deterministic synthetic snapshot. Not live shipments, not a person map, not connected plant.</figcaption>
+      </figure>
+      <noscript><p class="fallback">Synthetic geographic exhibit. JavaScript and WebGL are required for the globe. <a href="#about">About Notation Systems</a> · <a href="#contact">Contact</a></p></noscript>
+    </main>
+    <footer class="legal-footer">
+      <nav aria-label="Legal documents">
+        <a href="https://notation.systems/privacy-policy" rel="noreferrer">Privacy</a>
+        <span aria-hidden="true">·</span>
+        <a href="https://notation.systems/terms-of-service" rel="noreferrer">Terms</a>
+        <span aria-hidden="true">·</span>
+        <a href="#licences" data-window="licences" aria-haspopup="dialog" aria-controls="licences">Licences</a>
+      </nav>
+    </footer>
+  </div>
+
+  <dialog id="about" class="window" aria-labelledby="about-title">
+    <header class="window-header"><h2 id="about-title">About</h2><a class="window-close" href="#main" data-close aria-label="Close About">×</a></header>
+    <div class="window-content">
+      <p class="eyebrow">Notation Systems · Industrial information</p>
+      <p class="purpose">We turn heterogeneous industrial observation into verified state you can inspect, price, and move.</p>
+      <p>We operate provenance-bearing computational corpora for the physical economy. Our objects are organizations, sites and parcels, shipments and contracts. We keep lineage from source to served state.</p>
+      <h3>Three domains</h3>
+      <dl class="domains" aria-label="Company domains">
+        <div><dt>PAYLOAD</dt><dd>Goods, sites and voyages.</dd></div>
+        <div><dt>TRADEWIND</dt><dd>Commodity and contract state.</dd></div>
+        <div><dt>LANDSHARK</dt><dd>Parcels, zoning, design intent and the built site.</dd></div>
+      </dl>
+      <h3>Four crafts</h3>
+      <dl class="crafts" aria-label="How the firm works">
+        <div><dt>Modelling</dt><dd>Declare the object and preserve its identity.</dd></div>
+        <div><dt>Simulation</dt><dd>Explore time and consequence on a declared model.</dd></div>
+        <div><dt>Compilation</dt><dd>Bring observations into spatial, temporal and relational state.</dd></div>
+        <div><dt>Verification</dt><dd>Check the result, retain its limits and refuse a bad merge.</dd></div>
+      </dl>
+      <p class="exhibit-note">The globe is a read-only exhibition of synthetic state, not a live feed. The compiler and evidence stores are not running on this page. Its generalized geographic contours are rendered on an undistorted sphere; it is not a survey or satellite photograph.</p>
+      <p class="small">Drag to rotate · Wheel to zoom · <kbd>/</kbd> inside the globe for view commands · <kbd>Esc</kbd> to put the controls away.</p>
+      <p class="small">No person path. <span class="author">Giason Pooni</span></p>
+    </div>
+  </dialog>
+
+  <dialog id="contact" class="window window-contact" aria-labelledby="contact-title">
+    <header class="window-header"><h2 id="contact-title">Contact</h2><a class="window-close" href="#main" data-close aria-label="Close Contact">×</a></header>
+    <div class="window-content">
+      <p class="eyebrow">Notation Systems</p>
+      <p class="purpose">Industrial questions.<br>Direct correspondence.</p>
+      <p>For enquiries about logistics, commodity state or the built site:</p>
+      <a class="email-link" href="mailto:info@notationsystems.com">info@notationsystems.com</a>
+      <p class="small">This opens your email application. This page does not submit or store a message.</p>
+    </div>
+  </dialog>
+
+  <dialog id="tools" class="window window-tools" aria-labelledby="tools-title" data-launch-state="local-only">
+    <header class="window-header"><h2 id="tools-title">Notations Terminal</h2><a class="window-close" href="#main" data-close aria-label="Close Tools">×</a></header>
+    <div class="window-content">
+      <p class="eyebrow">Workbench · Local installation</p>
+      <p class="purpose">Notations Engineering Terminal</p>
+      <p>The workbench currently runs on your computer. A browser-hosted Terminal is not connected to this page.</p>
+      <p>From your Terminal checkout in PowerShell:</p>
+      <pre class="launch-commands"><code>.\scripts\workbench.ps1 Setup
+.\scripts\workbench.ps1 Start
+.\scripts\workbench.ps1 Status</code></pre>
+      <a class="tools-guide" href="https://github.com/giasonpooni/Notations-Engineering-Terminal/blob/main/deploy/README.md" target="_blank" rel="noopener noreferrer">Installation &amp; launch instructions <span class="visually-hidden">(opens in a new tab)</span></a>
+      <p class="small">Run commands locally. This homepage does not start the workbench or connect to local ports.</p>
+    </div>
+  </dialog>
+
+  <dialog id="licences" class="window window-licences" aria-labelledby="licences-title">
+    <header class="window-header"><h2 id="licences-title">Licences &amp; source</h2><a class="window-close" href="#main" data-close aria-label="Close Licences">×</a></header>
+    <div class="window-content">
+      <p>Giason Pooni · GPL-3.0 on the homepage and shown tools. Third-party notices are retained separately.</p>
+      <nav class="document-links" aria-label="Licences and corresponding source">
+        <a href="./licenses/GSV-GPL-3.0.txt">GNU General Public License v3.0</a>
+        <a href="./licenses/THIRD-PARTY-NOTICES.txt">Third-party notices</a>
+        <a href="./source/gsv-source.tar.gz" download>Exhibit source archive</a>
+        <a href="./source/homepage-source.tar.gz" download>Homepage source archive</a>
+        <a href="./build-manifest.json">Build manifest</a>
+      </nav>
+      <p class="small source-links"><a href="https://github.com/giasonpooni/Geospatial-State-Visualization" rel="noreferrer">Exhibit repository</a> · <a href="https://github.com/giasonpooni/Geospatial-Systems-Compiler" rel="noreferrer">Compiler repository</a></p>
+      <p class="small">The compiler is a source link, not an operational service on this page.</p>
+    </div>
+  </dialog>
+</body>
+</html>

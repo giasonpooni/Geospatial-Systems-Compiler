@@ -1,0 +1,93 @@
+name: Notation read-only homepage
+on:
+  push:
+    paths:
+      - 'homepage/**'
+      - '.github/workflows/notation-homepage.yml'
+  pull_request:
+    paths:
+      - 'homepage/**'
+      - '.github/workflows/notation-homepage.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: notation-homepage-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  static-homepage:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    defaults:
+      run:
+        working-directory: homepage-source
+    steps:
+      - name: Checkout homepage sources only (no parent install)
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          persist-credentials: false
+          path: homepage-source
+      - name: Use GSV runtime, not GSC runtime
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version: '24'
+      - name: Read immutable exhibit pin
+        id: exhibit
+        run: |
+          node --input-type=module <<'JS'
+          import {readFileSync,appendFileSync} from 'node:fs';
+          import {validatePin} from './homepage/scripts/boundary.mjs';
+          const pin=validatePin(JSON.parse(readFileSync('homepage/gsv.lock.json','utf8')));
+          appendFileSync(process.env.GITHUB_OUTPUT,`commit=${pin.commit}\n`);
+          JS
+      - name: Separate GSV checkout
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          repository: giasonpooni/Geospatial-State-Visualization
+          ref: ${{ steps.exhibit.outputs.commit }}
+          path: gsv-exhibit
+          persist-credentials: false
+      - name: Homepage boundary regressions
+        run: node --test homepage/tests/boundary.test.mjs
+      - name: Install only the GSV lockfile
+        working-directory: gsv-exhibit
+        run: npm ci
+      - name: GSV check + production build + synthetic-only packaging
+        run: node homepage/scripts/build.mjs --gsv ../gsv-exhibit
+      - name: Record upstream dependency advisories without upgrading the lockfile
+        run: |
+          mkdir -p homepage/evidence
+          cd ../gsv-exhibit
+          npm audit --json > ../homepage-source/homepage/evidence/npm-audit.json || test "$?" -eq 1
+          npm audit --omit=dev --json > ../homepage-source/homepage/evidence/npm-audit-production.json
+      - name: Isolated browser-test tooling (not a shipped dependency)
+        run: |
+          npm install --prefix "$RUNNER_TEMP/notation-browser" --ignore-scripts --no-audit --no-fund playwright@1.55.1
+          "$RUNNER_TEMP/notation-browser/node_modules/.bin/playwright" install --with-deps chromium
+      - name: Real production-browser acceptance
+        run: PLAYWRIGHT_MODULE="$RUNNER_TEMP/notation-browser/node_modules/playwright/index.mjs" node homepage/tests/browser-smoke.mjs
+      - name: Retain static site only after all checks pass
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: notation-static-homepage
+          path: homepage-source/homepage/dist/
+          include-hidden-files: true
+          if-no-files-found: error
+          retention-days: 14
+      - name: Retain failed build for local diagnosis (not a release)
+        if: failure()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: diagnostic-only-not-approved-for-deployment
+          path: homepage-source/homepage/dist/
+          include-hidden-files: true
+          if-no-files-found: ignore
+          retention-days: 2
+      - name: Retain browser evidence
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: notation-homepage-browser-evidence
+          path: homepage-source/homepage/evidence/
+          if-no-files-found: ignore
+          retention-days: 14

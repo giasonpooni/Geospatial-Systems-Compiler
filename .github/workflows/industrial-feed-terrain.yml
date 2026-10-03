@@ -1,0 +1,58 @@
+name: Industrial feed and terrain
+on:
+  push:
+    branches: [ci-verify/industrial-feed-terrain-v1]
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: industrial-feed-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  qualify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      - name: Hermetic repository qualification
+        run: |
+          npx tsc --noEmit
+          npm test
+          npm run build
+      - name: Isolated raster decoder
+        run: |
+          python3 -m venv /tmp/industrial-python
+          /tmp/industrial-python/bin/pip install rasterio==1.4.3 numpy==2.2.6
+          /tmp/industrial-python/bin/pip freeze > /tmp/industrial-python-environment.txt
+      - name: Explicit live source capture
+        run: |
+          /tmp/industrial-python/bin/python scripts/industrial/capture.py --capture-live --output artifacts/industrial/capture
+          /tmp/industrial-python/bin/python scripts/industrial/verify_terrain.py artifacts/industrial/capture --output artifacts/industrial/terrain-recompute.json
+          if test -f scripts/industrial/test_capture.py; then
+            /tmp/industrial-python/bin/python -m unittest discover -s scripts/industrial -p 'test_*.py'
+          fi
+      - name: Retain reproducibility evidence
+        if: always()
+        run: |
+          mkdir -p /tmp/industrial-evidence
+          git archive --format=tar.gz HEAD > /tmp/industrial-evidence/source.tar.gz
+          git rev-parse HEAD > /tmp/industrial-evidence/commit.txt
+          git rev-parse HEAD^{tree} > /tmp/industrial-evidence/tree.txt
+          test ! -d node_modules || tar -czf /tmp/industrial-evidence/dependencies.tar.gz node_modules
+          test ! -d artifacts/industrial || cp -r artifacts/industrial /tmp/industrial-evidence/
+          test ! -f /tmp/industrial-python-environment.txt || cp /tmp/industrial-python-environment.txt /tmp/industrial-evidence/
+          sha256sum /tmp/industrial-evidence/*.tar.gz > /tmp/industrial-evidence/sha256.txt
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        if: always()
+        with:
+          name: industrial-feed-${{ github.sha }}
+          path: /tmp/industrial-evidence/
+          retention-days: 7
+          if-no-files-found: error

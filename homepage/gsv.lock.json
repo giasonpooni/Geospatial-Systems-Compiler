@@ -1,0 +1,13 @@
+{
+  "repository": "giasonpooni/Geospatial-State-Visualization",
+  "commit": "67861ce05f7ea46db89af9e0493f5d6dc756c8ed",
+  "packageName": "payload-earth",
+  "provenanceSource": "synthetic:demo",
+  "runtime": "Node.js >=24",
+  "commandHints": [
+    "show maritime",
+    "show copper flows",
+    "find toronto",
+    "help"
+  ]
+}
