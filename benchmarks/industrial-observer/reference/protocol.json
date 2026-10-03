@@ -1,0 +1,61 @@
+{
+  "schema": "synthetic-independent-reference-protocol.v1",
+  "baseCommit": "c6b5da4c13a86bb63444d3d55ed66c02fcc367a3",
+  "priorSelectionHash": "053a30aabda6bd2b42d7a85873e69fd4cd6ee0a3c7c81b3ff6d3ea51bed77bd4",
+  "frozenParameters": {
+    "quietLossVariance": 1e-05,
+    "quietBiasVariance": 1e-05,
+    "jumpLossVariance": 0.25,
+    "jumpBiasVariance": 2.25,
+    "initialLossVariance": 0.001,
+    "initialBiasVariance": 0.001,
+    "lossJumpCoupling": 1,
+    "jumpProbability": 0.02,
+    "modePersistence": 0.95
+  },
+  "selection": "none; freeze PR20 v2 model; vary measurement availability only",
+  "steps": 96,
+  "heldOutSeeds": {
+    "start": 14000,
+    "count": 16
+  },
+  "regimes": [
+    "nominal",
+    "loss_step",
+    "bias_plateau",
+    "mixed_jumps",
+    "slow_drift",
+    "delayed_primary",
+    "primary_blackout",
+    "all_blackout",
+    "decoupled_mixed"
+  ],
+  "arms": [
+    "none",
+    "independent_4s",
+    "shared_bias_4s",
+    "independent_1s",
+    "initial_only"
+  ],
+  "referenceVarianceLitres2": 0.25,
+  "referenceAssumption": "known zero offset, independent per-reading noise; not a persistent calibration-uncertainty model",
+  "gates": {
+    "nominalRmseRatioMaximum": 1,
+    "changedVolumeRmseRatioMaximum": 0.8,
+    "changedBiasRmseRatioMaximum": 0.7,
+    "changedLossRmseRatioMaximum": 0.9,
+    "eachChangedCoverageMinimum": 0.9,
+    "meanWidthRatioMaximum": 1.5
+  },
+  "controls": [
+    "shared_bias_monitor_is_not_an_independent_anchor",
+    "copied_primary_noise_family_is_rejected",
+    "mislabeled_shared_bias_is_a_separate_fault_injection"
+  ],
+  "gaussianCheck": {
+    "startSeed": 15000,
+    "count": 256,
+    "steps": 48
+  },
+  "promotion": "never_auto_promote; old estimators and previous failed checks remain unchanged"
+}

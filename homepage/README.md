@@ -46,8 +46,8 @@ The module has no network, storage, forms, message bridge or frame access.
 
 ### Research context for portfolio readers
 
-The [Frame Mapper overview](../README.md#mathematical-motivation-and-review)
-introduces the representation-preservation problem. NET's
+The [Frame Mapper overview](../README.md#net-micro-tool) identifies the
+representation and inspection scope. NET's
 [research README](https://github.com/giasonpooni/Notations-Systems-Terminal/blob/docs/research-whitepaper-foundations-20260929/README.md)
 and [mathematical review note](https://github.com/giasonpooni/Notations-Systems-Terminal/blob/docs/research-whitepaper-foundations-20260929/docs/REPRESENTATION_PROBLEM.md)
 provide the formal objects, an implemented finite counterexample and open

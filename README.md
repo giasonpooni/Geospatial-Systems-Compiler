@@ -6,51 +6,18 @@
 [Technical reference](TECHNICAL_REFERENCE.md) · [Security policy](SECURITY.md) ·
 [Copyright and licence](#copyright-and-attribution)
 
-## Mathematical motivation and review
-
-Frame Mapper exposes a concrete part of Notation Systems' representation
-problem: **what must survive when the same modeled state is shown in different
-spatial, temporal or relational forms?** Let $S$ be a declared state model,
-$r_i:S\to A_i$ a representation and $T_{ij}:A_i\to A_j$ a transformation.
-For compatible observables $F_i:A_i\to Y$ and $F_j:A_j\to Y$, exact
-preservation requires $F_j\circ T_{ij}=F_i$ on a declared admissible domain.
-Approximate preservation needs an explicit metric and error bound.
-
-A representation may aggregate or omit distinctions. Identical displays,
-matching aggregates and preservation of a statewise intervention are different
-claims. Coordinate reference systems, units, time basis, geometry, topology,
-uncertainty and entity bindings must be specified when a workload depends on
-them; displaying records alone verifies none of those transformations.
-
-The unresolved research questions concern which observables are sufficient for
-a task, which reductions can support its interventions, and which additional
-mathematical structure a domain requires. NET's
-[research README](https://github.com/giasonpooni/Notations-Systems-Terminal/blob/docs/research-whitepaper-foundations-20260929/README.md)
-and [mathematical review note](https://github.com/giasonpooni/Notations-Systems-Terminal/blob/docs/research-whitepaper-foundations-20260929/docs/REPRESENTATION_PROBLEM.md)
-give a small finite counterexample: equal coarse output distributions can
-coexist with failed statewise preservation. These are **review-branch
-documents**, and their linked preservation implementations remain
-**draft/unmerged** in NET. They do not qualify GSC's current rendering or
-implement new frame adapters here.
-
-The computational-interlingua or **universal-adapter** direction asks whether
-new domains can attach through explicit representation, transformation, loss
-and verification contracts while retaining their specialist mathematics.
-Its generality is a research hypothesis; this project contributes a spatial
-representation and inspection workload to that investigation.
-
 ## NET micro-tool
 
 | Identity | Value |
 | --- | --- |
 | User-facing name | **Frame Mapper** |
 | Proposed NET operation | `spatial.map` |
-| Implementation repository | `Notations-FrameMapper-RunTime` (formerly `Geospatial-Systems-Compiler`) |
+| Implementation repository | `Geospatial-Systems-Compiler` |
 | Existing project identity | Geospatial Systems Compiler / GSC |
 | Current scope | Existing browser inspection application; broader representation compilation and coordinate/frame adapters remain explicitly scoped integration work |
 
 The friendly name describes the representation capability to expose through
-[Notations Engineering Terminal (NET)](https://github.com/giasonpooni/Notations-Systems-Terminal).
+[Notations Engineering Terminal (NET)](https://github.com/atomtrapping/Notations-Systems-Terminal).
 `spatial.map` is an interface target, **not a newly implemented terminal command
 or a claim that arbitrary coordinate, Blender, Godot, Bevy or GIS conversions
 already work**. Existing application routes and configuration remain unchanged.
@@ -60,14 +27,42 @@ GSC is the representation and inspection project in Notation Systems. Its
 existing browser application grew from Payload Terminal V0; the broader
 compiler and cross-project handoffs remain explicitly scoped integration work.
 
-## Notation Systems
+## Organization
 
-[notation.systems](https://notation.systems) is the portfolio umbrella for
-independent computational systems, simulation and interactive-software projects
-by **[Giason Pooni](https://github.com/giasonpooni)**. The website presents the
-work; each repository retains its own implementation, status and licence.
+**Notation Systems Inc.** is the parent organization in the owner-declared
+parent/child company hierarchy. It is a scientific computing and systems
+engineering company developing computational instruments, software and
+interactive environments for understanding and building physical and virtual
+systems.
 
-Portfolio areas: **Games & Interactive · Simulation · Tools · Research · About**.
+Its development direction connects measurement, state estimation and sensor
+fusion, scientific modelling, simulation and execution, from materials and
+machines to interactive worlds. Each repository's implemented capabilities and
+qualification limits remain those documented for that component.
+
+| Activity area | Focus |
+| --- | --- |
+| **Notations Gaming** | Games, graphics, world building, interactive environments and gameplay simulation. |
+| **Notations Manufacturing** | Design, machinery integration, process development, fabrication and production systems. |
+| **Notations Laboratories** | Research and experimental validation in scientific computing, measurement, physics and chemistry modelling, materials and simulation. |
+
+Frame Mapper is shared representation and inspection infrastructure across
+these companies. Its GSC implementation retains its own scope, operational
+interfaces and separately tracked integration work.
+
+Evidence, operation, execution and verification identities remain separate.
+Game and simulation state do not acquire industrial evidence or canonical-state
+authority through shared tooling. Cross-company handoffs use explicit contracts
+and the existing admission, execution and release boundaries.
+
+Scientific and industrial applications require calibration, uncertainty,
+repeatability, validation and documented operating envelopes appropriate to the
+application. Simulation alone does not validate a physical model or authorize
+machinery control. Gaming prioritizes interaction, visual quality and play;
+reusable simulations do not make gameplay state scientific evidence.
+
+[notation.systems](https://notation.systems) presents the organization's work.
+Each repository retains its implementation, status and applicable licence.
 Website publication and repository availability are separate; a project link
 does not imply that a hosted demo or released game exists.
 
@@ -82,8 +77,9 @@ does not imply that a hosted demo or released game exists.
 
 ## Portfolio, explorer and workbench
 
-**notation.systems is the independent portfolio container**, not an instruction
-to turn GSC into a game engine or place the entire portfolio inside a map.
+**notation.systems presents Notation Systems Inc. and its operating divisions.**
+GSC remains a separately scoped representation and inspection application;
+the website does not place the entire organization inside a map.
 Project pages should expose work, status, contributions, source and useful
 technical explanations before the underlying architecture.
 
@@ -106,6 +102,26 @@ new portfolio site or a completed unified scientific workbench.
 Existing package, `PAYLOAD_*` configuration, route, schema and retained-record
 identities remain unchanged. The prior application title is historical context,
 not a new parallel project.
+
+## Opt-in static exhibition homepage
+
+The [independent homepage guide](homepage/README.md) describes a separately built
+static shell around a pinned synthetic Globe exhibition. Build it explicitly
+with Node.js 24+ and a separate Globe checkout; its output is `homepage/dist/`.
+The existing application remains the default. The static homepage contains no
+operational compiler, evidence admission, live provider or canonical write path.
+A build does not publish the site or change hosting or deployment.
+
+## GIS and remote-sensing scene metadata
+
+The [scene inspection tool](docs/remote-sensing-scenes.md) provides explicit,
+bounded USGS Landsat STAC discovery, source/query/byte-bound receipts,
+metadata filtering, GeoJSON scene envelopes, and offline replay. It does not
+read raster pixels, admit evidence or change the public homepage.
+
+```sh
+npx tsx scripts/rs-scenes.ts demo rs-demo
+```
 
 ## Technical reference
 
@@ -164,9 +180,9 @@ Registration was never the only door.
 
 ## Copyright and attribution
 
-**© 2026 Giason Pooni, for original contributions.** Notation Systems is the
-independent project umbrella. This attribution does not claim ownership of
-inherited code or third-party dependencies.
+**© 2026 Giason Pooni, for original contributions.** Notation Systems Inc. is
+the parent organization. This attribution does not claim ownership of inherited
+code or third-party dependencies.
 
 This project began as a fork of [simplifaisoul/osiris](https://github.com/simplifaisoul/osiris)
 and retains its map/rendering foundation. The inherited MIT grant and notices
@@ -174,4 +190,3 @@ remain applicable to that code. The project-wide **GNU GPL v3.0** terms remain
 in [LICENSE](LICENSE); contributor and dependency notices remain in force.
 This documentation update does not relicense code or add an incompatible
 blanket “all rights reserved” restriction.
-

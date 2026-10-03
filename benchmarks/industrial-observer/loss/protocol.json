@@ -1,0 +1,21 @@
+{
+  "schema": "synthetic-loss-validation-protocol.v1",
+  "baseCommit": "55dfb992a11f89fa26b5e9a825117256cd212250",
+  "steps": 96,
+  "developmentSeeds": { "start": 0, "count": 16 },
+  "developmentRegimes": ["nominal", "development_step"],
+  "candidateProcessVariances": [0.0001, 0.001, 0.01, 0.04],
+  "initialLossVariance": 0.04,
+  "selection": "minimum_development_step_volume_rmse_subject_to_nominal_ratio_at_most_1.15; ties_use_smaller_variance",
+  "heldOutSeeds": { "start": 1000, "count": 16 },
+  "heldOutRegimes": ["nominal", "small_step", "ramp", "reversal", "intermittent", "delayed_step", "blackout_step", "sensor_bias"],
+  "holdoutGate": {
+    "nominalRmseRatioMaximum": 1.15,
+    "lossRegimeAggregateRmseRatioMaximum": 0.8,
+    "lossRegimeCoverageMinimum": 0.9,
+    "sensorBiasRole": "diagnostic_only_not_an_acceptance_case"
+  },
+  "consistency": { "startSeed": 2000, "replications": 256, "terminalStep": 64, "tailProbabilities": [0.005, 0.995] },
+  "promotion": "never_auto_promote; preserve_original_estimator_as_baseline",
+  "scope": "synthetic_benchmark; development_selection_only; no_neural_training; no_physical_causal_identification"
+}
