@@ -103,6 +103,15 @@ Existing package, `PAYLOAD_*` configuration, route, schema and retained-record
 identities remain unchanged. The prior application title is historical context,
 not a new parallel project.
 
+## Opt-in static exhibition homepage
+
+The [independent homepage guide](homepage/README.md) describes a separately built
+static shell around a pinned synthetic Globe exhibition. Build it explicitly
+with Node.js 24+ and a separate Globe checkout; its output is `homepage/dist/`.
+The existing application remains the default. The static homepage contains no
+operational compiler, evidence admission, live provider or canonical write path.
+A build does not publish the site or change hosting or deployment.
+
 ## GIS and remote-sensing scene metadata
 
 The [scene inspection tool](docs/remote-sensing-scenes.md) provides explicit,
