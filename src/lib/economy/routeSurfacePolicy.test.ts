@@ -212,6 +212,8 @@ type ArtifactRole =
 
 const DESCRIPTION_ARTIFACTS: Readonly<Record<string, ArtifactRole>> = {
   'README.md': 'outward-facing',
+  'TECHNICAL_REFERENCE.md': 'outward-facing',
+  'docs/industrial-observation-quality.md': 'outward-facing',
   'DOCKER.md': 'outward-facing',
   'SECURITY.md': 'outward-facing',
   'src/app/layout.tsx': 'outward-facing',
