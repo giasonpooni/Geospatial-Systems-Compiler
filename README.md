@@ -42,7 +42,7 @@ qualification limits remain those documented for that component.
 
 | Activity area | Focus |
 | --- | --- |
-| **Notations Gaming** | Games, graphics, world building, interactive environments and gameplay simulation; replaces the Cartesian Graphics studio label. |
+| **Notations Gaming** | Games, graphics, world building, interactive environments and gameplay simulation. |
 | **Notations Manufacturing** | Design, machinery integration, process development, fabrication and production systems. |
 | **Notations Laboratories** | Research and experimental validation in scientific computing, measurement, physics and chemistry modelling, materials and simulation. |
 
