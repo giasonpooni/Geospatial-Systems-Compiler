@@ -93,6 +93,30 @@ read-only demonstration/explorer boundary does **not** describe every existing
 route. Public portfolio content must remain separate from authenticated
 operations and operational credentials.
 
+## Commercial physical-economy products
+
+The commercial packaging is **Seat / Feed / Watch**, separate from Frame Mapper's
+NET operation. Open `/products` in the application for the qualification-stage
+product cards, or read the [commercial guide](docs/commercial/README.md).
+
+| Product | Scope | Current commercial status |
+| --- | --- | --- |
+| **Seat** | One commodity or corridor; evidence that survives memo export | Non-builder demand and value validation required |
+| **Feed** | Licensed commodity, corridor or regional delivery with source vintages | Source/customer/use-specific rights and delivery qualification required |
+| **Watch** | A versioned customer set of resolved industrial objects | Source rights, measured capacity, coverage and notification qualification required |
+
+There is no validated annual seat rate, production grant registry, checkout or
+live monitoring service added by this change. Research access is not permission
+to redistribute. Provenance, value kind, quantity basis, control versus economic
+interest and explicit refusals are part of the product, not optional extras.
+
+The [preflight helpers and integration limits](docs/commercial/INTEGRATION.md)
+separate source rights, seat-value evidence and bounded watch qualification.
+They do not replace authentication or the existing collection and route gates.
+The [procurement specifications](docs/commercial/PROCUREMENT.md) define three
+separate order schedules, support hours and ceiling/draw-down requirements.
+The pre-registered [continue criterion](docs/CONTINUE_CRITERION.md) is unchanged.
+
 ## Run the existing application
 
 Use Node.js 22 and the [existing application instructions](TECHNICAL_REFERENCE.md#run-the-existing-application)
