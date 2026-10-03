@@ -17,7 +17,7 @@
 | Current scope | Existing browser inspection application; broader representation compilation and coordinate/frame adapters remain explicitly scoped integration work |
 
 The friendly name describes the representation capability to expose through
-[Notations Engineering Terminal (NET)](https://github.com/giasonpooni/Notations-Engineering-Terminal).
+[Notations Engineering Terminal (NET)](https://github.com/atomtrapping/Notations-Systems-Terminal).
 `spatial.map` is an interface target, **not a newly implemented terminal command
 or a claim that arbitrary coordinate, Blender, Godot, Bevy or GIS conversions
 already work**. Existing application routes and configuration remain unchanged.
