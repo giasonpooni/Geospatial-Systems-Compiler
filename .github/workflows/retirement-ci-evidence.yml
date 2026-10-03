@@ -1,0 +1,220 @@
+name: Retirement CI evidence transfer
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+    paths: [".github/workflows/retirement-ci-evidence.yml"]
+
+permissions: {}
+
+jobs:
+  preserve-original-zip:
+    if: >-
+      github.event_name == 'pull_request' &&
+      github.repository == 'atomtrapping/Notations-FrameMapper-RunTime' &&
+      github.event.pull_request.head.repo.full_name == 'atomtrapping/Notations-FrameMapper-RunTime' &&
+      github.event.pull_request.head.ref == 'rescue/retirement-ci-evidence-20261003'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    permissions:
+      actions: read
+      contents: read
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - artifact_id: "11015305609"
+            original_run_id: "36526464877"
+            expected_size: "234932872"
+            expected_sha256: "bcdfa9cb9ddbdef84ea31bb83126566fc7b315a52fac87cfc53104acca6ac8e9"
+          - artifact_id: "11013722329"
+            original_run_id: "36524095454"
+            expected_size: "234922699"
+            expected_sha256: "06fc3b36830d12f6296bb5af653d63db6742eb1c1185c393a8405d7c08887231"
+    env:
+      SOURCE_REPOSITORY: atomtrapping/Notations-FrameMapper-RunTime
+      ARTIFACT_ID: ${{ matrix.artifact_id }}
+      ORIGINAL_RUN_ID: ${{ matrix.original_run_id }}
+      EXPECTED_SIZE: ${{ matrix.expected_size }}
+      EXPECTED_SHA256: ${{ matrix.expected_sha256 }}
+    steps:
+      # No checkout and no execution of any source, ZIP entry or archived program.
+      - name: Retrieve exact original artifact ZIP
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          gh api --method GET "repos/$SOURCE_REPOSITORY/actions/artifacts/$ARTIFACT_ID/zip" > "$RUNNER_TEMP/source.zip"
+
+      - name: Verify original bytes and split bounded transfer pieces
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import hashlib
+          import json
+          import os
+          from pathlib import Path
+
+          source = Path(os.environ["RUNNER_TEMP"]) / "source.zip"
+          expected_size = int(os.environ["EXPECTED_SIZE"])
+          expected_digest = os.environ["EXPECTED_SHA256"]
+          actual_size = source.stat().st_size
+          with source.open("rb") as stream:
+              actual_digest = hashlib.file_digest(stream, "sha256").hexdigest()
+          if actual_size != expected_size or actual_digest != expected_digest:
+              raise SystemExit("Original ZIP size/digest differs from the recorded artifact identity")
+          artifact_id = os.environ["ARTIFACT_ID"]
+          output = Path(os.environ["RUNNER_TEMP"]) / "retirement-source" / artifact_id
+          output.mkdir(parents=True, exist_ok=False)
+          chunk_size = 20 * 1024 * 1024
+          chunks = []
+          with source.open("rb") as stream:
+              number = 1
+              while data := stream.read(chunk_size):
+                  filename = f"part-{number:03d}.bin"
+                  (output / filename).write_bytes(data)
+                  chunks.append({
+                      "position": number,
+                      "filename": filename,
+                      "artifact_name": f"source-retirement-{artifact_id}-part-{number:03d}",
+                      "size_bytes": len(data),
+                      "sha256": hashlib.sha256(data).hexdigest(),
+                  })
+                  number += 1
+          if len(chunks) != 12 or sum(c["size_bytes"] for c in chunks) != expected_size:
+              raise SystemExit("Unexpected original ZIP partition")
+          manifest = {
+              "schema": "notations.original-artifact-transfer.v1",
+              "source_repository": os.environ["SOURCE_REPOSITORY"],
+              "source_artifact_id": int(artifact_id),
+              "source_workflow_run_id": int(os.environ["ORIGINAL_RUN_ID"]),
+              "original_zip_size_bytes": actual_size,
+              "original_zip_sha256": actual_digest,
+              "transfer_workflow_run_id": int(os.environ["GITHUB_RUN_ID"]),
+              "transfer_commit": os.environ["GITHUB_SHA"],
+              "chunk_size_limit_bytes": chunk_size,
+              "chunks": chunks,
+              "reconstruction": "Extract the single part file from each transfer ZIP, verify its size and SHA256, concatenate by position, then verify the original ZIP size and SHA256.",
+          }
+          (output / "index.json").write_text(json.dumps(manifest, indent=2) + "\n", encoding="utf-8")
+          print(f"Verified original artifact {artifact_id}: {actual_size} bytes, {len(chunks)} pieces")
+          PY
+
+      - name: Upload reconstruction index
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: source-retirement-${{ matrix.artifact_id }}-index
+          path: ${{ runner.temp }}/retirement-source/${{ matrix.artifact_id }}/index.json
+          if-no-files-found: error
+          compression-level: 0
+          retention-days: 7
+
+      - name: Upload exact ZIP piece 001
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: source-retirement-${{ matrix.artifact_id }}-part-001
+          path: ${{ runner.temp }}/retirement-source/${{ matrix.artifact_id }}/part-001.bin
+          if-no-files-found: error
+          compression-level: 0
+          retention-days: 7
+
+      - name: Upload exact ZIP piece 002
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: source-retirement-${{ matrix.artifact_id }}-part-002
+          path: ${{ runner.temp }}/retirement-source/${{ matrix.artifact_id }}/part-002.bin
+          if-no-files-found: error
+          compression-level: 0
+          retention-days: 7
+
+      - name: Upload exact ZIP piece 003
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: source-retirement-${{ matrix.artifact_id }}-part-003
+          path: ${{ runner.temp }}/retirement-source/${{ matrix.artifact_id }}/part-003.bin
+          if-no-files-found: error
+          compression-level: 0
+          retention-days: 7
+
+      - name: Upload exact ZIP piece 004
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: source-retirement-${{ matrix.artifact_id }}-part-004
+          path: ${{ runner.temp }}/retirement-source/${{ matrix.artifact_id }}/part-004.bin
+          if-no-files-found: error
+          compression-level: 0
+          retention-days: 7
+
+      - name: Upload exact ZIP piece 005
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: source-retirement-${{ matrix.artifact_id }}-part-005
+          path: ${{ runner.temp }}/retirement-source/${{ matrix.artifact_id }}/part-005.bin
+          if-no-files-found: error
+          compression-level: 0
+          retention-days: 7
+
+      - name: Upload exact ZIP piece 006
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: source-retirement-${{ matrix.artifact_id }}-part-006
+          path: ${{ runner.temp }}/retirement-source/${{ matrix.artifact_id }}/part-006.bin
+          if-no-files-found: error
+          compression-level: 0
+          retention-days: 7
+
+      - name: Upload exact ZIP piece 007
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: source-retirement-${{ matrix.artifact_id }}-part-007
+          path: ${{ runner.temp }}/retirement-source/${{ matrix.artifact_id }}/part-007.bin
+          if-no-files-found: error
+          compression-level: 0
+          retention-days: 7
+
+      - name: Upload exact ZIP piece 008
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: source-retirement-${{ matrix.artifact_id }}-part-008
+          path: ${{ runner.temp }}/retirement-source/${{ matrix.artifact_id }}/part-008.bin
+          if-no-files-found: error
+          compression-level: 0
+          retention-days: 7
+
+      - name: Upload exact ZIP piece 009
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: source-retirement-${{ matrix.artifact_id }}-part-009
+          path: ${{ runner.temp }}/retirement-source/${{ matrix.artifact_id }}/part-009.bin
+          if-no-files-found: error
+          compression-level: 0
+          retention-days: 7
+
+      - name: Upload exact ZIP piece 010
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: source-retirement-${{ matrix.artifact_id }}-part-010
+          path: ${{ runner.temp }}/retirement-source/${{ matrix.artifact_id }}/part-010.bin
+          if-no-files-found: error
+          compression-level: 0
+          retention-days: 7
+
+      - name: Upload exact ZIP piece 011
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: source-retirement-${{ matrix.artifact_id }}-part-011
+          path: ${{ runner.temp }}/retirement-source/${{ matrix.artifact_id }}/part-011.bin
+          if-no-files-found: error
+          compression-level: 0
+          retention-days: 7
+
+      - name: Upload exact ZIP piece 012
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: source-retirement-${{ matrix.artifact_id }}-part-012
+          path: ${{ runner.temp }}/retirement-source/${{ matrix.artifact_id }}/part-012.bin
+          if-no-files-found: error
+          compression-level: 0
+          retention-days: 7
