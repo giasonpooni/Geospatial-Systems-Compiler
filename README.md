@@ -27,14 +27,27 @@ GSC is the representation and inspection project in Notation Systems. Its
 existing browser application grew from Payload Terminal V0; the broader
 compiler and cross-project handoffs remain explicitly scoped integration work.
 
-## Notation Systems
+## Organization
 
-[notation.systems](https://notation.systems) is the portfolio umbrella for
-independent computational systems, simulation and interactive-software projects
-by **[Giason Pooni](https://github.com/giasonpooni)**. The website presents the
-work; each repository retains its own implementation, status and licence.
+**Notation Systems Inc.** is the parent organization.
 
-Portfolio areas: **Games & Interactive · Simulation · Tools · Research · About**.
+| Operating division | Focus |
+| --- | --- |
+| **Notations Gaming** | Games, graphics and interactive worlds; replaces the Cartesian Graphics studio label. |
+| **Notations Manufacturing** | Industrial design, materials, manufacturing and production systems. |
+| **Notations Laboratories** | Research, scientific computing, simulation and experimental validation. |
+
+Frame Mapper is shared representation and inspection infrastructure across
+these divisions. Its GSC implementation retains its own scope, operational
+interfaces and separately tracked integration work.
+
+Evidence, operation, execution and verification identities remain separate.
+Game and simulation state do not acquire industrial evidence or canonical-state
+authority through shared tooling. Cross-division handoffs use explicit contracts
+and the existing admission, execution and release boundaries.
+
+[notation.systems](https://notation.systems) presents the organization's work.
+Each repository retains its implementation, status and applicable licence.
 Website publication and repository availability are separate; a project link
 does not imply that a hosted demo or released game exists.
 
@@ -49,8 +62,9 @@ does not imply that a hosted demo or released game exists.
 
 ## Portfolio, explorer and workbench
 
-**notation.systems is the independent portfolio container**, not an instruction
-to turn GSC into a game engine or place the entire portfolio inside a map.
+**notation.systems presents Notation Systems Inc. and its operating divisions.**
+GSC remains a separately scoped representation and inspection application;
+the website does not place the entire organization inside a map.
 Project pages should expose work, status, contributions, source and useful
 technical explanations before the underlying architecture.
 
@@ -131,9 +145,9 @@ Registration was never the only door.
 
 ## Copyright and attribution
 
-**© 2026 Giason Pooni, for original contributions.** Notation Systems is the
-independent project umbrella. This attribution does not claim ownership of
-inherited code or third-party dependencies.
+**© 2026 Giason Pooni, for original contributions.** Notation Systems Inc. is
+the parent organization. This attribution does not claim ownership of inherited
+code or third-party dependencies.
 
 This project began as a fork of [simplifaisoul/osiris](https://github.com/simplifaisoul/osiris)
 and retains its map/rendering foundation. The inherited MIT grant and notices
